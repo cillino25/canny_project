@@ -1,0 +1,296 @@
+Device: zynq_sdhci
+Manufacturer ID: 12
+OEM: 3456
+Name: F0F0F 
+Tran Speed: 50000000
+Rd Block Len: 512
+SD version 3.0
+High Capacity: Yes
+Capacity: 3.7 GiB
+Bus Width: 4-bit
+Erase Group Size: 512 Bytes
+reading uEnv.txt
+77 bytes read in 11 ms (6.8 KiB/s)
+Loaded environment from uEnv.txt
+Importing environment from SD ...
+Copying Linux from SD to RAM...
+reading uImage
+3529536 bytes read in 311 ms (10.8 MiB/s)
+reading devicetree.dtb
+9429 bytes read in 15 ms (613.3 KiB/s)
+reading uramdisk.image.gz
+6366613 bytes read in 546 ms (11.1 MiB/s)
+## Booting kernel from Legacy Image at 02080000 ...
+   Image Name:   Linux-4.0.0-xilinx-00020-g5b3c91
+   Image Type:   ARM Linux Kernel Image (uncompressed)
+   Data Size:    3529472 Bytes = 3.4 MiB
+   Load Address: 00008000
+   Entry Point:  00008000
+   Verifying Checksum ... OK
+## Loading init Ramdisk from Legacy Image at 04000000 ...
+   Image Name:   
+   Image Type:   ARM Linux RAMDisk Image (gzip compressed)
+   Data Size:    6366549 Bytes = 6.1 MiB
+   Load Address: 00000000
+   Entry Point:  00000000
+   Verifying Checksum ... OK
+## Flattened Device Tree blob at 02000000
+   Booting using the fdt blob at 0x2000000
+   Loading Kernel Image ... OK
+   Loading Ramdisk to 1ed06000, end 1f318555 ... OK
+   Loading Device Tree to 1ed00000, end 1ed054d4 ... OK
+
+Starting kernel ...
+
+Booting Linux on physical CPU 0x0
+Linux version 4.0.0-xilinx-00020-g5b3c91b (michele@Michele-VAIO) (gcc version 4.9.1 (Sourcery CodeBench Lite 2014.11-30) ) #1 SMP PREEM5
+CPU: ARMv7 Processor [413fc090] revision 0 (ARMv7), cr=18c5387d
+CPU: PIPT / VIPT nonaliasing data cache, VIPT aliasing instruction cache
+Machine model: Zynq Zed Development Board
+cma: Reserved 16 MiB at 0x1dc00000
+Memory policy: Data cache writealloc
+PERCPU: Embedded 11 pages/cpu @dfbd0000 s12672 r8192 d24192 u45056
+Built 1 zonelists in Zone order, mobility grouping on.  Total pages: 130048
+Kernel command line: console=ttyPS0,115200 root=/dev/ram rw earlyprintk memmap=10M$500M
+PID hash table entries: 2048 (order: 1, 8192 bytes)
+Dentry cache hash table entries: 65536 (order: 6, 262144 bytes)
+Inode-cache hash table entries: 32768 (order: 5, 131072 bytes)
+Memory: 489844K/524288K available (4758K kernel code, 223K rwdata, 1708K rodata, 220K init, 208K bss, 18060K reserved, 16384K cma-reser)
+Virtual kernel memory layout:
+    vector  : 0xffff0000 - 0xffff1000   (   4 kB)
+    fixmap  : 0xffc00000 - 0xfff00000   (3072 kB)
+    vmalloc : 0xe0800000 - 0xff000000   ( 488 MB)
+    lowmem  : 0xc0000000 - 0xe0000000   ( 512 MB)
+    pkmap   : 0xbfe00000 - 0xc0000000   (   2 MB)
+    modules : 0xbf000000 - 0xbfe00000   (  14 MB)
+      .text : 0xc0008000 - 0xc0658e70   (6468 kB)
+      .init : 0xc0659000 - 0xc0690000   ( 220 kB)
+      .data : 0xc0690000 - 0xc06c7ce0   ( 224 kB)
+       .bss : 0xc06c7ce0 - 0xc06fbff4   ( 209 kB)
+Preemptible hierarchical RCU implementation.
+        Additional per-CPU info printed with stalls.
+        RCU restricting CPUs from NR_CPUS=4 to nr_cpu_ids=2.
+RCU: Adjusting geometry for rcu_fanout_leaf=16, nr_cpu_ids=2
+NR_IRQS:16 nr_irqs:16 16
+L2C: platform modifies aux control register: 0x72360000 -> 0x72760000
+L2C: DT/platform modifies aux control register: 0x72360000 -> 0x72760000
+L2C-310 erratum 769419 enabled
+L2C-310 enabling early BRESP for Cortex-A9
+L2C-310 full line of zeros enabled for Cortex-A9
+L2C-310 ID prefetch enabled, offset 1 lines
+L2C-310 dynamic clock gating enabled, standby mode enabled
+L2C-310 cache controller enabled, 8 ways, 512 kB
+L2C-310: CACHE_ID 0x410000c8, AUX_CTRL 0x76760001
+slcr mapped to e0804000
+zynq_clock_init: clkc starts at e0804100
+Zynq clock init
+sched_clock: 64 bits at 333MHz, resolution 3ns, wraps every 3298534883328ns
+timer #0 at e0808000, irq=17
+Console: colour dummy device 80x30
+Calibrating delay loop... 1332.01 BogoMIPS (lpj=6660096)
+pid_max: default: 32768 minimum: 301
+Mount-cache hash table entries: 1024 (order: 0, 4096 bytes)
+Mountpoint-cache hash table entries: 1024 (order: 0, 4096 bytes)
+CPU: Testing write buffer coherency: ok
+CPU0: thread -1, cpu 0, socket 0, mpidr 80000000
+Setting up static identity map for 0x481ce0 - 0x481d38
+CPU1: thread -1, cpu 1, socket 0, mpidr 80000001
+Brought up 2 CPUs
+SMP: Total of 2 processors activated (2664.03 BogoMIPS).
+CPU: All CPU(s) started in SVC mode.
+devtmpfs: initialized
+VFP support v0.3: implementor 41 architecture 3 part 30 variant 9 rev 4
+pinctrl core: initialized pinctrl subsystem
+NET: Registered protocol family 16
+DMA: preallocated 256 KiB pool for atomic coherent allocations
+cpuidle: using governor ladder
+cpuidle: using governor menu
+hw-breakpoint: found 5 (+1 reserved) breakpoint and 1 watchpoint registers.
+hw-breakpoint: maximum watchpoint size is 4 bytes.
+zynq-ocm f800c000.ocmc: ZYNQ OCM pool: 256 KiB @ 0xe0880000
+vgaarb: loaded
+SCSI subsystem initialized
+usbcore: registered new interface driver usbfs
+usbcore: registered new interface driver hub
+usbcore: registered new device driver usb
+media: Linux media interface: v0.10
+Linux video capture interface: v2.00
+pps_core: LinuxPPS API ver. 1 registered
+pps_core: Software ver. 5.3.6 - Copyright 2005-2007 Rodolfo Giometti <giometti@linux.it>
+PTP clock support registered
+EDAC MC: Ver: 3.0.0
+Advanced Linux Sound Architecture Driver Initialized.
+Switched to clocksource arm_global_timer
+NET: Registered protocol family 2
+TCP established hash table entries: 4096 (order: 2, 16384 bytes)
+TCP bind hash table entries: 4096 (order: 3, 32768 bytes)
+TCP: Hash tables configured (established 4096 bind 4096)
+TCP: reno registered
+UDP hash table entries: 256 (order: 1, 8192 bytes)
+UDP-Lite hash table entries: 256 (order: 1, 8192 bytes)
+NET: Registered protocol family 1
+RPC: Registered named UNIX socket transport module.
+RPC: Registered udp transport module.
+RPC: Registered tcp transport module.
+RPC: Registered tcp NFSv4.1 backchannel transport module.
+Trying to unpack rootfs image as initramfs...
+Freeing initrd memory: 6220K (ded06000 - df319000)
+hw perfevents: enabled with armv7_cortex_a9 PMU driver, 7 counters available
+futex hash table entries: 512 (order: 3, 32768 bytes)
+jffs2: version 2.2. (NAND) (SUMMARY)  © 2001-2006 Red Hat, Inc.
+io scheduler noop registered
+io scheduler deadline registered
+io scheduler cfq registered (default)
+zynq-pinctrl 700.pinctrl: zynq pinctrl initialized
+dma-pl330 f8003000.dmac: Loaded driver for PL330 DMAC-241330
+dma-pl330 f8003000.dmac:        DBUFF-128x8bytes Num_Chans-8 Num_Peri-4 Num_Events-16
+e0001000.serial: ttyPS0 at MMIO 0xe0001000 (irq = 143, base_baud = 3125000) is a xuartps
+console [ttyPS0] enabled
+xdevcfg f8007000.devcfg: ioremap 0xf8007000 to e086c000
+[drm] Initialized drm 1.1.0 20060810
+brd: module loaded
+loop: module loaded
+m25p80 spi0.0: found s25fl256s1, expected n25q128a11
+m25p80 spi0.0: s25fl256s1 (32768 Kbytes)
+5 ofpart partitions found on MTD device spi0.0
+Creating 5 MTD partitions on "spi0.0":
+0x000000000000-0x000000100000 : "qspi-fsbl-uboot"
+0x000000100000-0x000000600000 : "qspi-linux"
+0x000000600000-0x000000620000 : "qspi-device-tree"
+0x000000620000-0x000000c00000 : "qspi-rootfs"
+0x000000c00000-0x000001000000 : "qspi-bitstream"
+CAN device driver interface
+libphy: MACB_mii_bus: probed
+macb e000b000.ethernet eth0: Cadence GEM rev 0x00020118 at 0xe000b000 irq 145 (00:0a:35:00:01:22)
+macb e000b000.ethernet eth0: attached PHY driver [Marvell 88E1510] (mii_bus:phy_addr=e000b000.etherne:00, irq=-1)
+e1000e: Intel(R) PRO/1000 Network Driver - 2.3.2-k
+e1000e: Copyright(c) 1999 - 2014 Intel Corporation.
+ehci_hcd: USB 2.0 'Enhanced' Host Controller (EHCI) Driver
+ehci-pci: EHCI PCI platform driver
+usbcore: registered new interface driver usb-storage
+e0002000.usb supply vbus not found, using dummy regulator
+ULPI transceiver vendor/product ID 0x0451/0x1507
+Found TI TUSB1210 ULPI transceiver.
+ULPI integrity check: passed.
+ci_hdrc ci_hdrc.0: EHCI Host Controller
+ci_hdrc ci_hdrc.0: new USB bus registered, assigned bus number 1
+ci_hdrc ci_hdrc.0: USB 2.0 started, EHCI 1.00
+hub 1-0:1.0: USB hub found
+hub 1-0:1.0: 1 port detected
+mousedev: PS/2 mouse device common for all mice
+i2c /dev entries driver
+Xilinx Zynq CpuIdle Driver started
+Driver 'mmcblk' needs updating - please use bus_type methods
+sdhci: Secure Digital Host Controller Interface driver
+sdhci: Copyright(c) Pierre Ossman
+sdhci-pltfm: SDHCI platform and OF driver helper
+sdhci-arasan e0100000.sdhci: No vmmc regulator found
+sdhci-arasan e0100000.sdhci: No vqmmc regulator found
+mmc0: Invalid maximum block size, assuming 512 bytes
+mmc0: SDHCI controller on e0100000.sdhci [e0100000.sdhci] using ADMA
+ledtrig-cpu: registered to indicate activity on CPUs
+usbcore: registered new interface driver usbhid
+usbhid: USB HID core driver
+TCP: cubic registered
+NET: Registered protocol family 17
+can: controller area network core (rev 20120528 abi 9)
+NET: Registered protocol family 29
+can: raw protocol (rev 20120528)
+can: broadcast manager protocol (rev 20120528 t)
+can: netlink gateway (rev 20130117) max_hops=1
+Registering SWP/SWPB emulation handler
+drivers/rtc/hctosys.c: unable to open rtc device (rtc0)
+mmc0: new high speed SDHC card at address b368
+ALSA device list:
+  No soundcards found.
+mmcblk0: mmc0:b368 F0F0F 3.71 GiB 
+Freeing unused kernel memory: 220K (c0659000 - c0690000)
+INIT:  mmcblk0: p1
+version 2.88 booting
+Starting Bootlog daemon: bootlogd.
+Creating /dev/flash/* device nodes
+random: dd urandom read with 1 bits of entropy available
+FAT-fs (mmcblk0p1): Volume was not properly unmounted. Some data may be corrupt. Please run fsck.
+Configuring network interfaces... done.
+starting Busybox inet Daemon: inetd... done.
+INIT: Entering runlevel: 5
+Starting Dropbear SSH server: dropbear.
+Stopping Bootlog daemon: bootlogd.
+Starting tcf-agent: OK
+
+ _____       _           _      _
+| ___ \     | |         | |    (_)
+| |_/ / ___ | |_   __ _ | |     _  _ __   _   _ __  __
+|  __/ / _ \| __| / _` || |    | || '_ \ | | | |\ \/ /
+| |   |  __/| |_ | (_| || |____| || | | || |_| | >  <
+\_|    \___| \__| \__,_|\_____/|_||_| |_| \__,_|/_/\_\
+
+PetaLinux v2013.10 (Yocto 1.4) zynq ttyPS0
+
+zynq login: root
+Password: 
+login[848]: root login  on `ttyPS0'
+
+root@zynq:~# ls
+Test_HWacc              hello_new               pk
+VDMA-test               hello_out               pk_rv64ima
+bbl                     hello_rv64g             read_mem
+bbl_rv64ima             mt-matmul.riscv         start_linux.sh
+fesvr-zynq              mt-matmul.riscv.1core   start_linux_rv64ima.sh
+hello                   mt-matmul.riscv.2cores  test-VDMA
+root@zynq:~# ./VDMA-test 
+Reg[0]: 0
+Reg[0]: beef
+Waiting for end...
+root@zynq:~# ./test-VDMA 
+-d:VDMA test.
+Open AXI VDMA peripheral with
+  size=       4096
+  baseAddr=   0x43000000
+  width=      512
+  height=     512
+  channels=   3
+  fb1Addr=    0x1f000000
+  fb2Addr=    0x1f100000
+  fb3Addr=    0x1f200000
+
+-d: /dev/mem opened.
+
+-d: Trying to map VDMA base address (0x43000000)..
+-d: ..mapped to 0xb6f98000.
+OFFSET_VDMA_MM2S_STATUS_REGISTER = 0x4
+#Status register at virtual address 0xb6f98004
+#Status register at physical address 0x43000004
+
+Reading from VDMA control register: 
+Writing to VDMA registers:
+
+Reading from VDMA control register: 
+
+-d: Trying to map buffer 1 (0x1f000000)..
+-d: ..mapped to 0xb6d58000.
+
+-d: Trying to map buffer 2 (0x1f100000)..
+-d: ..mapped to 0xb6c98000.
+
+-d: Trying to map buffer 3 (0x1f200000)..
+-d: ..mapped to 0xb6bd8000.
+-d: fb1 memset done
+-d: fb2 memset done
+-d: fb3 memset done
+#Status register at address 0xb6f98004:  10082
+-d: /dev/mem opened.
+
+-d: Trying to map fb1PhysicalAddress (0x1f000000)..
+-d: ..mapped to 0xb6b18000.
+
+-d: Trying to map fb2PhysicalAddress (0x1f100000)..
+-d: ..mapped to 0xb6a58000.
+
+-d: Trying to map fb3PhysicalAddress (0x1f200000)..
+-d: ..mapped to 0xb6998000.
+-d: fb1 memset done
+-d: fb2 memset done
+-d: fb3 memset done
+-d:2222
+Segmentation fault

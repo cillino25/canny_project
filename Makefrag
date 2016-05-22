@@ -1,0 +1,11 @@
+RV_CC=riscv64-unknown-linux-gnu-gcc
+
+ifeq ($(RISCV_TYPE),riscv)
+	exe_type=_rv64g
+
+else
+	exe_type=_rv64ima
+endif
+
+exe_type:
+	echo $(exe_type)

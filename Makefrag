@@ -1,4 +1,5 @@
 RV_CC=riscv64-unknown-linux-gnu-gcc
+ARM_CC=arm-xilinx-linux-gnueabi-gcc
 
 ifeq ($(RISCV_TYPE),riscv)
 	exe_type=_rv64g

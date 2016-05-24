@@ -1,1 +1,5 @@
 out_images/
+root.bin
+mnt/
+busybox-1.24.1/
+

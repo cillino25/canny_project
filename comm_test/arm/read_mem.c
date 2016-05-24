@@ -37,9 +37,10 @@ int main(int argc, char **argv)
 		printf("Parameters must be 2\n");
 		exit(1);
 	}
-	mem_address = atoi(argv[1]);
+	mem_address = strtoul(argv[1], NULL, 0);
+	printf("mem_address is 0x%x\n", mem_address);
 
-	printf("size of unsigned int: %d\n", sizeof(unsigned int));
+	printf("size of unsigned int: %ld\n", sizeof(unsigned int));
 	printf("page size: %d\n", page_size);
   /*======================================================================================
   Initialize the matrix

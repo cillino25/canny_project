@@ -1,0 +1,109 @@
+cur_dir=/usr/share/riscv_src
+
+src_dir=pipeline_test/riscv
+src_dir_arm=pipeline_test/arm
+src_dir_bare=pipeline_test/bare-metal
+
+
+ifeq ($(RISCV_TYPE),riscv)
+	exe_type=_rv64g
+else
+	exe_type=_rv64ima
+endif
+
+exe_type:
+	echo $(exe_type)
+
+#dd if=/dev/zero of=root.bin bs=1M count=64
+root.bin:
+	dd if=/dev/zero of=$(cur_dir)/root.bin bs=1M count=64
+	mkfs.ext2 -F $(cur_dir)/root.bin
+
+rootcv.bin:
+	dd if=/dev/zero of=$(cur_dir)/rootcv.bin bs=1M count=128
+	mkfs.ext2 -F $(cur_dir)/rootcv.bin
+
+
+test:
+	riscv64-unknown-linux-gnu-gcc -o $(cur_dir)/test $(cur_dir)/test.c -lm -lpthread
+
+test_debug:
+	riscv64-unknown-linux-gnu-gcc -o $(cur_dir)/test $(cur_dir)/test.c -lm -lpthread -DDEBUG
+
+
+mount_root:
+	mount -o loop $(cur_dir)/root.bin $(cur_dir)/mnt/
+umount_root:
+	umount $(cur_dir)/mnt/
+
+
+mount_rootcv:
+	mount -o loop $(cur_dir)/rootcv.bin $(cur_dir)/mnt-cv/
+umount_rootcv:
+	umount $(cur_dir)/mnt-cv/
+
+
+cp_test: test
+	mount -o loop $(cur_dir)/root.bin $(cur_dir)/mnt/
+	cp $(cur_dir)/test $(cur_dir)/mnt/
+	umount $(cur_dir)/mnt/
+
+cp_test_debug:	test_debug
+	mount -o loop $(cur_dir)/root.bin $(cur_dir)/mnt/
+	cp $(cur_dir)/test $(cur_dir)/mnt/
+	umount $(cur_dir)/mnt/
+
+read_mem:
+	arm-xilinx-linux-gnueabi-gcc $(cur_dir)/$(src_dir_arm)/read_mem.c -o $(cur_dir)/$(src_dir_arm)/read_mem
+update_read_mem: read_mem
+	scp $(cur_dir)/$(src_dir_arm)/read_mem zedboard:~
+
+spike:
+	spike -p2 +disk=$(cur_dir)/root.bin bbl $(cur_dir)/linux-4.1.17/vmlinux
+
+spike_IMA:
+	spike -p2 --isa=RV64IMA +disk=$(cur_dir)/root.bin bbl $(cur_dir)/linux-4.1.17/vmlinux_rv64ima
+
+write_mem: mount_root
+	riscv64-unknown-linux-gnu-gcc $(cur_dir)/$(src_dir)/write_mem.c -o $(cur_dir)/mnt/write_mem$(exe_type)
+
+reset_mem: mount_root
+	riscv64-unknown-linux-gnu-gcc $(cur_dir)/$(src_dir)/reset_mem.c -o $(cur_dir)/mnt/reset_mem$(exe_type)
+
+Test_HWacc: mount_root
+	riscv64-unknown-linux-gnu-gcc $(cur_dir)/$(src_dir)/Test_HWacc.c -o $(cur_dir)/mnt/Test_HWacc$(exe_type)
+
+test_acc: mount_root
+	riscv64-unknown-linux-gnu-gcc $(cur_dir)/$(src_dir)/test_acc.c -o $(cur_dir)/mnt/test_acc$(exe_type)
+
+test_acc_fixed: mount_root
+	riscv64-unknown-linux-gnu-gcc $(cur_dir)/$(src_dir)/test_acc_fixed.c -o $(cur_dir)/mnt/test_acc_fixed$(exe_type)
+
+bare_write: mount_root
+	riscv64-unknown-elf-gcc $(cur_dir)/$(src_dir_bare)/bare_write.c -o $(cur_dir)/$(src_dir_bare)/bare_write$(exe_type) 
+
+update_root: write_mem reset_mem Test_HWacc test_acc test_acc_fixed umount_root
+
+#####################################  Canny detector  #######################################
+canny:
+	riscv64-unknown-linux-gnu-g++ -I$RISCV/opencv/include -L$RISCV/opencv/lib -static $(cur_dir)/openCV/canny_detector.cpp -o $(cur_dir)/mnt-cv/canny/canny_detector$(exe_type) `pkg-config --static --cflags --libs opencv`
+
+canny_mod:
+	riscv64-unknown-linux-gnu-g++ -I$RISCV/opencv/include -L$RISCV/opencv/lib -static $(cur_dir)/openCV/canny_mod/Canny_test.cpp $(cur_dir)/openCV/canny_mod/opencv_Canny.cpp $(cur_dir)/openCV/canny_mod/opencv_Gblur.cpp -o $(cur_dir)/openCV/canny_mod/canny_mod$(exe_type) `pkg-config --cflags --libs --static opencv`
+
+update_rootcv: mount_rootcv canny umount_rootcv
+
+update_rootcv_mod: mount_rootcv canny_mod umount_rootcv
+
+upload_root: update_root
+	scp $(cur_dir)/root.bin 192.168.1.5:~/mnt/root.bin
+
+upload_rootcv: update_rootcv
+	scp $(cur_dir)/rootcv.bin 192.168.1.5:~/mnt/rootcv.bin
+
+all: test
+
+.PHONY: root.bin test test_debug mount_root umount_root spike all clean cp_test cp_test_debug spike_IMA reset_mem write_mem Test_HWacc test_acc test_acc_fixed upload_root update_root
+.PHONY: canny update_rootcv upload_rootcv read_mem update_read_mem
+clean:
+	rm test $(cur_dir)/canny_detector $(cur_dir)/bare_write $(cur_dir)/test_acc_fixed

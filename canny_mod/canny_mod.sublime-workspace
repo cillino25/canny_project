@@ -520,106 +520,10 @@
 	"buffers":
 	[
 		{
-			"file": "Makefile",
-			"settings":
-			{
-				"buffer_size": 1977,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "/media/stefano/data_ext4/Dropbox/poliTO/tesi/zyfpor-master-49f2c4ee82fb41221973b682da2f82afbfcdd085/src/linux_program/apsoc_cv_apps.cpp",
-			"settings":
-			{
-				"buffer_size": 29529,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "/media/stefano/data_ext4/Dropbox/poliTO/tesi/zyfpor-master-49f2c4ee82fb41221973b682da2f82afbfcdd085/src/vivado_hls/zyfpor_ip_test.cpp",
-			"settings":
-			{
-				"buffer_size": 3632,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "/media/stefano/data_ext4/Dropbox/poliTO/tesi/zyfpor-master-49f2c4ee82fb41221973b682da2f82afbfcdd085/src/vivado_hls/zyfpor_ip_top.cpp",
-			"settings":
-			{
-				"buffer_size": 3176,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "/media/stefano/data_ext4/Dropbox/poliTO/tesi/zyfpor-master-49f2c4ee82fb41221973b682da2f82afbfcdd085/src/vivado_hls/zyfpor_ip_top.h",
-			"settings":
-			{
-				"buffer_size": 1279,
-				"line_ending": "Unix"
-			}
-		},
-		{
 			"file": "Canny_test.cpp",
 			"settings":
 			{
 				"buffer_size": 11107,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "opencv_Canny.cpp",
-			"settings":
-			{
-				"buffer_size": 12501,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "/media/stefano/data_ext4/Dropbox/poliTO_private/tesi/sepFilter_IP/xilinx_com_hls_sepImageFilter_1_0/drivers/sepImageFilter_v1_0/src/xsepimagefilter_hw.h",
-			"settings":
-			{
-				"buffer_size": 3000,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "opencv_Canny.h",
-			"settings":
-			{
-				"buffer_size": 2146,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "/media/stefano/data_ext4/Dropbox/poliTO/tesi/canny/convolution/main.cpp",
-			"settings":
-			{
-				"buffer_size": 12537,
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "opencv_funcs.h",
-			"settings":
-			{
-				"buffer_size": 394,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "opencv_Gblur.cpp",
-			"settings":
-			{
-				"buffer_size": 10787,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": ".git/info/exclude",
-			"settings":
-			{
-				"buffer_size": 257,
 				"line_ending": "Unix"
 			}
 		},
@@ -632,10 +536,66 @@
 			}
 		},
 		{
-			"file": "gaussian_coefficients.c",
+			"file": "opencv_Canny.cpp",
 			"settings":
 			{
-				"buffer_size": 5764,
+				"buffer_size": 12501,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "opencv_Filter.cpp",
+			"settings":
+			{
+				"buffer_size": 3594,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "opencv_Gblur.cpp",
+			"settings":
+			{
+				"buffer_size": 10787,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "quality_metrics_OpenCV.cpp",
+			"settings":
+			{
+				"buffer_size": 4190,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "convolution.h",
+			"settings":
+			{
+				"buffer_size": 4435,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "gaussian_coefficients.h",
+			"settings":
+			{
+				"buffer_size": 624,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "opencv_Canny.h",
+			"settings":
+			{
+				"buffer_size": 2146,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "opencv_funcs.h",
+			"settings":
+			{
+				"buffer_size": 394,
 				"line_ending": "Unix"
 			}
 		},
@@ -644,6 +604,54 @@
 			"settings":
 			{
 				"buffer_size": 3565,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "opencv_geom.h",
+			"settings":
+			{
+				"buffer_size": 2553,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "opencv_precomp.h",
+			"settings":
+			{
+				"buffer_size": 3482,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "quality_metrics_OpenCV.h",
+			"settings":
+			{
+				"buffer_size": 457,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "FeatureSIM.m",
+			"settings":
+			{
+				"buffer_size": 18371,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "gaussian_coefficients.c",
+			"settings":
+			{
+				"buffer_size": 5568,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "opencv_Filterengine.hpp",
+			"settings":
+			{
+				"buffer_size": 16208,
 				"line_ending": "Unix"
 			}
 		}
@@ -698,12 +706,11 @@
 		"side_bar_visible": false,
 		"status_bar_visible": false
 	},
-	"expanded_folders":
-	[
-		"/media/stefano/data_ext4/Dropbox/poliTO/tesi/canny/canny_mod"
-	],
 	"file_history":
 	[
+		"/media/stefano/data_ext4/Dropbox/poliTO/tesi/canny_project/canny_mod/quality_metrics_OpenCV.hpp",
+		"/media/stefano/data_ext4/Dropbox/poliTO/tesi/canny_project/canny_mod/.git/info/exclude",
+		"/media/stefano/data_ext4/Dropbox/poliTO/tesi/canny/convolution/main.cpp",
 		"/home/stefano/Scaricati/xapp742/vdma_ref_design/readme.txt",
 		"/media/stefano/data_ext4/Dropbox/poliTO/tesi/canny/canny_mod/.git/config",
 		"/media/stefano/data_ext4/Dropbox/poliTO/tesi/canny/canny_mod/convolution.h",
@@ -828,14 +835,11 @@
 		"/usr/share/riscv_src/rocket-chip/src/main/scala/Testing.scala",
 		"/usr/share/riscv_src/rocket-chip/src/main/scala/TestConfigs.scala",
 		"/usr/share/riscv_src/rocket-chip/src/main/scala/TestBench.scala",
-		"/usr/share/riscv_src/rocket-chip/src/main/scala/RocketChip.scala",
-		"/usr/share/riscv_src/rocket-chip/src/main/scala/Network.scala",
-		"/usr/share/riscv_src/rocket-chip/src/main/scala/Backends.scala",
-		"/usr/share/riscv_src/rocket-chip/src/main/scala/Fpga.scala"
+		"/usr/share/riscv_src/rocket-chip/src/main/scala/RocketChip.scala"
 	],
 	"find":
 	{
-		"height": 35.0
+		"height": 26.0
 	},
 	"find_in_files":
 	{
@@ -1046,44 +1050,16 @@
 	"groups":
 	[
 		{
-			"selected": 7,
+			"selected": 15,
 			"sheets":
 			[
 				{
 					"buffer": 0,
-					"file": "Makefile",
+					"file": "Canny_test.cpp",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 1977,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								639,
-								639
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Makefile/Makefile.sublime-syntax"
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 8,
-					"type": "text"
-				},
-				{
-					"buffer": 1,
-					"file": "/media/stefano/data_ext4/Dropbox/poliTO/tesi/zyfpor-master-49f2c4ee82fb41221973b682da2f82afbfcdd085/src/linux_program/apsoc_cv_apps.cpp",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 29529,
+						"buffer_size": 11107,
 						"regions":
 						{
 						},
@@ -1096,132 +1072,45 @@
 						],
 						"settings":
 						{
-							"syntax": "Packages/C++/C++.sublime-syntax",
-							"translate_tabs_to_spaces": false
+							"syntax": "Packages/C++/C++.sublime-syntax"
 						},
 						"translation.x": 0.0,
-						"translation.y": 810.0,
+						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 7,
+					"stack_index": 16,
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "convolution.cpp",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 82072,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/C++/C++.sublime-syntax"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 15,
 					"type": "text"
 				},
 				{
 					"buffer": 2,
-					"file": "/media/stefano/data_ext4/Dropbox/poliTO/tesi/zyfpor-master-49f2c4ee82fb41221973b682da2f82afbfcdd085/src/vivado_hls/zyfpor_ip_test.cpp",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 3632,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								1274,
-								1274
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/C++/C++.sublime-syntax"
-						},
-						"translation.x": -0.0,
-						"translation.y": 594.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 6,
-					"type": "text"
-				},
-				{
-					"buffer": 3,
-					"file": "/media/stefano/data_ext4/Dropbox/poliTO/tesi/zyfpor-master-49f2c4ee82fb41221973b682da2f82afbfcdd085/src/vivado_hls/zyfpor_ip_top.cpp",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 3176,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								2232,
-								2232
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/C++/C++.sublime-syntax"
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 4,
-					"type": "text"
-				},
-				{
-					"buffer": 4,
-					"file": "/media/stefano/data_ext4/Dropbox/poliTO/tesi/zyfpor-master-49f2c4ee82fb41221973b682da2f82afbfcdd085/src/vivado_hls/zyfpor_ip_top.h",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 1279,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								965,
-								965
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/C++/C++.sublime-syntax"
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 3,
-					"type": "text"
-				},
-				{
-					"buffer": 5,
-					"file": "Canny_test.cpp",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 11107,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								2981,
-								2981
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/C++/C++.sublime-syntax",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 1728.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 2,
-					"type": "text"
-				},
-				{
-					"buffer": 6,
 					"file": "opencv_Canny.cpp",
 					"semi_transient": false,
 					"settings":
@@ -1233,37 +1122,8 @@
 						"selection":
 						[
 							[
-								4675,
-								4675
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/C++/C++.sublime-syntax",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 1728.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 1,
-					"type": "text"
-				},
-				{
-					"buffer": 7,
-					"file": "/media/stefano/data_ext4/Dropbox/poliTO_private/tesi/sepFilter_IP/xilinx_com_hls_sepImageFilter_1_0/drivers/sepImageFilter_v1_0/src/xsepimagefilter_hw.h",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 3000,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								3000,
-								3000
+								0,
+								0
 							]
 						],
 						"settings":
@@ -1271,10 +1131,150 @@
 							"syntax": "Packages/C++/C++.sublime-syntax"
 						},
 						"translation.x": 0.0,
-						"translation.y": 324.0,
+						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 0,
+					"stack_index": 14,
+					"type": "text"
+				},
+				{
+					"buffer": 3,
+					"file": "opencv_Filter.cpp",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 3594,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/C++/C++.sublime-syntax"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 13,
+					"type": "text"
+				},
+				{
+					"buffer": 4,
+					"file": "opencv_Gblur.cpp",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 10787,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/C++/C++.sublime-syntax"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 12,
+					"type": "text"
+				},
+				{
+					"buffer": 5,
+					"file": "quality_metrics_OpenCV.cpp",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 4190,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/C++/C++.sublime-syntax"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 11,
+					"type": "text"
+				},
+				{
+					"buffer": 6,
+					"file": "convolution.h",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 4435,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/C++/C++.sublime-syntax"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 10,
+					"type": "text"
+				},
+				{
+					"buffer": 7,
+					"file": "gaussian_coefficients.h",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 624,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/C++/C++.sublime-syntax"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 9,
 					"type": "text"
 				},
 				{
@@ -1296,48 +1296,17 @@
 						],
 						"settings":
 						{
-							"syntax": "Packages/C++/C++.sublime-syntax",
-							"translate_tabs_to_spaces": false
+							"syntax": "Packages/C++/C++.sublime-syntax"
 						},
 						"translation.x": 0.0,
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 13,
+					"stack_index": 8,
 					"type": "text"
 				},
 				{
 					"buffer": 9,
-					"file": "/media/stefano/data_ext4/Dropbox/poliTO/tesi/canny/convolution/main.cpp",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 12537,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								3895,
-								3895
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/C++/C++.sublime-syntax",
-							"tab_size": 4,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 1890.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 12,
-					"type": "text"
-				},
-				{
-					"buffer": 10,
 					"file": "opencv_funcs.h",
 					"semi_transient": false,
 					"settings":
@@ -1361,128 +1330,11 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 15,
+					"stack_index": 7,
 					"type": "text"
 				},
 				{
-					"buffer": 11,
-					"file": "opencv_Gblur.cpp",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 10787,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								137,
-								137
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/C++/C++.sublime-syntax",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 5,
-					"type": "text"
-				},
-				{
-					"buffer": 12,
-					"file": ".git/info/exclude",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 257,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								257,
-								257
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Text/Plain text.tmLanguage"
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 9,
-					"type": "text"
-				},
-				{
-					"buffer": 13,
-					"file": "convolution.cpp",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 82072,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								31713,
-								31713
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/C++/C++.sublime-syntax",
-							"tab_size": 4,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 13628.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 10,
-					"type": "text"
-				},
-				{
-					"buffer": 14,
-					"file": "gaussian_coefficients.c",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 5764,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								4339,
-								4339
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/C++/C.sublime-syntax",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 2727.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 11,
-					"type": "text"
-				},
-				{
-					"buffer": 15,
+					"buffer": 10,
 					"file": "opencv_Gblur.h",
 					"semi_transient": false,
 					"settings":
@@ -1494,8 +1346,8 @@
 						"selection":
 						[
 							[
-								368,
-								368
+								0,
+								0
 							]
 						],
 						"settings":
@@ -1506,7 +1358,175 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 14,
+					"stack_index": 6,
+					"type": "text"
+				},
+				{
+					"buffer": 11,
+					"file": "opencv_geom.h",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 2553,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/C++/C++.sublime-syntax"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 5,
+					"type": "text"
+				},
+				{
+					"buffer": 12,
+					"file": "opencv_precomp.h",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 3482,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/C++/C++.sublime-syntax"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 4,
+					"type": "text"
+				},
+				{
+					"buffer": 13,
+					"file": "quality_metrics_OpenCV.h",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 457,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/C++/C++.sublime-syntax"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 3,
+					"type": "text"
+				},
+				{
+					"buffer": 14,
+					"file": "FeatureSIM.m",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 18371,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Objective-C/Objective-C.sublime-syntax"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 2,
+					"type": "text"
+				},
+				{
+					"buffer": 15,
+					"file": "gaussian_coefficients.c",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 5568,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								2420,
+								2420
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/C++/C.sublime-syntax"
+						},
+						"translation.x": 0.0,
+						"translation.y": 918.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
+					"type": "text"
+				},
+				{
+					"buffer": 16,
+					"file": "opencv_Filterengine.hpp",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 16208,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/C++/C++.sublime-syntax"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 1,
 					"type": "text"
 				}
 			]
@@ -1555,7 +1575,7 @@
 	"project": "canny_mod.sublime-project",
 	"replace":
 	{
-		"height": 64.0
+		"height": 48.0
 	},
 	"save_all_on_build": true,
 	"select_file":

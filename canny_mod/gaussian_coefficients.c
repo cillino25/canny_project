@@ -13,7 +13,7 @@ long    mask2[MAX_N][MAX_N] = {0};
 
 
 
-/*
+
 void main(int argc, char **argv){
 	int n=5;
 	int i=0, j=0;
@@ -94,23 +94,10 @@ void main(int argc, char **argv){
 	printf("\nSSE(mask, mask2)=%ld\n", SSE(n, mask, mask2));
 
 
-
-	printf("Test:\n");
-	long * t;
-	long t1=0;
-	get_custom_pow2_coeff_matrix(n, sigma, &t, &t1);
-	for(i=0; i<n; i++){
-		for(j=0; j<n; j++){
-			printf("%6ld ", t[i*n+j]);
-		}
-		printf("\n");
-	}
-
-
 	printf("\n");
 	
 }
-*/
+
 
 
 

@@ -2,6 +2,7 @@ include Makefrag
 
 cur_dir=.
 
+test-VDMA_dir=$(cur_dir)/VDMA_test
 pipefr_dir=$(cur_dir)/canny_pipeline_fr
 comm_dir=$(cur_dir)/comm_test/arm
 
@@ -47,6 +48,39 @@ cp_pipe_fr: pipe_arm pipe_riscv
 
 ####################################################################################
 
+test-VDMA-arm-fr:
+	$(ARM_CC) $(pipefr_dir)/test-VDMA.c $(pipefr_dir)/vdma.c -o $(pipefr_dir)/test-VDMA
+
+cp-test-VDMA-arm-fr: cp_read_mem test-VDMA-arm-fr
+	scp $(pipefr_dir)/test-VDMA zedboard:~
+
+test-VDMA-rv-fr:
+	$(RV_CC) -DRC=1 $(pipefr_dir)/test-VDMA.c $(pipefr_dir)/vdma.c -o $(pipefr_dir)/test-VDMA_$(exe_type)
+
+cp-test-VDMA-fr: test-VDMA-rv-fr
+	cp $(pipefr_dir)/test-VDMA_$(exe_type) mnt/
+
+.PHONY: test-VDMA-rv-fr cp-test-VDMA-fr test-VDMA-arm-fr cp-test-VDMA-arm-fr
+
+####################################################################################
+
+
+test-VDMA-arm:
+	$(ARM_CC) $(test-VDMA_dir)/test-VDMA.c $(test-VDMA_dir)/vdma.c -o $(test-VDMA_dir)/test-VDMA
+
+cp-test-VDMA-arm: test-VDMA-arm
+	scp $(test-VDMA_dir)/test-VDMA zedboard
+
+test-VDMA-rv:
+	$(RV_CC) $(test-VDMA_dir)/test-VDMA.c $(test-VDMA_dir)/vdma.c -o $(test-VDMA_dir)/test-VDMA_$(exe_type)
+
+cp-test-VDMA: test-VDMA-rv
+	cp $(test-VDMA_dir)/test-VDMA_$(exe_type) mnt/
+
+.PHONY: test-VDMA-rv cp-test-VDMA
+
+####################################################################################
+
 read_mem:
 	$(ARM_CC) $(comm_dir)/read_mem.c -o $(comm_dir)/read_mem
 
@@ -56,7 +90,7 @@ cp_read_mem: read_mem
 .PHONY: read_mem cp_read_mem
 ####################################################################################
 
-update_root: mount_root cp_pipe_fr cp_read_mem
+update_root: mount_root cp_pipe_fr cp_read_mem cp-test-VDMA
 	umount $(cur_dir)/mnt/
 
 upload_root: update_root	

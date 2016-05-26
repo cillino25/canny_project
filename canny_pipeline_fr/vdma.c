@@ -104,19 +104,19 @@ int vdma_setup(vdma_handle *handle, unsigned int page_size, unsigned int baseAdd
 
 
     //printf("\n\n");
-    memset((void*)handle->fb1VirtualAddress_mm2s, 170, handle->width*handle->height*handle->pixelChannels);
+    memset((void*)handle->fb1VirtualAddress_mm2s, 170, handle->width*handle->height*handle->pixelChannels); //AA
     //printf("-d: fb1 memset done\n");
-    memset((void*)handle->fb2VirtualAddress_mm2s, 187, handle->width*handle->height*handle->pixelChannels);
+    memset((void*)handle->fb2VirtualAddress_mm2s, 187, handle->width*handle->height*handle->pixelChannels); //BB
     //printf("-d: fb2 memset done\n");
-    memset((void*)handle->fb3VirtualAddress_mm2s, 204, handle->width*handle->height*handle->pixelChannels);
+    memset((void*)handle->fb3VirtualAddress_mm2s, 204, handle->width*handle->height*handle->pixelChannels); //CC
     //printf("-d: fb3 memset done\n");
     
     //printf("\n\n");
-    //memset((void*)handle->fb1VirtualAddress_s2mm, 170, handle->width*handle->height*handle->pixelChannels);
+    memset((void*)handle->fb1VirtualAddress_s2mm, 255, handle->width*handle->height*handle->pixelChannels);
     //printf("-d: fb1 memset done\n");
-    //memset((void*)handle->fb2VirtualAddress_s2mm, 187, handle->width*handle->height*handle->pixelChannels);
+    memset((void*)handle->fb2VirtualAddress_s2mm, 255, handle->width*handle->height*handle->pixelChannels);
     //printf("-d: fb2 memset done\n");
-    //memset((void*)handle->fb3VirtualAddress_s2mm, 204, handle->width*handle->height*handle->pixelChannels);
+    memset((void*)handle->fb3VirtualAddress_s2mm, 255, handle->width*handle->height*handle->pixelChannels);
     //printf("-d: fb3 memset done\n");
 
     return 0;
@@ -176,7 +176,9 @@ void vdma_mm2s_status_dump(vdma_handle *handle) {
     vdma_status_dump(status);
 }
 
-void vdma_start_triple_buffering(vdma_handle *handle) {
+
+// Triple buffering - working version
+void vdma_start_triple_buffering_mod(vdma_handle *handle) {
     // Reset VDMA
     printf("-d: resetting VDMA\n");
     vdma_set(handle, OFFSET_VDMA_S2MM_CONTROL_REGISTER, VDMA_CONTROL_REGISTER_RESET);
@@ -234,8 +236,82 @@ void vdma_start_triple_buffering(vdma_handle *handle) {
     vdma_set(handle, OFFSET_PARK_PTR_REG, 0);
 
     // Frame delay and stride (bytes)
-    vdma_set(handle, OFFSET_VDMA_S2MM_FRMDLY_STRIDE, 1<<24 | handle->width*handle->pixelChannels);
-    vdma_set(handle, OFFSET_VDMA_MM2S_FRMDLY_STRIDE, 1<<24 | handle->width*handle->pixelChannels);
+    //vdma_set(handle, OFFSET_VDMA_S2MM_FRMDLY_STRIDE, 1<<24 | handle->width*handle->pixelChannels);
+    //vdma_set(handle, OFFSET_VDMA_MM2S_FRMDLY_STRIDE, 1<<24 | handle->width*handle->pixelChannels);
+
+    vdma_set(handle, OFFSET_VDMA_S2MM_FRMDLY_STRIDE, handle->width*handle->pixelChannels);
+    vdma_set(handle, OFFSET_VDMA_MM2S_FRMDLY_STRIDE, handle->width*handle->pixelChannels);
+
+    
+    // Write horizontal size (bytes)
+    vdma_set(handle, OFFSET_VDMA_S2MM_HSIZE, handle->width*handle->pixelChannels);
+    vdma_set(handle, OFFSET_VDMA_MM2S_HSIZE, handle->width*handle->pixelChannels);
+
+    // Write vertical size (lines), this actually starts the transfer
+    vdma_set(handle, OFFSET_VDMA_S2MM_VSIZE, handle->height);
+    vdma_set(handle, OFFSET_VDMA_MM2S_VSIZE, handle->height);
+}
+
+
+// Triple buffering original version
+void vdma_start_triple_buffering(vdma_handle *handle) {
+    // Reset VDMA
+    //printf("-d: 1\n");
+    vdma_set(handle, OFFSET_VDMA_S2MM_CONTROL_REGISTER, VDMA_CONTROL_REGISTER_RESET);
+    vdma_set(handle, OFFSET_VDMA_MM2S_CONTROL_REGISTER, VDMA_CONTROL_REGISTER_RESET);
+
+    // Wait for reset to finish
+    //printf("-d: 2\n");
+    while((vdma_get(handle, OFFSET_VDMA_S2MM_CONTROL_REGISTER) & VDMA_CONTROL_REGISTER_RESET)==4);
+    while((vdma_get(handle, OFFSET_VDMA_MM2S_CONTROL_REGISTER) & VDMA_CONTROL_REGISTER_RESET)==4);
+
+    // Clear all error bits in status register
+    //printf("-d: 3\n");
+    vdma_set(handle, OFFSET_VDMA_S2MM_STATUS_REGISTER, 0);
+    vdma_set(handle, OFFSET_VDMA_MM2S_STATUS_REGISTER, 0);
+
+    // Do not mask interrupts
+    vdma_set(handle, OFFSET_VDMA_S2MM_IRQ_MASK, 0xf);
+
+    int interrupt_frame_count = 3;
+
+    // Start both S2MM and MM2S in triple buffering mode
+    vdma_set(handle, OFFSET_VDMA_S2MM_CONTROL_REGISTER,
+        (interrupt_frame_count << 16) |
+        VDMA_CONTROL_REGISTER_START |
+        VDMA_CONTROL_REGISTER_GENLOCK_ENABLE |
+        VDMA_CONTROL_REGISTER_GenlockSrc |
+        VDMA_CONTROL_REGISTER_CIRCULAR_PARK);
+    vdma_set(handle, OFFSET_VDMA_MM2S_CONTROL_REGISTER,
+        (interrupt_frame_count << 16) |
+        VDMA_CONTROL_REGISTER_START |
+        VDMA_CONTROL_REGISTER_GENLOCK_ENABLE |
+        VDMA_CONTROL_REGISTER_GenlockSrc |
+        VDMA_CONTROL_REGISTER_CIRCULAR_PARK);
+
+
+    while((vdma_get(handle, OFFSET_VDMA_S2MM_CONTROL_REGISTER)&1)==0 || (vdma_get(handle, OFFSET_VDMA_S2MM_STATUS_REGISTER)&1)==1) {
+        printf("Waiting for VDMA to start running...\n");
+        sleep(1);
+    }
+
+    // Extra register index, use first 16 frame pointer registers
+    vdma_set(handle, OFFSET_VDMA_S2MM_REG_INDEX, 0);
+
+    // Write physical addresses to control register
+    vdma_set(handle, OFFSET_VDMA_S2MM_FRAMEBUFFER1, (unsigned int)handle->fb1PhysicalAddress_mm2s);
+    vdma_set(handle, OFFSET_VDMA_MM2S_FRAMEBUFFER1, (unsigned int)handle->fb1PhysicalAddress_mm2s);
+    vdma_set(handle, OFFSET_VDMA_S2MM_FRAMEBUFFER2, (unsigned int)handle->fb2PhysicalAddress_mm2s);
+    vdma_set(handle, OFFSET_VDMA_MM2S_FRAMEBUFFER2, (unsigned int)handle->fb2PhysicalAddress_mm2s);
+    vdma_set(handle, OFFSET_VDMA_S2MM_FRAMEBUFFER3, (unsigned int)handle->fb3PhysicalAddress_mm2s);
+    vdma_set(handle, OFFSET_VDMA_MM2S_FRAMEBUFFER3, (unsigned int)handle->fb3PhysicalAddress_mm2s);
+
+    // Write Park pointer register
+    vdma_set(handle, OFFSET_PARK_PTR_REG, 0);
+
+    // Frame delay and stride (bytes)
+    vdma_set(handle, OFFSET_VDMA_S2MM_FRMDLY_STRIDE, handle->width*handle->pixelChannels);
+    vdma_set(handle, OFFSET_VDMA_MM2S_FRMDLY_STRIDE, handle->width*handle->pixelChannels);
 
     // Write horizontal size (bytes)
     vdma_set(handle, OFFSET_VDMA_S2MM_HSIZE, handle->width*handle->pixelChannels);

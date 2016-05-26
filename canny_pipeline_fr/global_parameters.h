@@ -7,11 +7,13 @@
 #define AXI_DMA_HIGHADDR        0x4040FFFF
 
 
-#define AXI_VDMA_BASEADDR        0x45000000
-#define AXI_VDMA_HIGHADDR        0x4500FFFF
-
-#define AXI_RC_VDMA_BASEADDR     0x25000000
-#define AXI_RC_VDMA_HIGHADDR     0x2500FFFF
+#ifndef RC
+ #define AXI_VDMA_BASEADDR        0x45000000
+ #define AXI_VDMA_HIGHADDR        0x4500FFFF
+#else
+ #define AXI_VDMA_BASEADDR        0x25000000
+ #define AXI_VDMA_HIGHADDR        0x2500FFFF
+#endif
 
 #define AXI_GPIO_BASEADDR        0x44000000
 #define AXI_GPIO_HIGHADDR        0x4400FFFF

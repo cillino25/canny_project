@@ -71,7 +71,8 @@ int vdma_setup(vdma_handle *handle, unsigned int page_size, unsigned int baseAdd
     }
     //printf("-d: ..mapped to 0x%x.\n", handle->fb3VirtualAddress);
 
-    //printf("\n\n");
+    printf("\n\n");
+    //printf("memsetting buffers..\n");
     memset((void*)handle->fb1VirtualAddress, 160, handle->width*handle->height*handle->pixelChannels);
     //printf("-d: fb1 memset REALLY done\n");
     memset((void*)handle->fb2VirtualAddress, 255, handle->width*handle->height*handle->pixelChannels);
@@ -135,14 +136,17 @@ void vdma_mm2s_status_dump(vdma_handle *handle) {
 
 void vdma_start_triple_buffering(vdma_handle *handle) {
     // Reset VDMA
+    //printf("-d: 1\n");
     vdma_set(handle, OFFSET_VDMA_S2MM_CONTROL_REGISTER, VDMA_CONTROL_REGISTER_RESET);
     vdma_set(handle, OFFSET_VDMA_MM2S_CONTROL_REGISTER, VDMA_CONTROL_REGISTER_RESET);
 
     // Wait for reset to finish
+    //printf("-d: 2\n");
     while((vdma_get(handle, OFFSET_VDMA_S2MM_CONTROL_REGISTER) & VDMA_CONTROL_REGISTER_RESET)==4);
     while((vdma_get(handle, OFFSET_VDMA_MM2S_CONTROL_REGISTER) & VDMA_CONTROL_REGISTER_RESET)==4);
 
     // Clear all error bits in status register
+    //printf("-d: 3\n");
     vdma_set(handle, OFFSET_VDMA_S2MM_STATUS_REGISTER, 0);
     vdma_set(handle, OFFSET_VDMA_MM2S_STATUS_REGISTER, 0);
 

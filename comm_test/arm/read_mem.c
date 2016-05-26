@@ -33,12 +33,18 @@ int main(int argc, char **argv)
 
 	int i = 0;
 
-	if(argc != 2){
-		printf("Parameters must be 2\n");
+	if(argc < 2){
+		printf("Parameters must be at least 2:\n./read_mem <address> <range>\n\n");
 		exit(1);
 	}
+
 	mem_address = strtoul(argv[1], NULL, 0);
 	printf("mem_address is 0x%x\n", mem_address);
+
+	if(argc>=3){
+		range = strtoul(argv[2], NULL, 0);
+	}
+	printf("range is 0x%x\n", range);
 
 	printf("size of unsigned int: %ld\n", sizeof(unsigned int));
 	printf("page size: %d\n", page_size);

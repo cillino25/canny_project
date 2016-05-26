@@ -57,6 +57,10 @@ int main() {
     
   // Start triple buffering
   vdma_start_triple_buffering(&handle);
+  
+
+  
+
   vdma_cmp_buffer(&handle, read_fb, 0xA0A0A0A0);
 
   vdma_s2mm_status_dump(&handle);

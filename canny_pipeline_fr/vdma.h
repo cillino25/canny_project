@@ -36,6 +36,7 @@ void vdma_set(vdma_handle *handle, int num, unsigned int val);
 void vdma_status_dump(int status);
 void vdma_s2mm_status_dump(vdma_handle *handle);
 void vdma_mm2s_status_dump(vdma_handle *handle);
+void vdma_start_triple_buffering_mod(vdma_handle *handle);
 void vdma_start_triple_buffering(vdma_handle *handle);
 int vdma_s2mm_running(vdma_handle *handle);
 int vdma_s2mm_idle(vdma_handle *handle);

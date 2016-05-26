@@ -1,5 +1,4 @@
 out_images/
-*.bin
 mnt/
 busybox-1.24.1/
-
+root.bin

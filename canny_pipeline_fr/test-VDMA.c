@@ -84,7 +84,7 @@ int main() {
   
   for(i=0; i<10; i++) {
     if(i==3){
-      printf("-d: Filling buffer with dead beef..\n");
+      printf("-d: Filling buffer with dead beef...\n");
       fill_buffer(write_fb, 1024, 0xdeadbeef);
     }
   	printf("-d:%d\n", i);

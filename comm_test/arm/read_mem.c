@@ -67,7 +67,7 @@ int main(int argc, char **argv)
 
   // Map one page of memory into user space such that the device is in that page, but it may not
   // be at the start of the page.
-  mem_mmap = mmap(NULL, page_size, PROT_READ|PROT_WRITE, MAP_SHARED, fd_cpy, mem_address);
+  mem_mmap = mmap(NULL, 10*1024*1024, PROT_READ|PROT_WRITE, MAP_SHARED, fd_cpy, mem_address);
 	if (mem_mmap == (void *) -1)
 	{
 		printf("Can't map the memory to user space.\n");

@@ -104,6 +104,10 @@ int vdma_setup(vdma_handle *handle, unsigned int page_size, unsigned int baseAdd
 
 
     //printf("\n\n");
+    printf("-d: memsetting buffer:\n");
+    printf("  address: 0x%x\n", handle->fb1VirtualAddress_mm2s);
+    printf("  fill value: 0x%x\n", 170);
+    printf("  length (byte): %d = 0x%x\n", handle->fbLength, handle->width*handle->height*handle->pixelChannels);
     memset((void*)handle->fb1VirtualAddress_mm2s, 170, handle->width*handle->height*handle->pixelChannels); //AA
     //printf("-d: fb1 memset done\n");
     memset((void*)handle->fb2VirtualAddress_mm2s, 187, handle->width*handle->height*handle->pixelChannels); //BB
@@ -197,7 +201,7 @@ void vdma_start_triple_buffering_mod(vdma_handle *handle) {
     // Do not mask interrupts
     vdma_set(handle, OFFSET_VDMA_S2MM_IRQ_MASK, 0xf);
 
-    int interrupt_frame_count = 3;
+    int interrupt_frame_count = 2;
 
     printf("-d: start s2mm\n");
     // Start both S2MM and MM2S in triple buffering mode
@@ -357,6 +361,7 @@ void fill_buffer(unsigned int * fbAddr, int length, unsigned int val){
 // Length parameter must be in bytes!
 int cmp_buffer(unsigned int * fbAddr, int length, unsigned int val){
   int i=0;
+  printf("-dbg: length= %d = 0x%x\n", length, length);
   for(i=0; i<length/4; i++){
     if(((volatile unsigned int *)fbAddr)[i] != val){
       printf("Error comparing buffer: fb[%d]=%x <> %x\n", i, ((volatile unsigned int *)fbAddr)[i], val);

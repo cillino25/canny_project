@@ -57,10 +57,11 @@ cp-test-VDMA-arm-fr: cp_read_mem test-VDMA-arm-fr
 test-VDMA-rv-fr:
 	$(RV_CC) -DRC=1 $(pipefr_dir)/test-VDMA.c $(pipefr_dir)/vdma.c -o $(pipefr_dir)/test-VDMA_$(exe_type)
 
-cp-test-VDMA-fr: test-VDMA-rv-fr
+cp-test-VDMA-rv-fr: test-VDMA-rv-fr
 	cp $(pipefr_dir)/test-VDMA_$(exe_type) mnt/
+	umount $(cur_dir)/mnt/
 
-.PHONY: test-VDMA-rv-fr cp-test-VDMA-fr test-VDMA-arm-fr cp-test-VDMA-arm-fr
+.PHONY: test-VDMA-rv-fr cp-test-VDMA-rv-fr test-VDMA-arm-fr cp-test-VDMA-arm-fr
 
 ####################################################################################
 
@@ -90,7 +91,7 @@ cp_read_mem: read_mem
 .PHONY: read_mem cp_read_mem
 ####################################################################################
 
-update_root: mount_root cp_pipe_fr cp_read_mem cp-test-VDMA
+update_root: mount_root cp_pipe_fr cp_read_mem cp-test-VDMA cp-test-VDMA-rv-fr
 	umount $(cur_dir)/mnt/
 
 upload_root: update_root	

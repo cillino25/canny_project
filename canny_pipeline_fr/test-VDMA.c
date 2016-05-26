@@ -13,9 +13,9 @@ int main() {
   int h, j, i;
   vdma_handle handle;
 
-  int len = PIXEL_CHANNELS * IN_FRAME_WIDTH * IN_FRAME_HEIGHT;
+  int frame_len = PIXEL_CHANNELS * IN_FRAME_WIDTH * IN_FRAME_HEIGHT;
   int mem;
-  unsigned int *read_fb;
+  unsigned int *read_fb, *write_fb;
 
   unsigned int page_size = sysconf(_SC_PAGESIZE);
 
@@ -48,6 +48,11 @@ int main() {
     printf("vdmaVirtualAddress mapping for absolute memory access failed.\n");
     return -1;
   }
+  write_fb = (unsigned int*)mmap(NULL, BUFFER_SIZE, PROT_READ | PROT_WRITE, MAP_SHARED, mem, MEM2VDMA_BUFFER1_BASEADDR);
+  if(((unsigned int *)write_fb) == MAP_FAILED) {
+    printf("vdmaVirtualAddress mapping for absolute memory access failed.\n");
+    return -1;
+  }
 
 
   vdma_set(&handle, OFFSET_VDMA_MM2S_HSIZE, 512);
@@ -68,8 +73,8 @@ int main() {
   printf("VDMA S2MM Buffer 2: 0x%x\n", vdma_get(&handle, OFFSET_VDMA_S2MM_FRAMEBUFFER2));
   printf("VDMA S2MM Buffer 3: 0x%x\n", vdma_get(&handle, OFFSET_VDMA_S2MM_FRAMEBUFFER3));
 
-  sleep(1);
-  cmp_buffer(read_fb, BUFFER_SIZE, 0xAAAAAAAA);
+  //sleep(1);
+  cmp_buffer(read_fb, frame_len, 0xAAAAAAAA);
 
   vdma_s2mm_status_dump(&handle);
   vdma_mm2s_status_dump(&handle);
@@ -78,23 +83,19 @@ int main() {
   
   
   for(i=0; i<10; i++) {
+    if(i==3){
+      printf("-d: Filling buffer with dead beef..\n");
+      fill_buffer(write_fb, 1024, 0xdeadbeef);
+    }
   	printf("-d:%d\n", i);
     vdma_s2mm_status_dump(&handle);
     vdma_mm2s_status_dump(&handle);
     
-    /*
-    printf("FB1:\n");
-    for(j=0; j<IN_FRAME_HEIGHT; j++){
-    	for(h=0; h<IN_FRAME_WIDTH; h++){
-    		printf(" %02x", ((unsigned char *)handle.fb1VirtualAddress)[j]); printf("\n");
-    	}
-    }
-    */
-    cmp_buffer(read_fb, BUFFER_SIZE, 0xAAAAAAAA);
+    cmp_buffer(read_fb, frame_len, 0xAAAAAAAA);
     sleep(1);
   }
   
-  cmp_buffer(read_fb, BUFFER_SIZE, 0xAAAAAAAA);
+  cmp_buffer(read_fb, frame_len, 0xAAAAAAAA);
 
   // Halt VDMA and unmap memory ranges
   vdma_halt(&handle);

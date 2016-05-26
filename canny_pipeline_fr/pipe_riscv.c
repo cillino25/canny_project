@@ -22,7 +22,7 @@ int main(){
   printf("-d:VDMA test - Rocketchip -- .\n");
   printf("Open AXI VDMA peripheral with\n");
   printf("  size=                 %d\n", page_size);
-  printf("  baseAddr=             0x%x\n", AXI_RC_VDMA_BASEADDR);
+  printf("  baseAddr=             0x%x\n", AXI_VDMA_BASEADDR);
   printf("  width=                %d\n", IN_FRAME_WIDTH);
   printf("  height=               %d\n", IN_FRAME_HEIGHT);
   printf("  channels=             %d\n", PIXEL_CHANNELS);
@@ -46,7 +46,7 @@ int main(){
     return -1;
   }
 
-  vdma_setup(&handle, page_size, AXI_RC_VDMA_BASEADDR, IN_FRAME_WIDTH, IN_FRAME_HEIGHT, PIXEL_CHANNELS, BUFFER_SIZE, MEM2VDMA_BUFFER1_BASEADDR, MEM2VDMA_BUFFER2_BASEADDR, MEM2VDMA_BUFFER3_BASEADDR, VDMA2MEM_BUFFER1_BASEADDR, VDMA2MEM_BUFFER2_BASEADDR, VDMA2MEM_BUFFER3_BASEADDR);
+  vdma_setup(&handle, page_size, AXI_VDMA_BASEADDR, IN_FRAME_WIDTH, IN_FRAME_HEIGHT, PIXEL_CHANNELS, BUFFER_SIZE, MEM2VDMA_BUFFER1_BASEADDR, MEM2VDMA_BUFFER2_BASEADDR, MEM2VDMA_BUFFER3_BASEADDR, VDMA2MEM_BUFFER1_BASEADDR, VDMA2MEM_BUFFER2_BASEADDR, VDMA2MEM_BUFFER3_BASEADDR);
   printf("-d: VDMA set up.\n");
 
   vdma_start_triple_buffering(&handle);

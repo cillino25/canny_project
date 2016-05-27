@@ -36,12 +36,17 @@ void vdma_set(vdma_handle *handle, int num, unsigned int val);
 void vdma_status_dump(int status);
 void vdma_s2mm_status_dump(vdma_handle *handle);
 void vdma_mm2s_status_dump(vdma_handle *handle);
+void vdma_control_dump(int control);
+void vdma_s2mm_control_dump(vdma_handle *handle);
+void vdma_mm2s_control_dump(vdma_handle *handle);
 void vdma_start_triple_buffering_mod(vdma_handle *handle);
 void vdma_start_triple_buffering(vdma_handle *handle);
 int vdma_s2mm_running(vdma_handle *handle);
 int vdma_s2mm_idle(vdma_handle *handle);
 int vdma_mm2s_running(vdma_handle *handle);
 int vdma_mm2s_idle(vdma_handle *handle);
+
+void print_vdma_stats(vdma_handle *handle);
 
 void fill_buffer(unsigned int * fbAddr, int length, unsigned int val);
 int cmp_buffer(unsigned int * fbAddr, int length, unsigned int val);

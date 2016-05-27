@@ -3,8 +3,14 @@
 
 #define AXI_VDMA_REG_SPACE                      4096
 
-#define OFFSET_PARK_PTR_REG                     0x28
 #define OFFSET_VERSION                          0x2c
+
+#define OFFSET_PARK_PTR_REG                     0x28
+#define PARK_PTR_WRITE_FRAME_NUM                0x1f000000
+#define PARK_PTR_READ_FRAME_NUM                 0x001f0000
+#define PARK_PTR_WRITE_FRAME_REF                0x00001f00
+#define PARK_PTR_READ_FRAME_REF                 0x0000001f
+
 
 #define OFFSET_VDMA_MM2S_CONTROL_REGISTER       0x00
 #define OFFSET_VDMA_MM2S_STATUS_REGISTER        0x04

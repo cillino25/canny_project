@@ -105,9 +105,9 @@ int vdma_setup(vdma_handle *handle, unsigned int page_size, unsigned int baseAdd
 
     //printf("\n\n");
     printf("-d: memsetting buffer:\n");
-    printf("  address: 0x%x\n", handle->fb1VirtualAddress_mm2s);
-    printf("  fill value: 0x%x\n", 170);
-    printf("  length (byte): %d = 0x%x\n", handle->fbLength, handle->width*handle->height*handle->pixelChannels);
+    //printf("  address: 0x%x\n", handle->fb1VirtualAddress_mm2s);
+    //printf("  fill value: 0x%x\n", 170);
+    //printf("  length (byte): %d = 0x%x\n", handle->fbLength, handle->width*handle->height*handle->pixelChannels);
     memset((void*)handle->fb1VirtualAddress_mm2s, 170, handle->width*handle->height*handle->pixelChannels); //AA
     //printf("-d: fb1 memset done\n");
     memset((void*)handle->fb2VirtualAddress_mm2s, 187, handle->width*handle->height*handle->pixelChannels); //BB
@@ -121,7 +121,7 @@ int vdma_setup(vdma_handle *handle, unsigned int page_size, unsigned int baseAdd
     memset((void*)handle->fb2VirtualAddress_s2mm, 255, handle->width*handle->height*handle->pixelChannels);
     //printf("-d: fb2 memset done\n");
     memset((void*)handle->fb3VirtualAddress_s2mm, 255, handle->width*handle->height*handle->pixelChannels);
-    //printf("-d: fb3 memset done\n");
+    printf("-d: fb memset done\n");
 
     return 0;
 }
@@ -142,13 +142,13 @@ void vdma_halt(vdma_handle *handle) {
 
 unsigned int vdma_get(vdma_handle *handle, int num) {
     if(num>=0)
-      return handle->vdmaVirtualAddress[num>>2];
+      return ((volatile unsigned int *)handle->vdmaVirtualAddress)[num>>2];
 
     return 0;
 }
 
 void vdma_set(vdma_handle *handle, int num, unsigned int val) {
-    *((volatile unsigned int *)handle->vdmaVirtualAddress + (num>>2))=val;
+    ((volatile unsigned int *)handle->vdmaVirtualAddress)[num>>2]=val;
 }
 
 void vdma_status_dump(int status) {
@@ -167,7 +167,6 @@ void vdma_status_dump(int status) {
     printf(" delay-count:%d", (status & VDMA_STATUS_REGISTER_IRQDelayCount) >> 24);
     printf("\n");
 }
-
 void vdma_s2mm_status_dump(vdma_handle *handle) {
     int status = vdma_get(handle, OFFSET_VDMA_S2MM_STATUS_REGISTER);
     printf("S2MM status register (%08x):", status);
@@ -178,6 +177,50 @@ void vdma_mm2s_status_dump(vdma_handle *handle) {
     int status = vdma_get(handle, OFFSET_VDMA_MM2S_STATUS_REGISTER);
     printf("MM2S status register (%08x):", status);
     vdma_status_dump(status);
+}
+
+void vdma_control_dump(int control){
+    #define VDMA_CONTROL_REGISTER_START                     0x00000001
+    #define VDMA_CONTROL_REGISTER_CIRCULAR_PARK             0x00000002
+    #define VDMA_CONTROL_REGISTER_RESET                     0x00000004
+    #define VDMA_CONTROL_REGISTER_GENLOCK_ENABLE            0x00000008
+    #define VDMA_CONTROL_REGISTER_FrameCntEn                0x00000010
+    #define VDMA_CONTROL_REGISTER_GenlockSrc                0x00000080
+    #define VDMA_CONTROL_REGISTER_RWrPntr                   0x00000f00
+    #define VDMA_CONTROL_REGISTER_FrmCtn_IrqEn              0x00001000
+    #define VDMA_CONTROL_REGISTER_DlyCnt_IrqEn              0x00002000
+    #define VDMA_CONTROL_REGISTER_ERR_IrqEn                 0x00004000
+    #define VDMA_CONTROL_REGISTER_Repeat_En                 0x00008000
+    #define VDMA_CONTROL_REGISTER_InterruptFrameCount       0x00ff0000
+    #define VDMA_CONTROL_REGISTER_IRQDelayCount             0xff000000
+
+    if (control & VDMA_CONTROL_REGISTER_START) printf(" running"); else printf(" stopped");
+    if (control & VDMA_CONTROL_REGISTER_CIRCULAR_PARK) printf(" circular-mode"); else printf(" park-mode");
+    if (control & VDMA_CONTROL_REGISTER_RESET) printf(" reset-in-progress");
+    if (control & VDMA_CONTROL_REGISTER_GENLOCK_ENABLE) printf(" genlock");
+    if (control & VDMA_CONTROL_REGISTER_FrameCntEn) printf(" frame-counter-enabled(still transmitting)");
+    if (control & VDMA_CONTROL_REGISTER_GenlockSrc) printf(" internal-genlock"); else printf(" external-genlock");
+    printf(" r/w-pointer:%d", (control & VDMA_CONTROL_REGISTER_RWrPntr) >> 8);
+    if (control & VDMA_CONTROL_REGISTER_FrmCtn_IrqEn) printf(" frame-count-irq-enabled");
+    if (control & VDMA_CONTROL_REGISTER_DlyCnt_IrqEn) printf(" delay-count-interrupt");
+    if (control & VDMA_CONTROL_REGISTER_ERR_IrqEn) printf(" error-interrupt-enabled");
+    if (control & VDMA_CONTROL_REGISTER_Repeat_En) printf(" repeat-frames-on-errors");
+    printf(" frame-count:%d", (control & VDMA_CONTROL_REGISTER_InterruptFrameCount) >> 16);
+    printf(" delay-count:%d", (control & VDMA_CONTROL_REGISTER_IRQDelayCount) >> 24);
+    printf("\n");
+}
+
+
+void vdma_s2mm_control_dump(vdma_handle *handle){
+    int control = vdma_get(handle, OFFSET_VDMA_S2MM_CONTROL_REGISTER);
+    printf("S2MM control register: (%08x):", control);
+    vdma_control_dump(control);
+}
+
+void vdma_mm2s_control_dump(vdma_handle *handle){
+    int control = vdma_get(handle, OFFSET_VDMA_MM2S_CONTROL_REGISTER);
+    printf("MM2S control register: (%08x):", control);
+    vdma_control_dump(control);
 }
 
 
@@ -201,7 +244,7 @@ void vdma_start_triple_buffering_mod(vdma_handle *handle) {
     // Do not mask interrupts
     vdma_set(handle, OFFSET_VDMA_S2MM_IRQ_MASK, 0xf);
 
-    int interrupt_frame_count = 2;
+    int interrupt_frame_count = 3;
 
     printf("-d: start s2mm\n");
     // Start both S2MM and MM2S in triple buffering mode
@@ -277,9 +320,45 @@ void vdma_start_triple_buffering(vdma_handle *handle) {
     // Do not mask interrupts
     vdma_set(handle, OFFSET_VDMA_S2MM_IRQ_MASK, 0xf);
 
-    int interrupt_frame_count = 3;
+    int interrupt_frame_count = 1;
 
     // Start both S2MM and MM2S in triple buffering mode
+    vdma_set(handle, OFFSET_VDMA_S2MM_CONTROL_REGISTER,
+        (interrupt_frame_count << 16) |
+        VDMA_CONTROL_REGISTER_START |
+        VDMA_CONTROL_REGISTER_GENLOCK_ENABLE |
+        VDMA_CONTROL_REGISTER_GenlockSrc |
+        VDMA_CONTROL_REGISTER_CIRCULAR_PARK);
+    vdma_set(handle, OFFSET_VDMA_MM2S_CONTROL_REGISTER,
+        (interrupt_frame_count << 16) |
+        VDMA_CONTROL_REGISTER_START |
+        VDMA_CONTROL_REGISTER_GENLOCK_ENABLE |
+        VDMA_CONTROL_REGISTER_GenlockSrc |
+        VDMA_CONTROL_REGISTER_CIRCULAR_PARK);
+    vdma_set(handle, OFFSET_VDMA_S2MM_CONTROL_REGISTER,
+        (interrupt_frame_count << 16) |
+        VDMA_CONTROL_REGISTER_START |
+        VDMA_CONTROL_REGISTER_GENLOCK_ENABLE |
+        VDMA_CONTROL_REGISTER_GenlockSrc |
+        VDMA_CONTROL_REGISTER_CIRCULAR_PARK);
+    vdma_set(handle, OFFSET_VDMA_MM2S_CONTROL_REGISTER,
+        (interrupt_frame_count << 16) |
+        VDMA_CONTROL_REGISTER_START |
+        VDMA_CONTROL_REGISTER_GENLOCK_ENABLE |
+        VDMA_CONTROL_REGISTER_GenlockSrc |
+        VDMA_CONTROL_REGISTER_CIRCULAR_PARK);
+    vdma_set(handle, OFFSET_VDMA_S2MM_CONTROL_REGISTER,
+        (interrupt_frame_count << 16) |
+        VDMA_CONTROL_REGISTER_START |
+        VDMA_CONTROL_REGISTER_GENLOCK_ENABLE |
+        VDMA_CONTROL_REGISTER_GenlockSrc |
+        VDMA_CONTROL_REGISTER_CIRCULAR_PARK);
+    vdma_set(handle, OFFSET_VDMA_MM2S_CONTROL_REGISTER,
+        (interrupt_frame_count << 16) |
+        VDMA_CONTROL_REGISTER_START |
+        VDMA_CONTROL_REGISTER_GENLOCK_ENABLE |
+        VDMA_CONTROL_REGISTER_GenlockSrc |
+        VDMA_CONTROL_REGISTER_CIRCULAR_PARK);
     vdma_set(handle, OFFSET_VDMA_S2MM_CONTROL_REGISTER,
         (interrupt_frame_count << 16) |
         VDMA_CONTROL_REGISTER_START |
@@ -296,7 +375,11 @@ void vdma_start_triple_buffering(vdma_handle *handle) {
 
     while((vdma_get(handle, OFFSET_VDMA_S2MM_CONTROL_REGISTER)&1)==0 || (vdma_get(handle, OFFSET_VDMA_S2MM_STATUS_REGISTER)&1)==1) {
         printf("Waiting for VDMA to start running...\n");
-        sleep(1);
+        #ifndef RC
+          sleep(1);
+        #else
+          printf("..........................................................");
+        #endif
     }
 
     // Extra register index, use first 16 frame pointer registers
@@ -350,6 +433,48 @@ int vdma_mm2s_idle(vdma_handle *handle) {
 
 
 /***********************************************************************************************************/
+
+void print_vdma_stats(vdma_handle *handle) {
+
+  printf("-d: ** VDMA status.\n");
+
+  vdma_mm2s_status_dump(handle);
+  vdma_s2mm_status_dump(handle);
+ 
+  printf("=================== MM2S ===================\n");
+  printf("MM2S_VDMACR:        0x%08x\n", vdma_get(handle, OFFSET_VDMA_MM2S_CONTROL_REGISTER));
+  printf("MM2S_VDMASR:        0x%08x\n", vdma_get(handle, OFFSET_VDMA_MM2S_STATUS_REGISTER));
+  printf("MM2S_REG_INDEX:     0x%08x\n", vdma_get(handle, OFFSET_VDMA_MM2S_REG_INDEX));
+  printf("MM2S_VSIZE:         0x%08x\n", vdma_get(handle, OFFSET_VDMA_MM2S_VSIZE));
+  printf("MM2S_HSIZE:         0x%08x\n", vdma_get(handle, OFFSET_VDMA_MM2S_HSIZE));
+  printf("MM2S_FRMDLY_STRIDE: 0x%08x\n", vdma_get(handle, OFFSET_VDMA_MM2S_FRMDLY_STRIDE));
+  printf("VDMA MM2S Buffer 1: 0x%08x\n", vdma_get(handle, OFFSET_VDMA_MM2S_FRAMEBUFFER1));
+  printf("VDMA MM2S Buffer 2: 0x%08x\n", vdma_get(handle, OFFSET_VDMA_MM2S_FRAMEBUFFER2));
+  printf("VDMA MM2S Buffer 3: 0x%08x\n", vdma_get(handle, OFFSET_VDMA_MM2S_FRAMEBUFFER3));
+
+  printf("\n=================== S2MM ===================\n");
+    printf("S2MM_VDMACR:        0x%08x\n", vdma_get(handle, OFFSET_VDMA_S2MM_CONTROL_REGISTER));
+  printf("S2MM_VDMASR:        0x%08x\n", vdma_get(handle, OFFSET_VDMA_S2MM_STATUS_REGISTER));
+  printf("S2MM_IRQ_MASK:      0x%08x\n", vdma_get(handle, OFFSET_VDMA_S2MM_IRQ_MASK));
+  printf("S2MM_REG_INDEX:     0x%08x\n", vdma_get(handle, OFFSET_VDMA_S2MM_REG_INDEX));
+  printf("S2MM_VSIZE:         0x%08x\n", vdma_get(handle, OFFSET_VDMA_S2MM_VSIZE));
+  printf("S2MM_HSIZE:         0x%08x\n", vdma_get(handle, OFFSET_VDMA_S2MM_HSIZE));
+  printf("S2MM_FRMDLY_STRIDE: 0x%08x\n", vdma_get(handle, OFFSET_VDMA_S2MM_FRMDLY_STRIDE));
+  printf("VDMA S2MM Buffer 1: 0x%08x\n", vdma_get(handle, OFFSET_VDMA_S2MM_FRAMEBUFFER1));
+  printf("VDMA S2MM Buffer 2: 0x%08x\n", vdma_get(handle, OFFSET_VDMA_S2MM_FRAMEBUFFER2));
+  printf("VDMA S2MM Buffer 3: 0x%08x\n", vdma_get(handle, OFFSET_VDMA_S2MM_FRAMEBUFFER3));
+
+  printf("\n================= Park reg ==================\n");
+  int park_reg = vdma_get(handle, OFFSET_PARK_PTR_REG);
+  printf("PARK_REG:           0x%08x\n", park_reg);
+  printf("PARK_REG Write fr:  %d\n", (park_reg & PARK_PTR_WRITE_FRAME_NUM) >> 24);
+  printf("PARK_REG Read fr:   %d\n", (park_reg & PARK_PTR_READ_FRAME_NUM) >> 16);
+  printf("PARK_REG Write ref: %d\n", (park_reg & PARK_PTR_WRITE_FRAME_REF) >> 8);
+  printf("PARK_REG Read ref:  %d\n", (park_reg & PARK_PTR_READ_FRAME_REF));
+
+  printf("Bye!\n");
+}
+
 
 // Length parameter must be in bytes!
 void fill_buffer(unsigned int * fbAddr, int length, unsigned int val){

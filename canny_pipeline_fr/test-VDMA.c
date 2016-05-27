@@ -38,29 +38,55 @@ int main() {
 
 
   vdma_setup(&handle, page_size, AXI_VDMA_BASEADDR, IN_FRAME_WIDTH, IN_FRAME_HEIGHT, PIXEL_CHANNELS, BUFFER_SIZE, MEM2VDMA_BUFFER1_BASEADDR, MEM2VDMA_BUFFER2_BASEADDR, MEM2VDMA_BUFFER3_BASEADDR, VDMA2MEM_BUFFER1_BASEADDR, VDMA2MEM_BUFFER2_BASEADDR, VDMA2MEM_BUFFER3_BASEADDR);
+  printf("Setting up done.\n");
 
+  /*
   if((mem = open("/dev/mem", O_RDWR | O_SYNC)) == -1){
     printf("Can't open /dev/mem.\nExiting...\n");
     return 1;
   }
+  printf("-d1");
   read_fb = (unsigned int*)mmap(NULL, BUFFER_SIZE, PROT_READ | PROT_WRITE, MAP_SHARED, mem, VDMA2MEM_BUFFER1_BASEADDR);
   if(((unsigned int *)read_fb) == MAP_FAILED) {
     printf("vdmaVirtualAddress mapping for absolute memory access failed.\n");
     return -1;
   }
+  printf("-d2");
   write_fb = (unsigned int*)mmap(NULL, BUFFER_SIZE, PROT_READ | PROT_WRITE, MAP_SHARED, mem, MEM2VDMA_BUFFER1_BASEADDR);
   if(((unsigned int *)write_fb) == MAP_FAILED) {
     printf("vdmaVirtualAddress mapping for absolute memory access failed.\n");
     return -1;
+  }*/
+  
+
+  
+  printf("-d1");
+  read_fb = (unsigned int*)mmap(NULL, BUFFER_SIZE, PROT_READ | PROT_WRITE, MAP_SHARED, handle.vdmaHandler, VDMA2MEM_BUFFER1_BASEADDR);
+  if(((unsigned int *)read_fb) == MAP_FAILED) {
+    printf("vdmaVirtualAddress mapping for absolute memory access failed.\n");
+    return -1;
   }
+  printf("-d2");
+  write_fb = (unsigned int*)mmap(NULL, BUFFER_SIZE, PROT_READ | PROT_WRITE, MAP_SHARED, handle.vdmaHandler, MEM2VDMA_BUFFER1_BASEADDR);
+  if(((unsigned int *)write_fb) == MAP_FAILED) {
+    printf("vdmaVirtualAddress mapping for absolute memory access failed.\n");
+    return -1;
+  }
+  
 
 
-  vdma_set(&handle, OFFSET_VDMA_MM2S_HSIZE, 512);
+  printf("trying to writing to vdma...\n");
+  //vdma_set(&handle, OFFSET_VDMA_MM2S_HSIZE, 512);
   printf("Reading from VDMA_MM2S_HSIZE: %d\n", vdma_get(&handle, OFFSET_VDMA_MM2S_HSIZE));
   
 
-  vdma_s2mm_status_dump(&handle);
   vdma_mm2s_status_dump(&handle);
+  vdma_s2mm_status_dump(&handle);
+  
+  vdma_mm2s_control_dump(&handle);
+  vdma_s2mm_control_dump(&handle);
+
+  //return;
     
   // Start triple buffering
   vdma_start_triple_buffering_mod(&handle);
@@ -73,12 +99,20 @@ int main() {
   printf("VDMA S2MM Buffer 2: 0x%x\n", vdma_get(&handle, OFFSET_VDMA_S2MM_FRAMEBUFFER2));
   printf("VDMA S2MM Buffer 3: 0x%x\n", vdma_get(&handle, OFFSET_VDMA_S2MM_FRAMEBUFFER3));
 
-  //sleep(1);
-  cmp_buffer(read_fb, frame_len, 0xAAAAAAAA);
+  print_vdma_stats(&handle);
 
-  vdma_s2mm_status_dump(&handle);
+  //sleep(1);
+  //cmp_buffer(read_fb, frame_len, 0xAAAAAAAA);
+
   vdma_mm2s_status_dump(&handle);
+  vdma_s2mm_status_dump(&handle);
   
+
+  vdma_mm2s_control_dump(&handle);
+  vdma_s2mm_control_dump(&handle);
+
+  //printf("returning..\n");
+  //return 0;
   //sleep(1);
   
   
@@ -88,17 +122,28 @@ int main() {
       fill_buffer(write_fb, 1024, 0xdeadbeef);
     }
   	printf("-d:%d\n", i);
-    vdma_s2mm_status_dump(&handle);
     vdma_mm2s_status_dump(&handle);
+    vdma_s2mm_status_dump(&handle);
+    vdma_mm2s_control_dump(&handle);
+    vdma_s2mm_control_dump(&handle);
+
     
-    cmp_buffer(read_fb, frame_len, 0xAAAAAAAA);
-    sleep(1);
+    //cmp_buffer(read_fb, frame_len, 0xAAAAAAAA);
+    #ifndef RC
+      sleep(1);
+    #else
+      printf(".............................\n"); // just wasting time
+    #endif
   }
   
-  cmp_buffer(read_fb, frame_len, 0xAAAAAAAA);
+  //cmp_buffer(read_fb, frame_len, 0xAAAAAAAA);
 
   // Halt VDMA and unmap memory ranges
-  vdma_halt(&handle);
+  //vdma_halt(&handle);
 
+  //munmap(read_fb, BUFFER_SIZE);
+  //munmap(write_fb, BUFFER_SIZE);
   printf("Bye!\n");
+
+  return 0;
 }

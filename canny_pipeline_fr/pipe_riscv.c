@@ -49,7 +49,7 @@ int main(){
   vdma_setup(&handle, page_size, AXI_VDMA_BASEADDR, IN_FRAME_WIDTH, IN_FRAME_HEIGHT, PIXEL_CHANNELS, BUFFER_SIZE, MEM2VDMA_BUFFER1_BASEADDR, MEM2VDMA_BUFFER2_BASEADDR, MEM2VDMA_BUFFER3_BASEADDR, VDMA2MEM_BUFFER1_BASEADDR, VDMA2MEM_BUFFER2_BASEADDR, VDMA2MEM_BUFFER3_BASEADDR);
   printf("-d: VDMA set up.\n");
 
-  vdma_start_triple_buffering(&handle);
+  vdma_start_triple_buffering_mod(&handle);
   printf("-d: started triple buffering..\n");
 
   fill_buffer(write_fb, handle.fbLength, 0xdeadbeef);

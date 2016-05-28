@@ -4,6 +4,110 @@
 		"selected_items":
 		[
 			[
+				"IN_F",
+				"IN_FRAME_WIDTH"
+			],
+			[
+				"mount",
+				"mount_root"
+			],
+			[
+				"fb1",
+				"fb1VirtualAddress_mm2s"
+			],
+			[
+				"cp",
+				"cp_read_mem"
+			],
+			[
+				"tes",
+				"test-VDMA-arm-fr"
+			],
+			[
+				"test",
+				"test-VDMA-arm"
+			],
+			[
+				"VDM",
+				"VDMA2MEM_BUFFER3_BASEADDR"
+			],
+			[
+				"com",
+				"comm_dir"
+			],
+			[
+				"MA",
+				"MAP_FAILED"
+			],
+			[
+				"pi",
+				"pipe_riscv"
+			],
+			[
+				"pipe",
+				"pipe_arm"
+			],
+			[
+				"mo",
+				"mount_root"
+			],
+			[
+				"roo",
+				"rootcv"
+			],
+			[
+				"wr",
+				"write_fb"
+			],
+			[
+				"sc",
+				"scp-test"
+			],
+			[
+				"fb3",
+				"fb3PhysicalAddress"
+			],
+			[
+				"fb2",
+				"fb2PhysicalAddress"
+			],
+			[
+				"bas",
+				"baseAddr"
+			],
+			[
+				"fp",
+				"fb1PhysicalAddress"
+			],
+			[
+				"IN",
+				"IN_FRAME_HEIGHT"
+			],
+			[
+				"AX",
+				"AXI_VDMA_BASEADDR"
+			],
+			[
+				"BU",
+				"BUFFER_SIZE"
+			],
+			[
+				"VDMA",
+				"VDMA2MEM_BUFFER1_BASEADDR"
+			],
+			[
+				"BUFFER",
+				"BUFFER_MEM_WRITE_START_ADDRESS"
+			],
+			[
+				"vdma_mms",
+				"vdma_mm2s_idle"
+			],
+			[
+				"vdma",
+				"vdma-only"
+			],
+			[
 				"x",
 				"X86_PRESC"
 			],
@@ -160,10 +264,6 @@
 				"canny_mod"
 			],
 			[
-				"mount",
-				"mount_rootcv"
-			],
-			[
 				"e",
 				"exe_type"
 			],
@@ -177,10 +277,6 @@
 			],
 			[
 				"test_a",
-				"test_acc_fixed"
-			],
-			[
-				"test",
 				"test_acc_fixed"
 			],
 			[
@@ -418,107 +514,19 @@
 			[
 				"ars",
 				"s00_axi_arsize"
-			],
-			[
-				"aradd",
-				"s00_axi_araddr"
-			],
-			[
-				"arva",
-				"s00_axi_arvalid"
-			],
-			[
-				"bva",
-				"s00_axi_bvalid"
-			],
-			[
-				"bre",
-				"s00_axi_bready"
-			],
-			[
-				"wval",
-				"s00_axi_wvalid"
-			],
-			[
-				"wrea",
-				"s00_axi_wready"
-			],
-			[
-				"awus",
-				"s00_axi_awuser"
-			],
-			[
-				"awre",
-				"s00_axi_awregion"
-			],
-			[
-				"awval",
-				"s00_axi_awvalid"
-			],
-			[
-				"awread",
-				"s00_axi_awready"
-			],
-			[
-				"arle",
-				"S_AXI_arlen"
-			],
-			[
-				"out_bis",
-				"io_host_out_bits"
-			],
-			[
-				"out_vali",
-				"io_host_out_valid"
-			],
-			[
-				"out_rea",
-				"io_host_out_ready"
-			],
-			[
-				"in_bi",
-				"io_host_in_bits"
-			],
-			[
-				"io_host_in",
-				"io_host_in_ready"
-			],
-			[
-				"reset",
-				"reset_cpu"
-			],
-			[
-				"arc",
-				"architecture"
-			],
-			[
-				"host",
-				"host_clk"
-			],
-			[
-				"std_lo",
-				"std_logic_vector"
-			],
-			[
-				"IDLE",
-				"ST_WR_IDLE"
-			],
-			[
-				"st_wr",
-				"ST_WR_ACK"
-			],
-			[
-				"host_in_fifo",
-				"host_in_fifo_full"
-			],
-			[
-				"wadd",
-				"waddr"
 			]
 		]
 	},
 	"buffers":
 	[
+		{
+			"file": "Makefile",
+			"settings":
+			{
+				"buffer_size": 1977,
+				"line_ending": "Unix"
+			}
+		},
 		{
 			"file": "Canny_test.cpp",
 			"settings":
@@ -536,46 +544,6 @@
 			}
 		},
 		{
-			"file": "opencv_Canny.cpp",
-			"settings":
-			{
-				"buffer_size": 12501,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "opencv_Filter.cpp",
-			"settings":
-			{
-				"buffer_size": 3594,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "opencv_Gblur.cpp",
-			"settings":
-			{
-				"buffer_size": 10787,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "/media/stefano/A6F4-7DA5/uEnv.txt",
-			"settings":
-			{
-				"buffer_size": 69,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "quality_metrics_OpenCV.cpp",
-			"settings":
-			{
-				"buffer_size": 4190,
-				"line_ending": "Unix"
-			}
-		},
-		{
 			"file": "convolution.h",
 			"settings":
 			{
@@ -584,10 +552,26 @@
 			}
 		},
 		{
+			"file": "gaussian_coefficients.c",
+			"settings":
+			{
+				"buffer_size": 5568,
+				"line_ending": "Unix"
+			}
+		},
+		{
 			"file": "gaussian_coefficients.h",
 			"settings":
 			{
 				"buffer_size": 624,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "opencv_Canny.cpp",
+			"settings":
+			{
+				"buffer_size": 12501,
 				"line_ending": "Unix"
 			}
 		},
@@ -608,6 +592,14 @@
 			}
 		},
 		{
+			"file": "opencv_Gblur.cpp",
+			"settings":
+			{
+				"buffer_size": 10787,
+				"line_ending": "Unix"
+			}
+		},
+		{
 			"file": "opencv_Gblur.h",
 			"settings":
 			{
@@ -616,18 +608,10 @@
 			}
 		},
 		{
-			"file": "opencv_geom.h",
+			"file": "quality_metrics_OpenCV.cpp",
 			"settings":
 			{
-				"buffer_size": 2553,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "opencv_precomp.h",
-			"settings":
-			{
-				"buffer_size": 3482,
+				"buffer_size": 4190,
 				"line_ending": "Unix"
 			}
 		},
@@ -636,30 +620,6 @@
 			"settings":
 			{
 				"buffer_size": 457,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "FeatureSIM.m",
-			"settings":
-			{
-				"buffer_size": 18371,
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "gaussian_coefficients.c",
-			"settings":
-			{
-				"buffer_size": 5568,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "opencv_Filterengine.hpp",
-			"settings":
-			{
-				"buffer_size": 16208,
 				"line_ending": "Unix"
 			}
 		}
@@ -714,12 +674,56 @@
 		"side_bar_visible": false,
 		"status_bar_visible": false
 	},
+	"expanded_folders":
+	[
+		"/usr/share/opencv/opencv-3.0.0/modules"
+	],
 	"file_history":
 	[
-		"/media/stefano/A6F4-7DA5/uEnv.txt",
+		"/media/stefano/data_ext4/Dropbox/poliTO/tesi/canny_project/canny_mod/FeatureSIM.m",
+		"/media/stefano/data_ext4/Dropbox/poliTO/tesi/canny_project/canny_mod/gaussian_coefficients",
+		"/media/stefano/data_ext4/Dropbox/poliTO/tesi/canny_project/canny_mod/lena_secret.bmp",
+		"/media/stefano/data_ext4/Dropbox/poliTO/tesi/canny_project/canny_mod/generate_lena_imgs.sh",
+		"/media/stefano/data_ext4/Dropbox/poliTO/tesi/canny_project/canny_mod/bike_orig_1600x1280_420.jpg",
+		"/media/stefano/data_ext4/Dropbox/poliTO/tesi/canny_project/canny_mod/bike.bmp",
+		"/media/stefano/data_ext4/Dropbox/poliTO/tesi/canny_project/canny_mod/3.bmp",
+		"/media/stefano/data_ext4/Dropbox/poliTO/tesi/canny_project/canny_mod/2.bmp",
+		"/media/stefano/data_ext4/Dropbox/poliTO/tesi/canny_project/canny_mod/1.bmp",
+		"/media/stefano/data_ext4/Dropbox/poliTO/tesi/canny_project/canny_mod/0.bmp",
+		"/media/stefano/data_ext4/Dropbox/poliTO/tesi/canny_project/canny_mod/opencv_Filter.cpp",
+		"/media/stefano/data_ext4/Dropbox/poliTO/tesi/canny_project/canny_mod/opencv_Filterengine.hpp",
+		"/media/stefano/data_ext4/Dropbox/poliTO/tesi/canny_project/canny_mod/opencv_Gblur.cpp.bck",
+		"/media/stefano/data_ext4/Dropbox/poliTO/tesi/canny_project/canny_mod/opencv_geom.h",
+		"/media/stefano/data_ext4/Dropbox/poliTO/tesi/canny_project/canny_mod/opencv_precomp.h",
 		"/media/stefano/data_ext4/Dropbox/poliTO/tesi/canny_project/canny_mod/quality_metrics_OpenCV.hpp",
-		"/media/stefano/data_ext4/Dropbox/poliTO/tesi/canny_project/canny_mod/.git/info/exclude",
-		"/media/stefano/data_ext4/Dropbox/poliTO/tesi/canny/convolution/main.cpp",
+		"/media/stefano/data_ext4/Dropbox/poliTO/tesi/canny_project/canny_mod/result.bmp",
+		"/media/stefano/data_ext4/Dropbox/poliTO/tesi/canny_project/canny_mod/src_blurred.bmp",
+		"/media/stefano/data_ext4/Dropbox/poliTO/tesi/canny_project/canny_mod/src_gray.bmp",
+		"/media/stefano/data_ext4/Dropbox/poliTO/tesi/canny_project/canny_mod/test_bike",
+		"/media/stefano/data_ext4/Dropbox/poliTO/tesi/canny_project/canny_mod/test_lena",
+		"/media/stefano/data_ext4/Dropbox/poliTO/tesi/canny_project/canny_mod/tmp_custom0.bmp",
+		"/media/stefano/data_ext4/Dropbox/poliTO/tesi/canny_project/canny_mod/tmp_custom1.bmp",
+		"/media/stefano/data_ext4/Dropbox/poliTO/tesi/canny_project/canny_mod/tmp_custom2.bmp",
+		"/media/stefano/data_ext4/Dropbox/poliTO/tesi/canny_project/canny_mod/tmp_custom3.bmp",
+		"/media/stefano/data_ext4/Dropbox/poliTO/tesi/canny_project/canny_pipeline_fr/vdma.c",
+		"/media/stefano/data_ext4/Dropbox/poliTO/tesi/canny_project/canny_pipeline_fr/Makefile",
+		"/media/stefano/data_ext4/Dropbox/poliTO/tesi/canny_project/Makefile",
+		"/media/stefano/data_ext4/Dropbox/poliTO/tesi/canny_project/Makefile.old",
+		"/media/stefano/data_ext4/Dropbox/poliTO/tesi/canny_project/comm_test/arm/Makefile",
+		"/media/stefano/data_ext4/Dropbox/poliTO/tesi/canny_project/make_root.sh",
+		"/media/stefano/data_ext4/Dropbox/poliTO/tesi/canny_project/.gitignore",
+		"/media/stefano/data_ext4/Dropbox/poliTO_private/tesi/Canny_Thesis/opencv_Canny.cpp",
+		"/media/stefano/A6F4-7DA5/devicetree.dtb",
+		"/media/stefano/A6F4-7DA5/uEnv.txt",
+		"/media/stefano/data_ext4/Dropbox/poliTO_private/tesi/Canny_Thesis/Canny_test.cpp",
+		"/media/stefano/data_ext4/Dropbox/poliTO/tesi/canny/canny_mod/DMA_test/Vivado/src/bd/design_1.tcl",
+		"/media/stefano/data_ext4/Dropbox/poliTO/tesi/canny/canny_mod/DMA_test/README.md",
+		"/media/stefano/data_ext4/Dropbox/poliTO/tesi/canny/canny_mod/DMA_test/DMA.c",
+		"/media/stefano/data_ext4/Dropbox/poliTO_private/tesi/sepFilter_IP/xilinx_com_hls_sepImageFilter_1_0/hdl/vhdl/sepImageFilter.vhd",
+		"/media/stefano/data_ext4/Dropbox/poliTO/tesi/zyfpor-master-49f2c4ee82fb41221973b682da2f82afbfcdd085/vivado_project/zedBoard_opencv/archive_project_summary.txt",
+		"/media/stefano/data_ext4/Dropbox/poliTO/tesi/canny/canny_mod/VDMA_test/test.c",
+		"/media/stefano/data_ext4/Dropbox/poliTO/tesi/canny/canny_mod/VDMA_test/vdma.cpp",
+		"/media/stefano/data_ext4/Dropbox/poliTO/tesi/canny/canny_mod/VDMA_test/parameters.h",
 		"/home/stefano/Scaricati/xapp742/vdma_ref_design/readme.txt",
 		"/media/stefano/data_ext4/Dropbox/poliTO/tesi/canny/canny_mod/.git/config",
 		"/media/stefano/data_ext4/Dropbox/poliTO/tesi/canny/canny_mod/convolution.h",
@@ -803,47 +807,7 @@
 		"/usr/share/riscv_src/dev-rocket-chip/.gitmodules",
 		"/usr/share/riscv_src/dev-rocket-chip/.git/packed-refs",
 		"/usr/share/riscv_src/dev-rocket-chip/.git/index",
-		"/usr/share/riscv_src/dev-rocket-chip/.git/description",
-		"/usr/share/riscv_src/dev-rocket-chip/.git/config",
-		"/usr/share/riscv_src/rocket-chip/fpga-zynq/zedboard/zedboard_rocketchip_DefaultFPGASmallConfig__AccPDc/zedboard_rocketchip_DefaultFPGASmallConfig__AccPDc.srcs/sources_1/bd/system/ipshared/user.org/data_complement_v3_1/hdl/data_complement_v3_1_S00_AXI.vhd",
-		"/usr/share/riscv_src/rocket-chip/src/main/scala/Configs.scala",
-		"/media/stefano/data_ext4/Dropbox/poliTO/tesi/vivado2015/ip_repo/data_complement_3.1/hdl/data_complement_v3_1_S00_AXI.vhd",
-		"/usr/share/riscv_src/rocket-chip/fpga-zynq/zedboard/zedboard_rocketchip_DefaultFPGASmallConfig__AccMem__working/zedboard_rocketchip_DefaultFPGASmallConfig__AccMem__working.srcs/sources_1/bd/system/ipshared/user.org/axi_buffer_memory_v1_0/hdl/AXI_Buffer_Memory_v1_0_S00_AXI.v",
-		"/usr/share/riscv_src/rocket-chip/fpga-zynq/zedboard/zedboard_rocketchip_DefaultFPGASmallConfig__AccMem__working/zedboard_rocketchip_DefaultFPGASmallConfig__AccMem__working.srcs/sources_1/bd/system/ipshared/user.org/axi_buffer_memory_v1_0/hdl/AXI_Buffer_Memory_v1_0.v",
-		"/usr/share/riscv_src/pipeline_test/riscv/test_acc_fixed.c.bck",
-		"/usr/share/riscv_src/linux-4.1.17/Makefile",
-		"/usr/share/riscv_src/copy_libs.sh",
-		"/usr/share/riscv_src/linux-4.1.17/M",
-		"/usr/share/riscv_src/rocket-chip/fpga-zynq/zedboard/src/verilog/clocking.vh",
-		"/usr/share/riscv_src/rocket-chip/junctions/src/main/scala/package.scala",
-		"/usr/share/riscv_src/rocket-chip/groundtest/build.sbt",
-		"/usr/intelliJ/Install-Linux-tar.txt",
-		"/root/.IdeaIC2016.1/idea64.vmoptions",
-		"/usr/share/riscv_src/linux-4.1.17/arch/riscv/include/asm/page.h",
-		"/usr/share/riscv_src/riscv-tools/.git/packed-refs",
-		"/usr/share/riscv_src/riscv-tools/.git/ORIG_HEAD",
-		"/usr/share/riscv_src/riscv-tools/.git/HEAD",
-		"/usr/share/riscv_src/riscv-tools/.git/FETCH_HEAD",
-		"/usr/share/riscv_src/riscv-tools/.git/description",
-		"/usr/share/riscv_src/riscv-tools/.git/config",
-		"/usr/share/riscv_src/riscv-tools/riscv-pk/.git",
-		"/usr/share/riscv_src/linux-4.1.17/arch/riscv/kernel/setup.c",
-		"/usr/share/riscv_src/linux-4.1.17/arch/riscv/kernel/setup.",
-		"/usr/share/riscv_src/riscv-linux",
-		"/usr/share/riscv_src/riscv-tools/dev/riscv-pk/bbl/payload.S",
-		"/usr/share/riscv_src/riscv-tools/dev/riscv-pk/bbl/logo.c",
-		"/usr/share/riscv_src/riscv-tools/dev/riscv-pk/bbl/kernel_elf.c",
-		"/usr/share/riscv_src/riscv-tools/dev/riscv-pk/bbl/bbl.mk.in",
-		"/usr/share/riscv_src/riscv-tools/dev/riscv-pk/bbl/bbl.lds",
-		"/usr/share/riscv_src/riscv-tools/dev/riscv-pk/bbl/bbl.h",
-		"/usr/share/riscv_src/riscv-tools/dev/riscv-pk/bbl/bbl.c",
-		"/usr/share/riscv_src/riscv-tools/dev/riscv-pk/bbl/bbl.ac",
-		"/usr/share/riscv_src/pipeline_test/riscv/write_mem.c",
-		"/usr/share/riscv_src/rocket-chip/src/main/scala/ZscaleChip.scala",
-		"/usr/share/riscv_src/rocket-chip/src/main/scala/Vlsi.scala",
-		"/usr/share/riscv_src/rocket-chip/src/main/scala/Testing.scala",
-		"/usr/share/riscv_src/rocket-chip/src/main/scala/TestConfigs.scala",
-		"/usr/share/riscv_src/rocket-chip/src/main/scala/TestBench.scala"
+		"/usr/share/riscv_src/dev-rocket-chip/.git/description"
 	],
 	"find":
 	{
@@ -862,6 +826,24 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"status",
+			"len",
+			"printf",
+			"mm2s",
+			"fb3VirtualAddress",
+			"fb2VirtualAddress",
+			"fb1VirtualAddress",
+			"fb3PhysicalAddress",
+			"fb2PhysicalAddress",
+			"fb1PhysicalAddress",
+			"fb3Addr",
+			"fb2Addr",
+			"fb1Addr",
+			"AXI_VDMA_BASEADDR",
+			"perror",
+			"pixelLength",
+			"fb1PhysicalAddress",
+			"fb1VirtualAddress",
 			"norm",
 			"tmp",
 			"imwrite",
@@ -971,25 +953,7 @@
 			"write_csr",
 			"asm",
 			"thread_entry",
-			"thread_pointer",
-			"_tls_data",
-			"_tdata_begin",
-			"init_tls",
-			"main",
-			"handle_trap",
-			"trap_entry",
-			"MSTATUS_PRV1",
-			"bmarks",
-			"riscv-bmarks",
-			"csr_coreid",
-			"host",
-			"HtifIO",
-			"host",
-			"csr",
-			"io.host.id",
-			"hartid",
-			"14d",
-			"241"
+			"thread_pointer"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -997,6 +961,22 @@
 		"regex": false,
 		"replace_history":
 		[
+			"control",
+			"//printf",
+			"s2mm",
+			"s2m,",
+			"fb3VirtualAddress_mm2s",
+			"fb2VirtualAddress_mm2s",
+			"fb1VirtualAddress_mm2s",
+			"fb3PhysicalAddress_mm2s",
+			"fb2PhysicalAddress_mm2s",
+			"fb1PhysicalAddress_mm2s",
+			"fb3Addr_mm2s",
+			"fb2Addr_mm2s",
+			"fb1Addr_mm2s",
+			"AXI_RC_VDMA_BASEADDR",
+			"printf",
+			"pixelChannels",
 			"PRESC",
 			"//gettimeofday",
 			"poll_address",
@@ -1052,17 +1032,45 @@
 		"reverse": false,
 		"show_context": true,
 		"use_buffer2": true,
-		"whole_word": false,
+		"whole_word": true,
 		"wrap": true
 	},
 	"groups":
 	[
 		{
-			"selected": 5,
+			"selected": 3,
 			"sheets":
 			[
 				{
 					"buffer": 0,
+					"file": "Makefile",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 1977,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Makefile/Makefile.sublime-syntax"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 11,
+					"type": "text"
+				},
+				{
+					"buffer": 1,
 					"file": "Canny_test.cpp",
 					"semi_transient": false,
 					"settings":
@@ -1082,15 +1090,15 @@
 						{
 							"syntax": "Packages/C++/C++.sublime-syntax"
 						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
+						"translation.x": -0.0,
+						"translation.y": 972.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 17,
+					"stack_index": 10,
 					"type": "text"
 				},
 				{
-					"buffer": 1,
+					"buffer": 2,
 					"file": "convolution.cpp",
 					"semi_transient": false,
 					"settings":
@@ -1110,91 +1118,7 @@
 						{
 							"syntax": "Packages/C++/C++.sublime-syntax"
 						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 16,
-					"type": "text"
-				},
-				{
-					"buffer": 2,
-					"file": "opencv_Canny.cpp",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 12501,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								0,
-								0
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/C++/C++.sublime-syntax"
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 15,
-					"type": "text"
-				},
-				{
-					"buffer": 3,
-					"file": "opencv_Filter.cpp",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 3594,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								0,
-								0
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/C++/C++.sublime-syntax"
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 14,
-					"type": "text"
-				},
-				{
-					"buffer": 4,
-					"file": "opencv_Gblur.cpp",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 10787,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								0,
-								0
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/C++/C++.sublime-syntax"
-						},
-						"translation.x": 0.0,
+						"translation.x": -0.0,
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
@@ -1202,63 +1126,7 @@
 					"type": "text"
 				},
 				{
-					"buffer": 5,
-					"file": "/media/stefano/A6F4-7DA5/uEnv.txt",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 69,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								68,
-								68
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Text/Plain text.tmLanguage"
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 0,
-					"type": "text"
-				},
-				{
-					"buffer": 6,
-					"file": "quality_metrics_OpenCV.cpp",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 4190,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								0,
-								0
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/C++/C++.sublime-syntax"
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 13,
-					"type": "text"
-				},
-				{
-					"buffer": 7,
+					"buffer": 3,
 					"file": "convolution.h",
 					"semi_transient": false,
 					"settings":
@@ -1282,11 +1150,39 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
+					"stack_index": 0,
+					"type": "text"
+				},
+				{
+					"buffer": 4,
+					"file": "gaussian_coefficients.c",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 5568,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/C++/C.sublime-syntax"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
 					"stack_index": 12,
 					"type": "text"
 				},
 				{
-					"buffer": 8,
+					"buffer": 5,
 					"file": "gaussian_coefficients.h",
 					"semi_transient": false,
 					"settings":
@@ -1310,11 +1206,39 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 11,
+					"stack_index": 9,
 					"type": "text"
 				},
 				{
-					"buffer": 9,
+					"buffer": 6,
+					"file": "opencv_Canny.cpp",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 12501,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/C++/C++.sublime-syntax"
+						},
+						"translation.x": -0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 8,
+					"type": "text"
+				},
+				{
+					"buffer": 7,
 					"file": "opencv_Canny.h",
 					"semi_transient": false,
 					"settings":
@@ -1335,14 +1259,14 @@
 							"syntax": "Packages/C++/C++.sublime-syntax"
 						},
 						"translation.x": 0.0,
-						"translation.y": 0.0,
+						"translation.y": 108.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 10,
+					"stack_index": 7,
 					"type": "text"
 				},
 				{
-					"buffer": 10,
+					"buffer": 8,
 					"file": "opencv_funcs.h",
 					"semi_transient": false,
 					"settings":
@@ -1366,11 +1290,39 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 9,
+					"stack_index": 2,
 					"type": "text"
 				},
 				{
-					"buffer": 11,
+					"buffer": 9,
+					"file": "opencv_Gblur.cpp",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 10787,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/C++/C++.sublime-syntax"
+						},
+						"translation.x": 0.0,
+						"translation.y": 810.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 6,
+					"type": "text"
+				},
+				{
+					"buffer": 10,
 					"file": "opencv_Gblur.h",
 					"semi_transient": false,
 					"settings":
@@ -1391,70 +1343,42 @@
 							"syntax": "Packages/C++/C++.sublime-syntax"
 						},
 						"translation.x": 0.0,
+						"translation.y": 594.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 5,
+					"type": "text"
+				},
+				{
+					"buffer": 11,
+					"file": "quality_metrics_OpenCV.cpp",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 4190,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/C++/C++.sublime-syntax"
+						},
+						"translation.x": -0.0,
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 8,
+					"stack_index": 3,
 					"type": "text"
 				},
 				{
 					"buffer": 12,
-					"file": "opencv_geom.h",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 2553,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								0,
-								0
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/C++/C++.sublime-syntax"
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 7,
-					"type": "text"
-				},
-				{
-					"buffer": 13,
-					"file": "opencv_precomp.h",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 3482,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								0,
-								0
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/C++/C++.sublime-syntax"
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 6,
-					"type": "text"
-				},
-				{
-					"buffer": 14,
 					"file": "quality_metrics_OpenCV.h",
 					"semi_transient": false,
 					"settings":
@@ -1478,91 +1402,7 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 5,
-					"type": "text"
-				},
-				{
-					"buffer": 15,
-					"file": "FeatureSIM.m",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 18371,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								0,
-								0
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Objective-C/Objective-C.sublime-syntax"
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
 					"stack_index": 4,
-					"type": "text"
-				},
-				{
-					"buffer": 16,
-					"file": "gaussian_coefficients.c",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 5568,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								2420,
-								2420
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/C++/C.sublime-syntax"
-						},
-						"translation.x": 0.0,
-						"translation.y": 918.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 2,
-					"type": "text"
-				},
-				{
-					"buffer": 17,
-					"file": "opencv_Filterengine.hpp",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 16208,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								0,
-								0
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/C++/C++.sublime-syntax"
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 3,
 					"type": "text"
 				}
 			]
@@ -1649,7 +1489,7 @@
 	"show_open_files": false,
 	"show_tabs": true,
 	"side_bar_visible": true,
-	"side_bar_width": 276.0,
+	"side_bar_width": 214.0,
 	"status_bar_visible": true,
 	"template_settings":
 	{

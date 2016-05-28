@@ -26,7 +26,6 @@ int main() {
     printf("vdmaVirtualAddress mapping for absolute memory access failed.\n");
     return -1;
   }
-  printf("Setting up done.\n");
   
   
 

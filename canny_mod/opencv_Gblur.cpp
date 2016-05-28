@@ -12,7 +12,7 @@ namespace my_Space
 	void GaussianBlur( InputArray _src, OutputArray _dst, Size ksize, double sigma1, double sigma2, int borderType, int custom)
 	{
 		int i=0, j=0;
-		printf("GaussianBlur modified used!\n");
+		//printf("GaussianBlur modified used!\n");
 
 		//Create a destination image with the same size and type of the input one
 		int type = _src.type();
@@ -47,7 +47,7 @@ namespace my_Space
 		int sx = ksize.width;  //printf("-d: sx = ksize.width = %d\n", sx);  (={3,5,7})
 		int sy = ksize.height; //printf("-d: sy = ksize.height = %d\n", sy); (={3,5,7})
 
-		long norm;
+		long long norm;
 		Mat kx, ky;
 		Mat custom_kernel(sx, sy, CV_32F);
 		
@@ -66,10 +66,21 @@ namespace my_Space
 			// printf("### ky rows = %d, ky cols = %d\n", ky.rows, ky.cols);
 			// ky = (5,1) elements => column vector
 						
-			printf(" -- Separable filter used\n");
+			//printf(" -- Separable filter used\n");
 			cv::sepFilter2D(_src, _dst, CV_MAT_DEPTH(type), kx, ky, Point(-1,-1), 0, borderType );
-			imwrite("tmp_custom0.bmp", _dst);
-			//
+			
+
+			imwrite("src_blurred_0.bmp", _dst);
+			// resize image (custom convolution does not handle borders)
+			/*Mat tmp;
+		  Size src_size=_dst.size();
+		  src_size.height=src_size.height-(sx/2);
+		  src_size.width=src_size.width-(sx/2);
+		  resize(_dst, tmp, src_size);
+		  
+			imwrite("src_blurred_0.bmp", tmp);
+			*/
+
 		}else if(custom == 1){	// Custom Gaussian Separable 2D filter (float <1 kernel coefficients, uchar data)
 			int ii;
 			my_Space::createGaussianKernels(kx, ky, type, ksize, sigma1, sigma2);
@@ -98,14 +109,24 @@ namespace my_Space
 			Mat out_img = Mat(rows, cols, CV_8UC1, data_out);
 
 			out_img.copyTo(_dst);
-			imwrite("tmp_custom1.bmp", out_img);
+			imwrite("src_blurred_1.bmp", out_img);
+
+			/*
+			Mat tmp;
+		  Size src_size=_dst.size();
+		  src_size.height=src_size.height-(sx/2);
+		  src_size.width=src_size.width-(sx/2);
+		  resize(_dst, tmp, src_size);
+		  
+			imwrite("src_blurred_1.bmp", tmp);
+			*/
 
 			free(xKernel); free(yKernel);
 
 			
 		}else if(custom == 2){	// Custom Gaussian Separable 2D filter (integer >1 kernel coefficients, uchar data)
 			int h;
-			long * tmp_kernel;
+			long long * tmp_kernel;
 
 			get_custom_coeff_vector(sx, sigma1, &tmp_kernel, &norm);
 
@@ -114,31 +135,52 @@ namespace my_Space
 			Mat out_img = Mat(rows, cols, CV_8UC1, data_out);
 
 			out_img.copyTo(_dst);
-			imwrite("tmp_custom2.bmp", out_img);
+			imwrite("src_blurred_2.bmp", out_img);
 
+			/*
+			Mat tmp;
+		  Size src_size=_dst.size();
+		  src_size.height=src_size.height-(sx/2);
+		  src_size.width=src_size.width-(sx/2);
+		  resize(_dst, tmp, src_size);
+			imwrite("src_blurred_2.bmp", tmp);
+			*/
 
 		}else if(custom == 3){	// Custom Gaussian Separable 2D filter (integer >1 kernel coefficients, uchar data, SHIFT instead of division)
 			int h;
-			long * tmp_kernel;
+			long long * tmp_kernel;
 
 			get_custom_coeff_vector(sx, sigma1, &tmp_kernel, &norm);
 			
-			long norm2 = round_to_pow2(norm*norm);
-			convolve2DSeparable(data_in, data_out, cols, rows, tmp_kernel, sx, tmp_kernel, sx, log2(norm2), DIV_SHIFT);
+			long long norm2 = round_to_pow2(norm*norm);
+			//printf("norm2_rnd=%ld, log2(norm2)=%ld\n", norm2,  (long)log2(norm2));
+			//printf("tmp_kernel: ");
+			//for(h=0; h<sx; h++) printf("%ld ", tmp_kernel[h]);
+			//printf("\n");
+			convolve2DSeparable(data_in, data_out, cols, rows, tmp_kernel, sx, tmp_kernel, sx, (long long) log2(norm2), DIV_SHIFT);
 			
 
 			Mat out_img = Mat(rows, cols, CV_8UC1, data_out);
 
 			out_img.copyTo(_dst);
-			imwrite("tmp_custom3.bmp", out_img);
+			imwrite("src_blurred_3.bmp", _dst);
 
+			/*
+			Mat tmp;
+		  Size src_size=_dst.size();
+		  src_size.height=src_size.height-(sx/2);
+		  src_size.width=src_size.width-(sx/2);
+		  resize(_dst, tmp, src_size);
+			imwrite("src_blurred_3.bmp", tmp);
+			*/
 
 		}else{					// Custom Linear2D filter applied
+
 			// Create 2D custom kernel (float)
 			createCustomGaussianMask(sx, sigma1, custom_kernel, &norm, CV_32F, custom);
 			
 			
-			printf(" -- Linear2D filter used with coefficients (norm=%ld)\n", norm);
+			printf(" -- Linear2D filter used with coefficients (norm=%lld)\n", norm);
 			for(i=0; i<sx; i++){
 				for(j=0; j<sx; j++){
 					printf("%6ld ", (long)(custom_kernel.at<float>(j,i)*norm));
@@ -279,7 +321,8 @@ namespace my_Space
 	    return kernel;
 	}
 
-	void createCustomGaussianMask(int ksize, double sigma, Mat & kernel, long *normalization, int type, int custom){
+	void createCustomGaussianMask(int ksize, double sigma, Mat & kernel, long long *normalization, int type, int custom){
+		/*
 		int i=0, j=0;
 		long *coeffs;
 		long norm;
@@ -307,6 +350,7 @@ namespace my_Space
 		}
 		
 		*normalization=norm;
+		*/
 	}
 
 }// end namespace my_Space 

@@ -60,6 +60,7 @@ bool convolve2D(double* in, double* out, int sizeX, int sizeY, double* kernel, i
 ///////////////////////////////////////////////////////////////////////////////
 bool convolve2DSeparable(unsigned char* in, unsigned char* out, int sizeX, int sizeY, float* xKernel, int kSizeX, float* yKernel, int kSizeY);
 bool convolve2DSeparable(unsigned char* in, unsigned char* out, int dataSizeX, int dataSizeY, long* kernelX, int kSizeX, long* kernelY, int kSizeY, long normalization, int div_type);
+bool convolve2DSeparable(unsigned char* in, unsigned char* out, int dataSizeX, int dataSizeY, long long* kernelX, int kSizeX, long long* kernelY, int kSizeY, long long normalization, int div_type);
 bool convolve2DSeparable(unsigned short* in, unsigned short* out, int sizeX, int sizeY, float* xKernel, int kSizeX, float* yKernel, int kSizeY);
 bool convolve2DSeparable(int* in, int* out, int sizeX, int sizeY, float* xKernel, int kSizeX, float* yKernel, int kSizeY);
 bool convolve2DSeparable(float* in, float* out, int sizeX, int sizeY, float* xKernel, int kSizeX, float* yKernel, int kSizeY);

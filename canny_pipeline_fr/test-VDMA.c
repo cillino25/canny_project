@@ -60,24 +60,18 @@ int main() {
   
 
   
-  printf("-d1");
+
   read_fb = (unsigned int*)mmap(NULL, BUFFER_SIZE, PROT_READ | PROT_WRITE, MAP_SHARED, handle.vdmaHandler, VDMA2MEM_BUFFER1_BASEADDR);
   if(((unsigned int *)read_fb) == MAP_FAILED) {
     printf("vdmaVirtualAddress mapping for absolute memory access failed.\n");
     return -1;
   }
-  printf("-d2");
+
   write_fb = (unsigned int*)mmap(NULL, BUFFER_SIZE, PROT_READ | PROT_WRITE, MAP_SHARED, handle.vdmaHandler, MEM2VDMA_BUFFER1_BASEADDR);
   if(((unsigned int *)write_fb) == MAP_FAILED) {
     printf("vdmaVirtualAddress mapping for absolute memory access failed.\n");
     return -1;
   }
-  
-
-
-  printf("trying to writing to vdma...\n");
-  //vdma_set(&handle, OFFSET_VDMA_MM2S_HSIZE, 512);
-  printf("Reading from VDMA_MM2S_HSIZE: %d\n", vdma_get(&handle, OFFSET_VDMA_MM2S_HSIZE));
   
 
   vdma_mm2s_status_dump(&handle);
@@ -91,13 +85,13 @@ int main() {
   // Start triple buffering
   vdma_start_triple_buffering_mod(&handle);
 
-  printf("VDMA MM2S Buffer 1: 0x%x\n", vdma_get(&handle, OFFSET_VDMA_MM2S_FRAMEBUFFER1));
-  printf("VDMA MM2S Buffer 2: 0x%x\n", vdma_get(&handle, OFFSET_VDMA_MM2S_FRAMEBUFFER2));
-  printf("VDMA MM2S Buffer 3: 0x%x\n", vdma_get(&handle, OFFSET_VDMA_MM2S_FRAMEBUFFER3));
+  //printf("VDMA MM2S Buffer 1: 0x%x\n", vdma_get(&handle, OFFSET_VDMA_MM2S_FRAMEBUFFER1));
+  //printf("VDMA MM2S Buffer 2: 0x%x\n", vdma_get(&handle, OFFSET_VDMA_MM2S_FRAMEBUFFER2));
+  //printf("VDMA MM2S Buffer 3: 0x%x\n", vdma_get(&handle, OFFSET_VDMA_MM2S_FRAMEBUFFER3));
 
-  printf("VDMA S2MM Buffer 1: 0x%x\n", vdma_get(&handle, OFFSET_VDMA_S2MM_FRAMEBUFFER1));
-  printf("VDMA S2MM Buffer 2: 0x%x\n", vdma_get(&handle, OFFSET_VDMA_S2MM_FRAMEBUFFER2));
-  printf("VDMA S2MM Buffer 3: 0x%x\n", vdma_get(&handle, OFFSET_VDMA_S2MM_FRAMEBUFFER3));
+  //printf("VDMA S2MM Buffer 1: 0x%x\n", vdma_get(&handle, OFFSET_VDMA_S2MM_FRAMEBUFFER1));
+  //printf("VDMA S2MM Buffer 2: 0x%x\n", vdma_get(&handle, OFFSET_VDMA_S2MM_FRAMEBUFFER2));
+  //printf("VDMA S2MM Buffer 3: 0x%x\n", vdma_get(&handle, OFFSET_VDMA_S2MM_FRAMEBUFFER3));
 
   print_vdma_stats(&handle);
 

@@ -13,7 +13,7 @@ namespace my_Space
 					double low_thresh, double high_thresh,
 					int aperture_size, bool L2gradient )
 	{
-		printf("Canny modified used!\n");
+		//printf("Canny modified used!\n");
 
 		const int type = _src.type();			//type of a matrix element (pixel)
 		const int depth = CV_MAT_DEPTH(type);	//type of each individual channel
@@ -267,7 +267,7 @@ namespace my_Space
 	void Sobel( InputArray _src, OutputArray _dst, int ddepth, int dx, int dy,
 					int ksize, double scale, double delta, int borderType )
 	{
-		printf("Sobel modified used!\n");
+		//printf("Sobel modified used!\n");
 
 		int stype = _src.type(), sdepth = CV_MAT_DEPTH(stype), cn = CV_MAT_CN(stype);
 		if (ddepth < 0)
@@ -294,7 +294,7 @@ namespace my_Space
 	void getDerivKernels( OutputArray kx, OutputArray ky, int dx, int dy,
 	                          int ksize, bool normalize, int ktype )
 	{
-		printf("getDerivKernels modified used!\n");
+		//printf("getDerivKernels modified used!\n");
 
 	    if( ksize <= 0 )
 	        getScharrKernels( kx, ky, dx, dy, normalize, ktype );
@@ -305,7 +305,7 @@ namespace my_Space
 	void getScharrKernels( OutputArray _kx, OutputArray _ky,
 	                              int dx, int dy, bool normalize, int ktype )
 	{
-		printf("getScharrKernels modified used!\n");
+		//printf("getScharrKernels modified used!\n");
 
 		const int ksize = 3;
 
@@ -338,7 +338,7 @@ namespace my_Space
 	void getSobelKernels( OutputArray _kx, OutputArray _ky,
 	                             int dx, int dy, int _ksize, bool normalize, int ktype )
 	{
-		printf("getSobelKernels modified used!\n");
+		//printf("getSobelKernels modified used!\n");
 
 		int i, j, ksizeX = _ksize, ksizeY = _ksize;
 	    if( ksizeX == 1 && dx > 0 )

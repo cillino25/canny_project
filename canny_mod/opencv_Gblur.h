@@ -74,7 +74,7 @@ namespace my_Space {
  */
 	Mat getGaussianKernel( int ksize, double sigma, int ktype = CV_64F );
 
-	void createCustomGaussianMask(int ksize, double sigma, Mat & kernel, long * normalization, int type, int custom);
+	void createCustomGaussianMask(int ksize, double sigma, Mat & kernel, long long * normalization, int type, int custom);
 }
 
 #endif /* OPENCV_GBLUR_H_ */

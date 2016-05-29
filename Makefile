@@ -67,7 +67,7 @@ cp-print-VDMA-rv: print-VDMA-rv
 test-VDMA-arm-fr:
 	$(ARM_CC) $(pipefr_dir)/test-VDMA.c $(pipefr_dir)/vdma.c -o $(pipefr_dir)/test-VDMA
 
-cp-test-VDMA-arm-fr: cp_read_mem test-VDMA-arm-fr
+cp-test-VDMA-arm-fr: cp_read_mem cp_write_mem test-VDMA-arm-fr
 	scp $(pipefr_dir)/test-VDMA zedboard:~
 
 test-VDMA-rv-fr:
@@ -97,13 +97,19 @@ cp-test-VDMA: test-VDMA-rv
 
 ####################################################################################
 
+write_mem:
+	$(ARM_CC) $(comm_dir)/write_mem.c -o $(comm_dir)/write_mem
+
+cp_write_mem: write_mem
+	scp $(comm_dir)/write_mem zedboard:~
+
 read_mem:
 	$(ARM_CC) $(comm_dir)/read_mem.c -o $(comm_dir)/read_mem
 
 cp_read_mem: read_mem
 	scp $(comm_dir)/read_mem zedboard:~
 
-.PHONY: read_mem cp_read_mem
+.PHONY: read_mem cp_read_mem write_mem cp_write_mem
 ####################################################################################
 
 update_root: mount_root cp_pipe_fr cp_read_mem cp-test-VDMA cp-test-VDMA-rv-fr cp-print-VDMA-rv

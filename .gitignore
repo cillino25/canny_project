@@ -3,3 +3,4 @@ mnt/
 busybox-1.24.1/
 root.bin
 *.bin
+*.bmp

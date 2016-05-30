@@ -1,0 +1,37 @@
+Version Control System for Vivado projects.
+
+Folder structure:
+ * vivado
+  * ip_repo
+  * src
+   - build.tcl
+   * bd
+    - "design_bd".tcl
+   * hdl
+
+
+ "design_bd" is the block design name, inside src/bd/;
+ ip_repo contains all the custom IPs, while src/hdl the VHDL/Verilog files for the project, and also constraints and so on.
+
+ To recreate the project from these files: vivado -source build.tcl
+
+
+
+** 1) Create design_bd.tcl:
+From Vivado: File -> Export -> Export block design... , and give the name of the block design to the file, with extension ".tcl"
+
+** 2) Create build.tcl:
+From Vivado: File -> Write project tcl.
+
+Commands to be modified:
+   * set origin_dir => set origin_dir [file dirname [info script]]
+   * orig_proj_dir  => comment out
+   * create_project => create_project <my_project> $origin_dir/myproject
+
+Commands to be added at the end of the file:
+   * Create block design:
+     => source $origin_dir/src/bd/design_bd.tcl
+   * Generate wrapper:
+     => set design_name [get_bd_designs]
+     => make_wrapper -files [get_files $design_name.bd] -top -import
+

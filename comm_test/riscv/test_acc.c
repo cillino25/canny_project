@@ -6,7 +6,7 @@
 #include <sys/types.h>
 #include <sys/mman.h>
 
-#define BASE_ACC_ADDRESS  0x20000000	//AXI accelerator base address
+#define BASE_ACC_ADDRESS  0x26000000	//AXI accelerator base address
 #define MATRIX_SIZE	  	  6				//Square matrix of size MATRIX_SIZE*MATRIX_SIZE
 #define MEMORY_ADDRESS    0x1F400000	//Data starting address
 #define POLL_ADDRESS      0x1F500000	//Polling variable address

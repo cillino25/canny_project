@@ -148,6 +148,7 @@ unsigned int vdma_get(vdma_handle *handle, int num) {
 }
 
 void vdma_set(vdma_handle *handle, int num, unsigned int val) {
+    int i=0;
     ((volatile unsigned int *)handle->vdmaVirtualAddress)[num>>2]=val;
 }
 

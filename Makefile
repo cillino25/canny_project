@@ -103,16 +103,23 @@ write_mem:
 cp_write_mem: write_mem
 	scp $(comm_dir)/write_mem zedboard:~
 
+write_mem-rv:
+	$(RV_CC) $(comm_dir)/write_mem.c -o $(comm_dir)/write_mem_$(exe_type)
+
+cp_write_mem-rv: write_mem-rv
+	cp $(comm_dir)/write_mem_$(exe_type) mnt/
+
+
 read_mem:
 	$(ARM_CC) $(comm_dir)/read_mem.c -o $(comm_dir)/read_mem
 
 cp_read_mem: read_mem
 	scp $(comm_dir)/read_mem zedboard:~
 
-.PHONY: read_mem cp_read_mem write_mem cp_write_mem
+.PHONY: read_mem cp_read_mem write_mem cp_write_mem write_mem-rv cp_write_mem-rv
 ####################################################################################
 
-update_root: mount_root cp_pipe_fr cp_read_mem cp-test-VDMA cp-test-VDMA-rv-fr cp-print-VDMA-rv
+update_root: mount_root cp_pipe_fr cp_read_mem cp-test-VDMA cp-test-VDMA-rv-fr cp-print-VDMA-rv cp_write_mem-rv
 	umount $(cur_dir)/mnt/
 
 upload_root: update_root cp-print-VDMA-arm cp_read_mem cp-test-VDMA-arm-fr

@@ -54,49 +54,30 @@ int main(int argc, char ** argv){
 	//*((volatile unsigned int *)poll_mmap_2) = 0;
 
 
-	// if((pid = fork()) < 0){
-	// 	printf("Fork error. Terminating\n");
-	// 	return(1);
-	// }else if(pid == 0){ // child process	
-	//   execl("/home/root/mnt/torture/fesvr-zynq", "fesvr-zynq", "torture_test_riscv-bare", NULL); // Bare-metal torture
-	// 	exit(0);
-	// }else{	// parent process
-		//wait(&status);		// we're not waiting for the process end, but for the rocket to change the polling variable
-		int i=0;
+	int i=0;
 
-		for(i=0; i<N_TESTS; i++){
-			//printf("--d_arm: waiting for rc to write memory for test %d..\n", i);
+	for(i=0; i<N_TESTS; i++){
+		printf("--d_arm: waiting for rc to write memory for test %d..\n", i);
 
-			//while((*((volatile unsigned int *) poll_mmap_1) == 0)&&(*((volatile unsigned int *) poll_mmap_2) == 0));
-			while((*(volatile unsigned int *) poll_mmap_1 ) == 0);
-			//printf("HEllo!\n");
-			//printf("--d_arm: polling variable changed.\n");
+		while((*(volatile unsigned int *) poll_mmap_1 ) == 0);
+		printf("--d_arm: polling variable changed.\n");
 
-			if(read_mem(test, i)){
-				//printf("--d_arm: error reading test %d\n", i);
-				error++;
-			}else{
-				//printf("--d_arm: test %d passed\n", i);
-			}
-			//printf("--d_arm: changing polling variable..\n");
-			*((volatile unsigned int *)poll_mmap_1) = 0;
-			//*((volatile unsigned int *)poll_mmap_2) = 0;
-			
-			//printf("--d_arm: mem[%x] = %d, ", POLL_ADDRESS_1, *((volatile unsigned int *)poll_mmap_1));
-			//printf("mem[%x] = %d\n", POLL_ADDRESS_2, *((volatile unsigned int *)poll_mmap_2));
-			//__clear_cache(poll_mmap, poll_mmap+32);
-			
-		}
-
-		if(error){
-			printf("\n\n%d test(s) not passed.\n", error);
+		if(read_mem(test, i)){
+			//printf("--d_arm: error reading test %d\n", i);
+			error++;
 		}else{
-			printf("\n\nAll %d tests passed.\n", N_TESTS);
+			//printf("--d_arm: test %d passed\n", i);
 		}
+		printf("--d_arm: changing polling variable..\n");
+		*((volatile unsigned int *)poll_mmap_1) = 0;
+		*((volatile unsigned int *)poll_mmap_2) = 0;
+	}
 
-	// 	wait(&status);
-	// }
-	
+	if(error){
+		printf("\n\n%d test(s) not passed.\n", error);
+	}else{
+		printf("\n\nAll %d tests passed.\n", N_TESTS);
+	}	
 	
 
 	close(fd_mem);

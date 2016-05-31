@@ -47,7 +47,7 @@ upload_torture: torture
 upload_reset: reset_mem
 	scp reset_mem_arm zedboard:~/mnt/torture
 
-upload_root: mount_root torture_riscv-linux update_root umount_root
+upload_root: upload_torture mount_root torture_riscv-linux update_root umount_root
 	scp $(TOP)/root.bin zedboard:~/mnt
 
 upload: upload_reset upload_torture upload_root

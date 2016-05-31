@@ -46,25 +46,21 @@ int main(int argc, char ** argv){
 	/************************************************************************/
 	// Main program
 	for(i=0; i<N_TESTS; i++){
-		//printf("-d_rc: writing test %d\n", i);
+		printf("-d_rc: writing test %d\n", i);
 		write_mem(test, i);
 
-		//printf("-d_rc: Changing polling variables at %x and %x..\n", POLL_ADDRESS_1, POLL_ADDRESS_2);
-		//*((volatile unsigned int *) POLL_ADDRESS_1) = 1;
-		//*((volatile unsigned int *) POLL_ADDRESS_2) = 1;
+		printf("-d_rc: Changing polling variables at %x and %x..\n", POLL_ADDRESS_1, POLL_ADDRESS_2);
 		*((volatile unsigned int *) poll_mmap_1) = 1;
 		*((volatile unsigned int *) poll_mmap_2) = 1;
 
 
-		//printf("-d_rc:mem[%x] = %x, ", POLL_ADDRESS_1, *((volatile unsigned int *) POLL_ADDRESS_1));
-		//printf("mem[%x] = %x\n", POLL_ADDRESS_2, *((volatile unsigned int *) POLL_ADDRESS_2));
+		printf("-d_rc: mem[%x] = %x, ", POLL_ADDRESS_1, *((volatile unsigned int *) poll_mmap_1));
+		printf("mem[%x] = %x\n", POLL_ADDRESS_2, *((volatile unsigned int *) poll_mmap_2));
 
 
-		//printf("-d_rc: Waiting for ARM to validate memory...\n");
-		//while((*((volatile unsigned int *) POLL_ADDRESS_1) == 1)&&(*((volatile unsigned int *) POLL_ADDRESS_2) == 1));
+		printf("-d_rc: Waiting for ARM to validate memory...\n");
 		
-		//With single variable: it doesn't work!
-		//while((*(volatile unsigned int *) POLL_ADDRESS_1) == 1);
+		while((*(volatile unsigned int *) poll_mmap_1) == 1);
 
 	}
 
@@ -102,7 +98,7 @@ void write_mem(unsigned int * test_matrix, int n){
 		//if(test_matrix[row + i] != 0){
 			//printf("test_matrix[%d][%d]=%x\n", n, i, test_matrix[row + i]);
 			//*((volatile unsigned int *) ACC_ADDRESS_RC+i)=test_matrix[row + i];	// Bare-metal write
-			*((volatile unsigned int *) acc_mmap+i)=test_matrix[row + i];	// OS write
+			((volatile unsigned int *)acc_mmap)[i]=test_matrix[row + i];	// OS write
 		//}
 	}
 }

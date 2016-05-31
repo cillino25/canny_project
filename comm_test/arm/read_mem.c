@@ -12,6 +12,7 @@
 //#define POLL_ADDRESS      0x0F100000	//Polling variable address
 #define BLEN			  3				//Burst_Length - 1 (data range must be a multiple of Burst_Length)
 
+
 int main(int argc, char **argv)
 {
 	// virual addresses returned by mmap
@@ -99,3 +100,4 @@ int main(int argc, char **argv)
 	printf("BYE! \r\n");
     return 0;
 }
+

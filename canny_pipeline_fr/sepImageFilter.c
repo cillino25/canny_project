@@ -1,3 +1,7 @@
+#ifdef __cplusplus
+    extern "C" {
+#endif
+
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>
@@ -7,31 +11,14 @@
 #include "sepImageFilter.h"
 #include "sepImageFilter_parameters.h"
 
-typedef struct {
-	unsigned int baseAddr;
-	int imgfilterHandler;
-	unsigned int width;
-	unsigned int height;
-	unsigned char hz_kernel_0;
-	unsigned char hz_kernel_1;
-	unsigned char hz_kernel_2;
-	unsigned char hz_kernel_3;
-	unsigned char hz_kernel_4;
-	unsigned char vt_kernel_0;
-	unsigned char vt_kernel_1;
-	unsigned char vt_kernel_2;
-	unsigned char vt_kernel_3;
-	unsigned char vt_kernel_4;
-	unsigned int normalization;
 
-	unsigned int * imgFilterVirtualAddress;
 
-} sepimgfilter_handle;
+
 
 int sepImageFilter_setup(sepimgfilter_handle *handle, int * mem_handler, unsigned int size, unsigned int baseAddr){
 	handle->baseAddr=baseAddr;
 
-	handle->imgFilterVirtualAddress = (unsigned int *)mmap(NULL, size, PROT_READ|PROT_WRITE, MAP_SHARED, mem_handler, handle->baseAddr);
+	handle->imgFilterVirtualAddress = (unsigned int *)mmap(NULL, size, PROT_READ|PROT_WRITE, MAP_SHARED, *mem_handler, handle->baseAddr);
 	if(((unsigned int *)handle->imgFilterVirtualAddress) == MAP_FAILED){
 		printf("imgFilterVirtualAddress mapping failed.\n");
 		return -1;
@@ -93,11 +80,6 @@ void sepImageFilter_start(sepimgfilter_handle *handle){
 }
 
 
-int sepImageFilter_start(sepimgfilter_handle *handle){
-	// (1<<0)=1 : ap_start bit
-	return (sepImageFilter_get(handle, XSEPIMAGEFILTER_CONTROL_BUS_ADDR_AP_CTRL) & 1)==0;
-}
-
 int sepImageFilter_done(sepimgfilter_handle *handle){
 	// (1<<1)=2 : ap_done bit
 	return (sepImageFilter_get(handle, XSEPIMAGEFILTER_CONTROL_BUS_ADDR_AP_CTRL) & 2)==0;
@@ -126,3 +108,6 @@ unsigned int sepImageFilter_get(sepimgfilter_handle *handle, int num){
 	return 0;
 }
 
+#ifdef __cplusplus
+    }
+#endif

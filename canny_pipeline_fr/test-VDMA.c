@@ -7,11 +7,14 @@
 #include "global_parameters.h"
 #include "vdma_parameters.h"
 #include "vdma.h"
+#include "sepImageFilter.h"
+#include "sepImageFilter_parameters.h"
 
 
 int main() {
   int h, j, i;
   vdma_handle handle;
+  sepimgfilter_handle filter_handle;
 
   int frame_len = PIXEL_CHANNELS * IN_FRAME_WIDTH * IN_FRAME_HEIGHT;
   int mem;
@@ -38,6 +41,7 @@ int main() {
 
 
   vdma_setup(&handle, page_size, AXI_VDMA_BASEADDR, IN_FRAME_WIDTH, IN_FRAME_HEIGHT, PIXEL_CHANNELS, BUFFER_SIZE, MEM2VDMA_BUFFER1_BASEADDR, MEM2VDMA_BUFFER2_BASEADDR, MEM2VDMA_BUFFER3_BASEADDR, VDMA2MEM_BUFFER1_BASEADDR, VDMA2MEM_BUFFER2_BASEADDR, VDMA2MEM_BUFFER3_BASEADDR);
+  sepImageFilter_setup(&filter_handle, handle.vdma_handle, 0xFF, AXI_SEPIMGFILTER);
   printf("Setting up done.\n");
 
   /*

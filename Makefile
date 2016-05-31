@@ -35,6 +35,7 @@ umount_root:
 
 
 ####################################################################################
+## Complete ARM-RC-VDMA pipeline
 
 pipe_riscv:
 	$(RV_CC) $(pipefr_dir)/pipe_riscv.c $(pipefr_dir)/vdma.c -o $(pipefr_dir)/pipe_riscv_$(exe_type)
@@ -47,7 +48,7 @@ cp_pipe_fr: pipe_arm pipe_riscv
 	cp $(pipefr_dir)/pipe_riscv_$(exe_type) mnt/pipe_fr
 
 ####################################################################################
-
+## Print VDMA registers
 
 print-VDMA-arm:
 	$(ARM_CC) $(pipefr_dir)/print_vdma_stats.c $(pipefr_dir)/vdma.c -o $(pipefr_dir)/print-VDMA
@@ -63,23 +64,7 @@ cp-print-VDMA-rv: print-VDMA-rv
 
 .PHONY: print-VDMA-arm print-VDMA-rv
 ###################################################################################
-
-test-VDMA-arm-fr:
-	$(ARM_CC) $(pipefr_dir)/test-VDMA.c $(pipefr_dir)/vdma.c -o $(pipefr_dir)/test-VDMA
-
-cp-test-VDMA-arm-fr: cp_read_mem cp_write_mem test-VDMA-arm-fr
-	scp $(pipefr_dir)/test-VDMA zedboard:~
-
-test-VDMA-rv-fr:
-	$(RV_CC) -DRC=1 $(pipefr_dir)/test-VDMA.c $(pipefr_dir)/vdma.c -o $(pipefr_dir)/test-VDMA_$(exe_type)
-
-cp-test-VDMA-rv-fr: test-VDMA-rv-fr
-	cp $(pipefr_dir)/test-VDMA_$(exe_type) mnt/
-
-.PHONY: test-VDMA-rv-fr cp-test-VDMA-rv-fr test-VDMA-arm-fr cp-test-VDMA-arm-fr
-
-####################################################################################
-
+## Basic VDMA test (alternative folder)
 
 test-VDMA-arm:
 	$(ARM_CC) $(test-VDMA_dir)/test-VDMA.c $(test-VDMA_dir)/vdma.c -o $(test-VDMA_dir)/test-VDMA
@@ -96,6 +81,42 @@ cp-test-VDMA: test-VDMA-rv
 .PHONY: test-VDMA-rv cp-test-VDMA
 
 ####################################################################################
+## Free running version of VDMA test
+
+test-VDMA-arm-fr:
+	$(ARM_CC) $(pipefr_dir)/test-VDMA.c $(pipefr_dir)/vdma.c -o $(pipefr_dir)/test-VDMA
+
+cp-test-VDMA-arm-fr: cp_read_mem cp_write_mem test-VDMA-arm-fr
+	scp $(pipefr_dir)/test-VDMA zedboard:~
+
+test-VDMA-rv-fr:
+	$(RV_CC) -DRC=1 $(pipefr_dir)/test-VDMA.c $(pipefr_dir)/vdma.c -o $(pipefr_dir)/test-VDMA_$(exe_type)
+
+cp-test-VDMA-rv-fr: test-VDMA-rv-fr
+	cp $(pipefr_dir)/test-VDMA_$(exe_type) mnt/
+
+.PHONY: test-VDMA-rv-fr cp-test-VDMA-rv-fr test-VDMA-arm-fr cp-test-VDMA-arm-fr
+
+####################################################################################
+## VDMA test with fsync and filter
+
+test-filter-arm:
+	$(ARM_CC) -c -std=c99 -o $(pipefr_dir)/vdma.o $(pipefr_dir)/vdma.c 
+	$(ARM_CC) -c -std=c99 -o $(pipefr_dir)/sepImageFilter.o $(pipefr_dir)/sepImageFilter.c 
+	$(ARM_CPP) -c -std=c++0x -o $(pipefr_dir)/test-filter-arm.o $(pipefr_dir)/test-filter.cpp
+	$(ARM_CPP) -o $(pipefr_dir)/test-filter-arm $(pipefr_dir)/test-filter-arm.o $(pipefr_dir)/vdma.o $(pipefr_dir)/sepImageFilter.o
+cp-test-filter-arm: test-filter-arm
+	scp $(pipefr_dir)/test-filter-arm zedboard:~
+
+test-filter-rv:
+	$(RV_CC) $(pipefr_dir)/test-filter.c $(pipefr_dir)/vdma.c $(pipefr_dir)/sepImageFilter.c -o $(pipefr_dir)/test-filter_$(exe_type)
+cp-test-filter-rv: test-filter-rv
+	cp $(pipefr_dir)/test-filter_$(exe_type) mnt/
+
+
+.PHONY: test-filter-arm cp-test-filter-arm test-filter-rv cp-test-filter-rv
+####################################################################################
+## Write and read memory utilities
 
 write_mem:
 	$(ARM_CC) $(comm_dir)/write_mem.c -o $(comm_dir)/write_mem
@@ -129,3 +150,7 @@ upload_root: update_root cp-print-VDMA-arm cp_read_mem cp-test-VDMA-arm-fr
 
 ####################################################################################
 
+clean:
+	rm -rf $(pipefr_dir)/*.o
+
+.PHONY: clean

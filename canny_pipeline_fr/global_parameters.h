@@ -10,9 +10,11 @@
 #ifndef RC
  #define AXI_VDMA_BASEADDR        0x45000000
  #define AXI_VDMA_HIGHADDR        0x4500FFFF
+ #define AXI_SEPIMGFILTER         0x46000000
 #else
  #define AXI_VDMA_BASEADDR        0x25000000
  #define AXI_VDMA_HIGHADDR        0x2500FFFF
+ #define AXI_SEPIMGFILTER         0x26000000
 #endif
 
 #define AXI_GPIO_BASEADDR        0x44000000

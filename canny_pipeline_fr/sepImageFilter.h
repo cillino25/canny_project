@@ -1,6 +1,10 @@
 #ifndef XSEPIMAGEFILTER_H_
 #define XSEPIMAGEFILTER_H_
 
+#ifdef __cplusplus
+    extern "C" {
+#endif
+
 typedef struct {
 	unsigned int baseAddr;
 	int imgfilterHandler;
@@ -35,4 +39,9 @@ int sepImageFilter_running(sepimgfilter_handle *handle);
 void sepImageFilter_set(sepimgfilter_handle *handle, int num, unsigned int val);
 unsigned int sepImageFilter_get(sepimgfilter_handle *handle, int num);
 
+
+#ifdef __cplusplus
+    }
+#endif
+    
 #endif

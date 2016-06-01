@@ -1,6 +1,11 @@
 #ifndef GLOBAL_PARAMETERS_H_
 #define GLOBAL_PARAMETERS_H_
 
+#define BMP_INFO_SIZE           54
+#define BMP_WIDTH_OFFSET        18
+#define BMP_HEIGHT_OFFSET       22
+
+
 #define ROCKETCHIP_HTIF         0x43c00000
 
 #define AXI_DMA_BASEADDR        0x40400000
@@ -10,11 +15,14 @@
 #ifndef RC
  #define AXI_VDMA_BASEADDR        0x45000000
  #define AXI_VDMA_HIGHADDR        0x4500FFFF
- #define AXI_SEPIMGFILTER         0x46000000
+ #define AXI_PULSER               0x46000000
+ #define AXI_SEPIMGFILTER         0x47000000
 #else
  #define AXI_VDMA_BASEADDR        0x25000000
  #define AXI_VDMA_HIGHADDR        0x2500FFFF
  #define AXI_SEPIMGFILTER         0x26000000
+ #define AXI_PULSER               0x26000000
+ #define AXI_SEPIMGFILTER         0x27000000
 #endif
 
 #define AXI_GPIO_BASEADDR        0x44000000
@@ -24,7 +32,7 @@
 #define BUFFER_MEM_READ_START_ADDRESS        0x1F400000
 #define BUFFER_MEM_WRITE_START_ADDRESS       0x1F700000
 /* Buffer size = 1M */
-#define BUFFER_SIZE				                   0x00100000
+#define BUFFER_SIZE				             0x00100000
 
 
 #define MEM2VDMA_BUFFER1_BASEADDR		(BUFFER_MEM_READ_START_ADDRESS)

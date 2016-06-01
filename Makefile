@@ -108,6 +108,9 @@ test-filter-arm:
 cp-test-filter-arm: test-filter-arm
 	scp $(pipefr_dir)/test-filter-arm zedboard:~
 
+cp-lena-gray:
+	scp canny_mod/lena_gray.bmp zedboard:~
+	
 test-filter-rv:
 	$(RV_CC) $(pipefr_dir)/test-filter.c $(pipefr_dir)/vdma.c $(pipefr_dir)/sepImageFilter.c -o $(pipefr_dir)/test-filter_$(exe_type)
 cp-test-filter-rv: test-filter-rv

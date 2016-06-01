@@ -76,7 +76,8 @@ void sepImageFilter_start(sepimgfilter_handle *handle){
 	sepImageFilter_set(handle, XSEPIMAGEFILTER_CONTROL_BUS_ADDR_DIVISOR_V_DATA, handle->normalization);
 
 	// Set bits 0 (ap_start) and 7 (auto_restart)
-	sepImageFilter_set(handle, XSEPIMAGEFILTER_CONTROL_BUS_ADDR_AP_CTRL, 129);
+	//sepImageFilter_set(handle, XSEPIMAGEFILTER_CONTROL_BUS_ADDR_AP_CTRL, 129);
+	sepImageFilter_set(handle, XSEPIMAGEFILTER_CONTROL_BUS_ADDR_AP_CTRL, 1);
 }
 
 

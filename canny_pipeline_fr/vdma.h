@@ -2,6 +2,9 @@
 #define VDMA_H_
 
 
+#ifdef __cplusplus
+    extern "C" {
+#endif
 
 
 typedef struct {
@@ -24,12 +27,16 @@ typedef struct {
     long fb2PhysicalAddress_s2mm;
     unsigned int* fb3VirtualAddress_s2mm;
     long fb3PhysicalAddress_s2mm;
+
+    unsigned int* pulserVirtualAddress;
+    long pulserPhysicalAddress;
+
 } vdma_handle;
 
 
 
 
-int vdma_setup(vdma_handle *handle, unsigned int page_size, unsigned int baseAddr, int width, int height, int pixelChannels, int max_buffer_size, long fb1Addr_mm2s, long fb2Addr_mm2s, long fb3Addr_mm2s, long fb1Addr_s2mm, long fb2Addr_s2mm, long fb3Addr_s2mm);
+int vdma_setup(vdma_handle *handle, unsigned int page_size, unsigned int baseAddr, int width, int height, int pixelChannels, int max_buffer_size, long fb1Addr_mm2s, long fb2Addr_mm2s, long fb3Addr_mm2s, long fb1Addr_s2mm, long fb2Addr_s2mm, long fb3Addr_s2mm, long pulserPhysicalAddress);
 void vdma_halt(vdma_handle *handle);
 unsigned int vdma_get(vdma_handle *handle, int num);
 void vdma_set(vdma_handle *handle, int num, unsigned int val);
@@ -48,8 +55,13 @@ int vdma_mm2s_idle(vdma_handle *handle);
 
 void print_vdma_stats(vdma_handle *handle);
 
+void vdma_send_fsync(vdma_handle *handle);
+
 void fill_buffer(unsigned int * fbAddr, int length, unsigned int val);
 int cmp_buffer(unsigned int * fbAddr, int length, unsigned int val);
 
+#ifdef __cplusplus
+    }
+#endif
 
 #endif

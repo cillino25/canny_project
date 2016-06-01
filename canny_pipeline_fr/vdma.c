@@ -1,3 +1,7 @@
+#ifdef __cplusplus
+    extern "C" {
+#endif
+
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>
@@ -10,12 +14,13 @@
 
 
 
-int vdma_setup(vdma_handle *handle, unsigned int page_size, unsigned int baseAddr, int width, int height, int pixelChannels, int max_buffer_size, long fb1Addr_mm2s, long fb2Addr_mm2s, long fb3Addr_mm2s, long fb1Addr_s2mm, long fb2Addr_s2mm, long fb3Addr_s2mm) {
+int vdma_setup(vdma_handle *handle, unsigned int page_size, unsigned int baseAddr, int width, int height, int pixelChannels, int max_buffer_size, long fb1Addr_mm2s, long fb2Addr_mm2s, long fb3Addr_mm2s, long fb1Addr_s2mm, long fb2Addr_s2mm, long fb3Addr_s2mm, long pulser_baseAddr) {
     handle->baseAddr=baseAddr;
     handle->width=width;
     handle->height=height;
     handle->pixelChannels=pixelChannels;
     handle->fbLength=pixelChannels*width*height;
+
 
     if(handle->fbLength > max_buffer_size){
       printf("Frame buffer size is greater than maximum buffer size.\nExiting..\n");
@@ -101,6 +106,14 @@ int vdma_setup(vdma_handle *handle, unsigned int page_size, unsigned int baseAdd
     }
     //printf("-d: ..mapped to 0x%x.\n", handle->fb3VirtualAddress_s2mm);
 
+
+    /*********************** Pulser ************************/
+    handle->pulserPhysicalAddress = pulser_baseAddr;
+    handle->pulserVirtualAddress = (unsigned int*)mmap(NULL, 4096, PROT_READ | PROT_WRITE, MAP_SHARED, handle->vdmaHandler, (off_t)handle->pulserPhysicalAddress);
+    if(handle->pulserVirtualAddress == MAP_FAILED){
+      printf("pulser mapping for absolute memory access failed.\n");
+      return -3;
+    }
 
 
     //printf("\n\n");
@@ -433,6 +446,10 @@ void print_vdma_stats(vdma_handle *handle) {
   printf("Bye!\n");
 }
 
+void vdma_send_fsync(vdma_handle *handle){
+  *((volatile unsigned int *)handle->pulserVirtualAddress) = 1;
+  //*((volatile unsigned int *)handle->pulserVirtualAddress) = 0;
+}
 
 // Length parameter must be in bytes!
 void fill_buffer(unsigned int * fbAddr, int length, unsigned int val){
@@ -455,3 +472,6 @@ int cmp_buffer(unsigned int * fbAddr, int length, unsigned int val){
   return 0;
 }
 
+#ifdef __cplusplus
+    }
+#endif

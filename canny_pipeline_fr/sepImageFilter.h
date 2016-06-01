@@ -34,6 +34,8 @@ void sepImageFilter_setVtKernelCoeffs(sepimgfilter_handle *handle, unsigned char
 void sepImageFilter_setNormalizationFactor(sepimgfilter_handle *handle, unsigned int norm);
 
 void sepImageFilter_start(sepimgfilter_handle *handle);
+
+// Returns 1 if filter is running (actually, not idle)
 int sepImageFilter_running(sepimgfilter_handle *handle);
 
 void sepImageFilter_set(sepimgfilter_handle *handle, int num, unsigned int val);
@@ -43,5 +45,5 @@ unsigned int sepImageFilter_get(sepimgfilter_handle *handle, int num);
 #ifdef __cplusplus
     }
 #endif
-    
+
 #endif

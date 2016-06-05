@@ -62,6 +62,16 @@
 
 //void print(char *str);
 
+static inline void dcache_clean(void)
+ {
+     const int zero = 0;
+     /* clean entire D cache -> push to external memory. */
+     __asm volatile ("1: mrc p15, 0, r15, c7, c10, 3\n"
+                     " bne 1b\n" ::: "cc");
+     /* drain the write buffer */
+    __asm volatile ("mcr 15, 0, %0, c7, c10, 4"::"r" (zero));
+ }
+
 
 int main() {
 
@@ -142,6 +152,8 @@ int main() {
   // wait for filter to finish
   xil_printf("Waiting the filter to finish..\r\n");
   while(sepImageFilter_running(&filter_handle) == 0);
+
+  //dcache_clean();
 
   xil_printf("Print output buffer (0x%x):\r\n", handle.fb1PhysicalAddress_s2mm);
   for(i=0; i<size; i++) xil_printf("[0x%x] 0x%x\r\n", handle.fb1PhysicalAddress_s2mm + (i<<2), Xil_In32(handle.fb1PhysicalAddress_s2mm + (i<<2) ));

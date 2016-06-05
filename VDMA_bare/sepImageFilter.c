@@ -1,13 +1,10 @@
-#ifdef __cplusplus
-    extern "C" {
-#endif
-
 #include <stdio.h>
-#include <string.h>
 #include <unistd.h>
-#include <fcntl.h>
-#include <sys/mman.h>
+#include <xil_printf.h>
+#include <xil_types.h>
+#include <xil_io.h>
 
+#include "platform.h"
 #include "sepImageFilter.h"
 #include "sepImageFilter_parameters.h"
 
@@ -31,18 +28,6 @@ void sepImageFilter_setup(sepimgfilter_handle *handle){
 	sepImageFilter_set(handle, XSEPIMAGEFILTER_CONTROL_BUS_ADDR_VT_KERNEL_4_V_DATA, handle->vt_kernel_4);
 
 	sepImageFilter_set(handle, XSEPIMAGEFILTER_CONTROL_BUS_ADDR_DIVISOR_V_DATA, handle->normalization);
-}
-
-int sepImageFilter_setup_handle(sepimgfilter_handle *handle, int * mem_handler, unsigned int size, unsigned int baseAddr){
-	handle->baseAddr=baseAddr;
-
-	handle->imgFilterVirtualAddress = (unsigned int *)mmap(NULL, size, PROT_READ|PROT_WRITE, MAP_SHARED, *mem_handler, handle->baseAddr);
-	if(((unsigned int *)handle->imgFilterVirtualAddress) == MAP_FAILED){
-		printf("imgFilterVirtualAddress mapping failed.\n");
-		return -1;
-	}
-
-	return 0;
 }
 
 
@@ -99,18 +84,17 @@ int sepImageFilter_ready(sepimgfilter_handle *handle){
 
 
 void sepImageFilter_set(sepimgfilter_handle *handle, int num, unsigned int val){
-	printf("Setting address 0x%x: %d\n", handle->imgFilterVirtualAddress + (num>>2), sepImageFilter_get(handle, num));
-	((volatile unsigned int *)handle->imgFilterVirtualAddress)[num>>2]=val;
+	//((volatile unsigned int *)handle->imgFilterVirtualAddress)[num>>2]=val;
+	Xil_Out32(handle->baseAddr + (num), val);
+	//xil_printf("Setting address 0x%x = %d\r\n", handle->baseAddr + (num), val);
 }
 
 
 unsigned int sepImageFilter_get(sepimgfilter_handle *handle, int num){
-	if(num>=0)
-		return ((volatile unsigned int *)handle->imgFilterVirtualAddress)[num>>2];
-
+	if(num>=0){
+		//return ((volatile unsigned int *)handle->imgFilterVirtualAddress)[num>>2];
+		Xil_In32(handle->baseAddr + (num));
+		//xil_printf("Reading at address 0x%x: %d\r\n", handle->baseAddr + (num), Xil_In32(handle->baseAddr + (num)));
+	}
 	return 0;
 }
-
-#ifdef __cplusplus
-    }
-#endif

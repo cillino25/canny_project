@@ -4,40 +4,8 @@
 		"selected_items":
 		[
 			[
-				"se",
-				"sepImageFilter_get"
-			],
-			[
-				"w",
-				"width"
-			],
-			[
-				"rea",
-				"read_fb"
-			],
-			[
-				"lena",
-				"lena_info"
-			],
-			[
-				"write",
-				"writeBMP"
-			],
-			[
-				"BMP",
-				"BMP_INFO_SIZE"
-			],
-			[
-				"img",
-				"img_info"
-			],
-			[
-				"pulse",
-				"pulser_baseAddr"
-			],
-			[
-				"size",
-				"size"
+				"sepIm",
+				"sepImageFilter_setup_handle"
 			],
 			[
 				"filter",
@@ -45,7 +13,51 @@
 			],
 			[
 				"cp_",
-				"cp_write_mem-rv"
+				"cp_write_mem"
+			],
+			[
+				"cp-f",
+				"cp-test-filter-arm"
+			],
+			[
+				"ax",
+				"axi_init_txn"
+			],
+			[
+				"pulser",
+				"pulserVirtualAddress"
+			],
+			[
+				"read",
+				"readBMP"
+			],
+			[
+				"pip",
+				"pipefr_dir"
+			],
+			[
+				"cp-te",
+				"cp-test-filter-rv"
+			],
+			[
+				"test",
+				"test-filter-rv"
+			],
+			[
+				"pipefr",
+				"pipefr_dir"
+			],
+			[
+				"sep",
+				"sepImageFilter_set"
+			],
+			[
+				"se",
+				"sepImageFilter_set"
+			],
+			[
+				"img",
+				"imgFilterVirtualAddress"
 			],
 			[
 				"writ",
@@ -62,10 +74,6 @@
 			[
 				"print",
 				"print_vdma_stats"
-			],
-			[
-				"cp-te",
-				"cp-test-VDMA-arm-fr"
 			],
 			[
 				"PA",
@@ -98,10 +106,6 @@
 			[
 				"tes",
 				"test-VDMA-arm-fr"
-			],
-			[
-				"test",
-				"test-VDMA-arm"
 			],
 			[
 				"VDM",
@@ -244,6 +248,10 @@
 				"convolve2DSeparable"
 			],
 			[
+				"lena",
+				"lena_ref"
+			],
+			[
 				"getS",
 				"getMSSIM"
 			],
@@ -342,6 +350,10 @@
 			[
 				"test_a",
 				"test_acc_fixed"
+			],
+			[
+				"size",
+				"sizeof"
 			],
 			[
 				"HW",
@@ -502,18 +514,6 @@
 			[
 				"rvali",
 				"m00_axi_rvalid"
-			],
-			[
-				"rlas",
-				"m00_axi_rlast"
-			],
-			[
-				"rid",
-				"m00_axi_rid"
-			],
-			[
-				"rdata",
-				"m00_axi_rdata"
 			]
 		]
 	},
@@ -536,30 +536,6 @@
 			}
 		},
 		{
-			"file": "test-filter.cpp",
-			"settings":
-			{
-				"buffer_size": 5592,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "test-img.cpp",
-			"settings":
-			{
-				"buffer_size": 1298,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "vdma.h",
-			"settings":
-			{
-				"buffer_size": 2072,
-				"line_ending": "Unix"
-			}
-		},
-		{
 			"file": "/media/stefano/data_ext4/Dropbox/poliTO/tesi/canny_project/comm_test/arm/read_mem.c",
 			"settings":
 			{
@@ -572,6 +548,23 @@
 			"settings":
 			{
 				"buffer_size": 4941,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "test-filter.cpp",
+			"settings":
+			{
+				"buffer_size": 5592,
+				"line_ending": "Unix",
+				"name": "test-filter.c"
+			}
+		},
+		{
+			"file": "test-img.cpp",
+			"settings":
+			{
+				"buffer_size": 1298,
 				"line_ending": "Unix"
 			}
 		},
@@ -600,20 +593,19 @@
 			}
 		},
 		{
+			"file": "vdma.h",
+			"settings":
+			{
+				"buffer_size": 2072,
+				"line_ending": "Unix"
+			}
+		},
+		{
 			"file": "vdma_parameters.h",
 			"settings":
 			{
 				"buffer_size": 3679,
 				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "sepImageFilter.c",
-			"settings":
-			{
-				"buffer_size": 4181,
-				"line_ending": "Unix",
-				"name": "sepImageFilter.c"
 			}
 		},
 		{
@@ -623,6 +615,23 @@
 				"buffer_size": 1763,
 				"line_ending": "Unix",
 				"name": "sepImageFilter.h"
+			}
+		},
+		{
+			"file": "sepImageFilter.c",
+			"settings":
+			{
+				"buffer_size": 4065,
+				"line_ending": "Unix",
+				"name": "sepImageFilter.c"
+			}
+		},
+		{
+			"file": "sepImageFilter_parameters.h",
+			"settings":
+			{
+				"buffer_size": 4596,
+				"line_ending": "Unix"
 			}
 		}
 	],
@@ -678,8 +687,10 @@
 	},
 	"file_history":
 	[
-		"/media/stefano/data_ext4/Dropbox/poliTO_private/tesi/rc-vdma-arm-fsync/build.tcl",
-		"/media/stefano/data_ext4/Dropbox/poliTO_private/tesi/rc-vdma-arm-fsync/src/hdl/rocketchip_wrapper.v",
+		"/usr/share/riscv_src/rocket-chip/fpga-zynq/zedboard/VDMA_fsync_filter/VDMA_fsync_filter.srcs/constrs_1/imports/constrs/base.xdc",
+		"/media/stefano/data_ext4/Dropbox/poliTO/tesi/vivado2015/ip_repo/AXI_pulser_v1_0_project/AXI_pulser_v1_0_project.srcs/sim_1/new/design_1_wrapper_tb.vhd",
+		"/media/stefano/data_ext4/Dropbox/poliTO/tesi/vivado2015/ip_repo/AXI_pulser_v1_0_project/AXI_pulser_v1_0_project.srcs/sources_1/bd/design_1/ipshared/user.org/axi_pulser_v1_1/hdl/AXI_pulser_v1_0_S00_AXI.vhd",
+		"/media/stefano/data_ext4/Dropbox/poliTO/tesi/canny_project/canny_pipeline_fr/sepImageFilter_parameters.h",
 		"/media/stefano/data_ext4/Dropbox/poliTO/tesi/canny_project/canny_pipeline_fr/Makefile",
 		"/media/stefano/data_ext4/Dropbox/poliTO/tesi/canny_project/canny_pipeline_fr/pipe_arm.c",
 		"/media/stefano/data_ext4/Dropbox/poliTO/tesi/canny_project/canny_pipeline_fr/print_vdma_stats.c",
@@ -803,9 +814,7 @@
 		"/usr/share/riscv_src/rocket-chip/fpga-zynq/zedboard/src/verilog/clocking.vh",
 		"/usr/share/riscv_src/rocket-chip/junctions/src/main/scala/package.scala",
 		"/usr/share/riscv_src/rocket-chip/groundtest/build.sbt",
-		"/usr/intelliJ/Install-Linux-tar.txt",
-		"/root/.IdeaIC2016.1/idea64.vmoptions",
-		"/usr/share/riscv_src/linux-4.1.17/arch/riscv/include/asm/page.h"
+		"/usr/intelliJ/Install-Linux-tar.txt"
 	],
 	"find":
 	{
@@ -824,11 +833,7 @@
 		"case_sensitive": false,
 		"find_history":
 		[
-			"IN_FRAME_WIDTH",
-			"AXI_PULSER",
-			"lena",
-			"file",
-			"lena",
+			"  \n",
 			"hz",
 			"h",
 			"REPEAT_16",
@@ -951,7 +956,11 @@
 			"write_csr",
 			"1337",
 			"tohost_exit",
-			"thread_entry"
+			"thread_entry",
+			"init_tls",
+			"init",
+			"CAUSE_USER_ECALL",
+			"handle_stats"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -959,8 +968,6 @@
 		"regex": false,
 		"replace_history":
 		[
-			"img",
-			"in_file",
 			"vt",
 			"handle",
 			"S2MM",
@@ -1041,7 +1048,7 @@
 	"groups":
 	[
 		{
-			"selected": 2,
+			"selected": 3,
 			"sheets":
 			[
 				{
@@ -1057,8 +1064,8 @@
 						"selection":
 						[
 							[
-								0,
-								0
+								108,
+								108
 							]
 						],
 						"settings":
@@ -1069,7 +1076,7 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 13,
+					"stack_index": 10,
 					"type": "text"
 				},
 				{
@@ -1085,8 +1092,8 @@
 						"selection":
 						[
 							[
-								0,
-								0
+								5237,
+								5237
 							]
 						],
 						"settings":
@@ -1094,107 +1101,14 @@
 							"syntax": "Packages/Makefile/Makefile.sublime-syntax"
 						},
 						"translation.x": 0.0,
-						"translation.y": 1566.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 10,
-					"type": "text"
-				},
-				{
-					"buffer": 2,
-					"file": "test-filter.cpp",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 5592,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								823,
-								823
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/C++/C++.sublime-syntax",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true,
-							"word_wrap": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 3,
-					"type": "text"
-				},
-				{
-					"buffer": 3,
-					"file": "test-img.cpp",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 1298,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								0,
-								0
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/C++/C++.sublime-syntax",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 4,
-					"type": "text"
-				},
-				{
-					"buffer": 4,
-					"file": "vdma.h",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 2072,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								1859,
-								1859
-							]
-						],
-						"settings":
-						{
-							"history_list_is_closing": true,
-							"syntax": "Packages/C++/C++.sublime-syntax",
-							"tab_size": 4,
-							"translate_tabs_to_spaces": true,
-							"word_wrap": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 559.0,
+						"translation.y": 2174.0,
 						"zoom_level": 1.0
 					},
 					"stack_index": 6,
 					"type": "text"
 				},
 				{
-					"buffer": 5,
+					"buffer": 2,
 					"file": "/media/stefano/data_ext4/Dropbox/poliTO/tesi/canny_project/comm_test/arm/read_mem.c",
 					"semi_transient": false,
 					"settings":
@@ -1206,8 +1120,8 @@
 						"selection":
 						[
 							[
-								0,
-								0
+								508,
+								508
 							]
 						],
 						"settings":
@@ -1215,14 +1129,14 @@
 							"syntax": "Packages/C++/C.sublime-syntax"
 						},
 						"translation.x": 0.0,
-						"translation.y": 702.0,
+						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
 					"stack_index": 11,
 					"type": "text"
 				},
 				{
-					"buffer": 6,
+					"buffer": 3,
 					"file": "test-VDMA.c",
 					"semi_transient": false,
 					"settings":
@@ -1234,8 +1148,8 @@
 						"selection":
 						[
 							[
-								0,
-								0
+								1822,
+								1822
 							]
 						],
 						"settings":
@@ -1244,15 +1158,74 @@
 							"tab_size": 2,
 							"translate_tabs_to_spaces": true
 						},
-						"translation.x": 0.0,
-						"translation.y": 432.0,
+						"translation.x": 1689.0,
+						"translation.y": 486.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 12,
+					"stack_index": 0,
 					"type": "text"
 				},
 				{
-					"buffer": 7,
+					"buffer": 4,
+					"file": "test-filter.cpp",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 5592,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								2972,
+								2972
+							]
+						],
+						"settings":
+						{
+							"auto_name": "test-filter.c",
+							"syntax": "Packages/C++/C++.sublime-syntax"
+						},
+						"translation.x": 0.0,
+						"translation.y": 756.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 2,
+					"type": "text"
+				},
+				{
+					"buffer": 5,
+					"file": "test-img.cpp",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 1298,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								427,
+								427
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/C++/C++.sublime-syntax",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 8,
+					"type": "text"
+				},
+				{
+					"buffer": 6,
 					"file": "/media/stefano/data_ext4/Dropbox/poliTO/tesi/canny_project/comm_test/arm/write_mem.c",
 					"semi_transient": false,
 					"settings":
@@ -1278,11 +1251,11 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 9,
+					"stack_index": 13,
 					"type": "text"
 				},
 				{
-					"buffer": 8,
+					"buffer": 7,
 					"file": "global_parameters.h",
 					"semi_transient": false,
 					"settings":
@@ -1294,8 +1267,8 @@
 						"selection":
 						[
 							[
-								0,
-								0
+								1821,
+								1821
 							]
 						],
 						"settings":
@@ -1303,10 +1276,10 @@
 							"syntax": "Packages/C++/C++.sublime-syntax"
 						},
 						"translation.x": 0.0,
-						"translation.y": 324.0,
+						"translation.y": 162.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 7,
+					"stack_index": 1,
 					"type": "text"
 				}
 			]
@@ -1316,7 +1289,7 @@
 			"sheets":
 			[
 				{
-					"buffer": 9,
+					"buffer": 8,
 					"file": "vdma.c",
 					"semi_transient": false,
 					"settings":
@@ -1328,27 +1301,27 @@
 						"selection":
 						[
 							[
-								10973,
-								10973
+								12023,
+								12023
 							]
 						],
 						"settings":
 						{
 							"history_list_is_closing": true,
 							"syntax": "Packages/C++/C.sublime-syntax",
-							"tab_size": 4,
+							"tab_size": 2,
 							"translate_tabs_to_spaces": true,
 							"word_wrap": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 2808.0,
+						"translation.y": 5257.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 0,
+					"stack_index": 3,
 					"type": "text"
 				},
 				{
-					"buffer": 4,
+					"buffer": 9,
 					"file": "vdma.h",
 					"semi_transient": false,
 					"settings":
@@ -1360,8 +1333,8 @@
 						"selection":
 						[
 							[
-								0,
-								0
+								1847,
+								1847
 							]
 						],
 						"settings":
@@ -1373,10 +1346,10 @@
 							"word_wrap": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 108.0,
+						"translation.y": 432.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 1,
+					"stack_index": 9,
 					"type": "text"
 				},
 				{
@@ -1392,8 +1365,8 @@
 						"selection":
 						[
 							[
-								1812,
-								1812
+								163,
+								163
 							]
 						],
 						"settings":
@@ -1404,24 +1377,55 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 5,
+					"stack_index": 12,
 					"type": "text"
 				},
 				{
 					"buffer": 11,
-					"file": "sepImageFilter.c",
+					"file": "sepImageFilter.h",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 4181,
+						"buffer_size": 1763,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								3862,
-								3862
+								582,
+								582
+							]
+						],
+						"settings":
+						{
+							"auto_name": "sepImageFilter.h",
+							"syntax": "Packages/C++/C++.sublime-syntax",
+							"tab_size": 2,
+							"word_wrap": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 120.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 5,
+					"type": "text"
+				},
+				{
+					"buffer": 12,
+					"file": "sepImageFilter.c",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 4065,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1598,
+								1598
 							]
 						],
 						"settings":
@@ -1431,19 +1435,19 @@
 							"word_wrap": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 1440.0,
+						"translation.y": 108.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 2,
+					"stack_index": 4,
 					"type": "text"
 				},
 				{
-					"buffer": 12,
-					"file": "sepImageFilter.h",
+					"buffer": 13,
+					"file": "sepImageFilter_parameters.h",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 1763,
+						"buffer_size": 4596,
 						"regions":
 						{
 						},
@@ -1456,15 +1460,13 @@
 						],
 						"settings":
 						{
-							"auto_name": "sepImageFilter.h",
-							"syntax": "Packages/C++/C++.sublime-syntax",
-							"tab_size": 2
+							"syntax": "Packages/C++/C++.sublime-syntax"
 						},
 						"translation.x": 0.0,
-						"translation.y": 54.0,
+						"translation.y": 1134.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 8,
+					"stack_index": 7,
 					"type": "text"
 				}
 			]
@@ -1498,7 +1500,7 @@
 		"cols":
 		[
 			0.0,
-			0.402604166667,
+			0.574479166667,
 			1.0
 		],
 		"rows":
@@ -1550,7 +1552,7 @@
 		],
 		"width": 0.0
 	},
-	"selected_group": 1,
+	"selected_group": 0,
 	"settings":
 	{
 	},

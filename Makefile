@@ -153,6 +153,9 @@ upload_root: update_root cp-print-VDMA-arm cp_read_mem cp-test-VDMA-arm-fr
 
 ####################################################################################
 
+cp-all: cp-test-filter-arm cp_write_mem cp_read_mem cp-print-VDMA-arm
+	scp canny_mod/lena_blurred_0.bmp zedboard:~
+
 clean:
 	rm -rf $(pipefr_dir)/*.o
 

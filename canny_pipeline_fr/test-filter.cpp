@@ -18,7 +18,7 @@ int main() {
   vdma_handle handle;
   sepimgfilter_handle filter_handle;
 
-  int frame_len = PIXEL_CHANNELS * IN_FRAME_WIDTH * IN_FRAME_HEIGHT;
+ 
   int mem;
   void *read_fb, *write_fb;
   unsigned int page_size = sysconf(_SC_PAGESIZE);
@@ -27,13 +27,15 @@ int main() {
   unsigned char vt_coeffs[] = {1, 4, 7, 4, 1};
   unsigned int norm = 289;
 
-  char in_file[]="lena_gray.bmp";
+  char in_file[]="lena_blurred_0.bmp";
   char out_file[]="lena_blurred.bmp";
   int size=0, width=0, height=0;
   unsigned char *img_data;
   unsigned char *img_info;
   readBMP(in_file, &img_info, &img_data, &size, &width, &height);
   writeBMP(out_file, img_info, img_data, size);
+
+  int frame_len = 1 * width * height;
 
   if(img_data==NULL){
     printf("Error opening file %s.\nExiting..\n", in_file);
@@ -52,13 +54,14 @@ int main() {
   printf("\n\n");
   */
 
-  vdma_setup(&handle, page_size, AXI_VDMA_BASEADDR, IN_FRAME_WIDTH, IN_FRAME_HEIGHT, PIXEL_CHANNELS, BUFFER_SIZE, MEM2VDMA_BUFFER1_BASEADDR, MEM2VDMA_BUFFER2_BASEADDR, MEM2VDMA_BUFFER3_BASEADDR, VDMA2MEM_BUFFER1_BASEADDR, VDMA2MEM_BUFFER2_BASEADDR, VDMA2MEM_BUFFER3_BASEADDR, AXI_PULSER);
+  vdma_setup(&handle, page_size, AXI_VDMA_BASEADDR, width, height, PIXEL_CHANNELS, BUFFER_SIZE, MEM2VDMA_BUFFER1_BASEADDR, MEM2VDMA_BUFFER2_BASEADDR, MEM2VDMA_BUFFER3_BASEADDR, VDMA2MEM_BUFFER1_BASEADDR, VDMA2MEM_BUFFER2_BASEADDR, VDMA2MEM_BUFFER3_BASEADDR, AXI_PULSER_ADDR);
   
-  sepImageFilter_setup(&filter_handle, &handle.vdmaHandler, page_size, AXI_SEPIMGFILTER);
+  sepImageFilter_setup_handle(&filter_handle, &handle.vdmaHandler, page_size, AXI_SEPIMGFILTER);
   sepImageFilter_setImageParams(&filter_handle, width, height);
   sepImageFilter_setHzKernelCoeffs(&filter_handle, hz_coeffs[0], hz_coeffs[1], hz_coeffs[2], hz_coeffs[3], hz_coeffs[4]);
   sepImageFilter_setVtKernelCoeffs(&filter_handle, vt_coeffs[0], vt_coeffs[1], vt_coeffs[2], vt_coeffs[3], vt_coeffs[4]);
   sepImageFilter_setNormalizationFactor(&filter_handle, norm);
+  sepImageFilter_setup(&filter_handle);
 
   printf("Setting up done.\n");
   
@@ -98,11 +101,11 @@ int main() {
 
   // send fsync to VDMA  
   printf("Sending fsync...\n");
-  vdma_send_fsync(&handle);
+  //vdma_send_fsync(&handle);
 
   // wait for filter to finish
   printf("Waiting the filter to finish..\n");
-  //while(sepImageFilter_running(&filter_handle) == 1);
+  while(sepImageFilter_running(&filter_handle) == 1);
 
   // read s2mm buffer
  	printf("Debug: read buffer content:\n");
@@ -115,7 +118,7 @@ int main() {
   
 
   // Halt VDMA and unmap memory ranges
-  vdma_halt(&handle);
+  //vdma_halt(&handle);
 
   munmap(read_fb, BUFFER_SIZE);
   munmap(write_fb, BUFFER_SIZE);

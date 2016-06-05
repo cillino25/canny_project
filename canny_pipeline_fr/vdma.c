@@ -244,7 +244,7 @@ void vdma_start_triple_buffering_mod(vdma_handle *handle) {
     // Do not mask interrupts
     vdma_set(handle, OFFSET_VDMA_S2MM_IRQ_MASK, 0xf);
 
-    int interrupt_frame_count = 1;
+    int interrupt_frame_count = 3;
 
     //printf("-d: start s2mm\n");
     // Start both S2MM and MM2S in triple buffering mode

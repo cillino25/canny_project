@@ -50,6 +50,7 @@
 #include <xil_printf.h>
 #include <xil_types.h>
 #include <xil_io.h>
+#include <xil_cache.h>
 
 #include "platform.h"
 
@@ -74,6 +75,9 @@ static inline void dcache_clean(void)
 
 
 int main() {
+  Xil_L1DCacheDisable();
+  Xil_L2CacheDisable();
+  disable_caches();
 
   int h, j, i;
   vdma_handle handle;
@@ -91,11 +95,13 @@ int main() {
 
 
   init_platform();
-
+  xil_printf("\r\n\nHelloworld application\r\n");
   xil_printf("Setting I/O buffers\r\n");
 
   // memset input buffer 1
-  for(i=0; i<size; i++) Xil_Out32(handle.fb1PhysicalAddress_mm2s, img[i]);
+  for(i=0; i<size; i++){
+	  Xil_Out8(MEM2VDMA_BUFFER1_BASEADDR + i, img[i]);
+  }
   // memset input buffer 2
   for(i=0; i<BUFFER_SIZE/4; i++) Xil_Out32(MEM2VDMA_BUFFER2_BASEADDR + i*4, 0xBBBBBBBB);
   // memset input buffer 3
@@ -123,10 +129,12 @@ int main() {
   handle.fb3PhysicalAddress_s2mm = 0x1f900000;
   handle.pulserPhysicalAddress   = 0x46000000;
 
+  filter_handle.baseAddr = AXI_SEPIMGFILTER;
+
 
   xil_printf("Setting sepImageFilter registers\r\n");
   //sepImageFilter_setup_handle(&filter_handle, &handle.vdmaHandler, page_size, AXI_SEPIMGFILTER);
-  filter_handle.baseAddr = AXI_SEPIMGFILTER;
+
   sepImageFilter_setImageParams(&filter_handle, width, height);
   sepImageFilter_setHzKernelCoeffs(&filter_handle, hz_coeffs[0], hz_coeffs[1], hz_coeffs[2], hz_coeffs[3], hz_coeffs[4]);
   sepImageFilter_setVtKernelCoeffs(&filter_handle, vt_coeffs[0], vt_coeffs[1], vt_coeffs[2], vt_coeffs[3], vt_coeffs[4]);
@@ -136,30 +144,56 @@ int main() {
   xil_printf("Setting up done.\r\n");
 
   xil_printf("Starting VDMA triple buffering..\r\n");
-  vdma_start_triple_buffering_mod(&handle);
+  //xil_printf("sepImageFilter status register: %d\r\n", Xil_In32(0x47000000));
 
-  xil_printf("Starting sepImageFilter..\r\n");
   sepImageFilter_start(&filter_handle);
+  vdma_start_triple_buffering_mod(&handle);
+  //while(1);
+  //xil_printf("Starting sepImageFilter..\r\n");
 
-  xil_printf("VDMA and filter started.\r\n");
+
+  //xil_printf("VDMA and filter started.\r\n");
 
   // Read the image
 
 
 
-  xil_printf("sepImageFilter status register: %d\r\n", Xil_In32(0x47000000));
+  //xil_printf("sepImageFilter status register: %d\r\n", Xil_In32(0x47000000));
 
   // wait for filter to finish
-  xil_printf("Waiting the filter to finish..\r\n");
-  while(sepImageFilter_running(&filter_handle) == 0);
+  //xil_printf("Waiting the filter to finish: %d\r\n", sepImageFilter_running(&filter_handle) == 1);
+  while(sepImageFilter_running(&filter_handle) != 0);
 
   //dcache_clean();
 
+  xil_printf("Print input buffer (0x%x):\r\n", handle.fb1PhysicalAddress_mm2s);
+	for(i=0; i<size; i++) xil_printf("[0x%x] 0x%x\r\n", handle.fb1PhysicalAddress_mm2s + (i<<2), Xil_In32(handle.fb1PhysicalAddress_mm2s + (i<<2)));
+	xil_printf("\r\n\n");
+
+	xil_printf("Print output buffer (0x%x):\r\n", handle.fb2PhysicalAddress_mm2s);
+	for(i=0; i<size; i++) xil_printf("[0x%x] 0x%x\r\n", handle.fb2PhysicalAddress_mm2s + (i<<2), Xil_In32(handle.fb2PhysicalAddress_mm2s + (i<<2)));
+	xil_printf("\r\n\n");
+
+	xil_printf("Print output buffer (0x%x):\r\n", handle.fb3PhysicalAddress_mm2s);
+	for(i=0; i<size; i++) xil_printf("[0x%x] 0x%x\r\n", handle.fb3PhysicalAddress_mm2s + (i<<2), Xil_In32(handle.fb3PhysicalAddress_mm2s + (i<<2)));
+
+
+  xil_printf("\n\n\r**********************************\r\n");
   xil_printf("Print output buffer (0x%x):\r\n", handle.fb1PhysicalAddress_s2mm);
-  for(i=0; i<size; i++) xil_printf("[0x%x] 0x%x\r\n", handle.fb1PhysicalAddress_s2mm + (i<<2), Xil_In32(handle.fb1PhysicalAddress_s2mm + (i<<2) ));
+  for(i=0; i<size; i++) xil_printf("[0x%x] 0x%x\r\n", handle.fb1PhysicalAddress_s2mm + (i<<2), Xil_In32(handle.fb1PhysicalAddress_s2mm + (i<<2)));
+  xil_printf("\r\n\n");
+
+  xil_printf("Print output buffer (0x%x):\r\n", handle.fb2PhysicalAddress_s2mm);
+  for(i=0; i<size; i++) xil_printf("[0x%x] 0x%x\r\n", handle.fb2PhysicalAddress_s2mm + (i<<2), Xil_In32(handle.fb2PhysicalAddress_s2mm + (i<<2)));
+  xil_printf("\r\n\n");
+
+  xil_printf("Print output buffer (0x%x):\r\n", handle.fb3PhysicalAddress_s2mm);
+  for(i=0; i<size; i++) xil_printf("[0x%x] 0x%x\r\n", handle.fb3PhysicalAddress_s2mm + (i<<2), Xil_In32(handle.fb3PhysicalAddress_s2mm + (i<<2)));
+  xil_printf("\r\n\n");
 
   xil_printf("Bye!\r\n");
 
+  xil_printf("sepImageFilter status register: %d\r\n", Xil_In32(0x47000000));
 
   while(1);
 

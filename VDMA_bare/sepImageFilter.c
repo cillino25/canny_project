@@ -74,7 +74,8 @@ int sepImageFilter_done(sepimgfilter_handle *handle){
 
 int sepImageFilter_running(sepimgfilter_handle *handle){
 	// (1<<2)=4 : ap_idle bit
-	return (sepImageFilter_get(handle, XSEPIMAGEFILTER_CONTROL_BUS_ADDR_AP_CTRL) & 4)==0;
+	if((sepImageFilter_get(handle, XSEPIMAGEFILTER_CONTROL_BUS_ADDR_AP_CTRL) & 4)==0) return 1;
+	return 0;
 }
 
 int sepImageFilter_ready(sepimgfilter_handle *handle){
@@ -93,8 +94,9 @@ void sepImageFilter_set(sepimgfilter_handle *handle, int num, unsigned int val){
 unsigned int sepImageFilter_get(sepimgfilter_handle *handle, int num){
 	if(num>=0){
 		//return ((volatile unsigned int *)handle->imgFilterVirtualAddress)[num>>2];
-		Xil_In32(handle->baseAddr + (num));
-		//xil_printf("Reading at address 0x%x: %d\r\n", handle->baseAddr + (num), Xil_In32(handle->baseAddr + (num)));
+		return Xil_In32(handle->baseAddr + (num));
+		//xil_printf("Reading at address 0x%x: %d\r\n", handle->baseAddr + (num), tmp);
+
 	}
 	return 0;
 }

@@ -26,7 +26,7 @@ unsigned int vdma_get(vdma_handle *handle, int num) {
 
 void vdma_set(vdma_handle *handle, int num, unsigned int val) {
     //((volatile unsigned int *)handle->vdmaVirtualAddress)[num>>2]=val;
-	xil_printf("Setting address 0x%x = 0x%x\r\n", handle->baseAddr + (num), val);
+	//xil_printf("Setting address 0x%x = 0x%x\r\n", handle->baseAddr + (num), val);
 	Xil_Out32(handle->baseAddr + (num), val);
 
 }
@@ -93,28 +93,28 @@ void vdma_mm2s_control_dump(vdma_handle *handle){
 // Triple buffering - working version
 void vdma_start_triple_buffering_mod(vdma_handle *handle) {
     // Reset VDMA
-    xil_printf("-d: resetting VDMA\r\n");
+    //xil_printf("-d: resetting VDMA\r\n");
     vdma_set(handle, OFFSET_VDMA_S2MM_CONTROL_REGISTER, VDMA_CONTROL_REGISTER_RESET);
     vdma_set(handle, OFFSET_VDMA_MM2S_CONTROL_REGISTER, VDMA_CONTROL_REGISTER_RESET);
 
     // Wait for reset to finish
-    xil_printf("-d: waiting for reset to finish...\r\n");
+    //xil_printf("-d: waiting for reset to finish...\r\n");
     while((vdma_get(handle, OFFSET_VDMA_S2MM_CONTROL_REGISTER) & VDMA_CONTROL_REGISTER_RESET)==4);
     while((vdma_get(handle, OFFSET_VDMA_MM2S_CONTROL_REGISTER) & VDMA_CONTROL_REGISTER_RESET)==4);
 
-    xil_printf("-d: clear error bits in status registers\r\n");
+    //xil_printf("-d: clear error bits in status registers\r\n");
     // Clear all error bits in status register
     vdma_set(handle, OFFSET_VDMA_S2MM_STATUS_REGISTER, 0);
-    xil_printf("done\r\n");
+    //xil_printf("done\r\n");
     vdma_set(handle, OFFSET_VDMA_MM2S_STATUS_REGISTER, 0);
 
     // Do not mask interrupts
-    xil_printf("Set interrupt mask\r\n");
+    //xil_printf("Set interrupt mask\r\n");
     vdma_set(handle, OFFSET_VDMA_S2MM_IRQ_MASK, 0xf);
 
     int interrupt_frame_count = 1;
 
-    xil_printf("-d: start s2mm\r\n");
+    //xil_printf("-d: start s2mm\r\n");
     // Start both S2MM and MM2S in triple buffering mode
     vdma_set(handle, OFFSET_VDMA_S2MM_CONTROL_REGISTER,
         (interrupt_frame_count << 16) |
@@ -122,7 +122,7 @@ void vdma_start_triple_buffering_mod(vdma_handle *handle) {
         VDMA_CONTROL_REGISTER_GENLOCK_ENABLE |
         VDMA_CONTROL_REGISTER_GenlockSrc |
         VDMA_CONTROL_REGISTER_CIRCULAR_PARK);
-    xil_printf("-d: start mm2s\r\n");
+    //xil_printf("-d: start mm2s\r\n");
     vdma_set(handle, OFFSET_VDMA_MM2S_CONTROL_REGISTER,
         (interrupt_frame_count << 16) |
         VDMA_CONTROL_REGISTER_START |
@@ -143,7 +143,7 @@ void vdma_start_triple_buffering_mod(vdma_handle *handle) {
     // Extra register index, use first 16 frame pointer registers
     vdma_set(handle, OFFSET_VDMA_S2MM_REG_INDEX, 0);
 
-    xil_printf("Setting frame buffer addresses..\r\n");
+    //xil_printf("Setting frame buffer addresses..\r\n");
     // Write physical addresses to control register
     vdma_set(handle, OFFSET_VDMA_MM2S_FRAMEBUFFER1, (unsigned int)handle->fb1PhysicalAddress_mm2s);
     vdma_set(handle, OFFSET_VDMA_S2MM_FRAMEBUFFER1, (unsigned int)handle->fb1PhysicalAddress_s2mm);

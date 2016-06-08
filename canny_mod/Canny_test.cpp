@@ -124,16 +124,14 @@ int main( int argc, char** argv )
   //printf("Result image will be %s\n", res);
 
 
-  Vec3b intensity;
-
-
   //printf("Print image values:\n");
-  for(i=0; i<src.rows; i++){
-    for(j=0; j<src.cols; j++){
-      intensity = src.at<Vec3b>(j, i);
-      //printf("src.at<uchar>(%d,%d) (BGR)=(%d,%d,%d)\n", j, i, intensity.val[0], intensity.val[1], intensity.val[2]);
-    }
-  }
+  //Vec3b intensity;
+  //for(i=0; i<src.rows; i++){
+  //  for(j=0; j<src.cols; j++){
+  //    intensity = src.at<Vec3b>(j, i);
+  //    //printf("src.at<uchar>(%d,%d) (BGR)=(%d,%d,%d)\n", j, i, intensity.val[0], intensity.val[1], intensity.val[2]);
+  //  }
+  //}
 
 
   /// Create a matrix of the same type and size as src (for dst)
@@ -174,6 +172,7 @@ int main( int argc, char** argv )
 
   // PSNR evaluation
   #ifdef METRICS
+  
   printf("PSNR evaluation\n");
   //printf("getPSNR(src_gray, detected_edges)  = %lf\n", getPSNR(src_gray, detected_edges));
   //printf("getPSNR(src_gray, lena_ref/lena_1.5_40.bmp)  = %lf\n", getPSNR(src_gray, lena_ref));
@@ -183,6 +182,17 @@ int main( int argc, char** argv )
   printf("getPSNR(src_gray, src_blurred)  = %lf\n", getPSNR(src_gray, img_blurred));
   printf("getMSSIM(src_gray, src_blurred) = %lf\n", getMSSIM(src_gray, img_blurred).val[0]); // NB: the two images must have THE SAME NUMBER OF CHANNELS!
   printf("\n");
+  
+
+  if(custom==2){
+    Mat bl0 = imread("src_blurred_0.bmp", 0);
+    Mat bl2 = imread("src_blurred_2.bmp", 0);
+    printf("getPSNR(src_blurred_0, src_blurred_2)  = %lf\n", getPSNR(bl0, bl2));
+    printf("getMSSIM(src_blurred_0, src_blurred_2) = %lf\n", getMSSIM(bl0, bl2).val[0]); // NB: the two images must have THE SAME NUMBER OF CHANNELS!
+    printf("\n");
+  }
+
+
   #endif
   src.release();
   src_gray.release();
@@ -207,7 +217,7 @@ void CannyThreshold(const Mat src, Mat *dst, int Threshold, double sigma, int gB
   my_Space::GaussianBlur(src, *dst, Size(gBlurMaskSize,gBlurMaskSize), sigma, sigma, BORDER_DEFAULT, custom);
   gettimeofday(&stop, NULL);
   //time2 = (double) getTickCount(); //getTickFrequency();
-  //printf("Gaussian Blur wall time: %lf s\n\n", ((stop.tv_sec + stop.tv_usec*0.000001)-(start.tv_sec + start.tv_usec*0.000001))*PRESC);
+  printf("Gaussian Blur wall time: %lf s\n\n", ((stop.tv_sec + stop.tv_usec*0.000001)-(start.tv_sec + start.tv_usec*0.000001))*PRESC);
   
 
   //printf("Canny start..\n");
@@ -215,7 +225,7 @@ void CannyThreshold(const Mat src, Mat *dst, int Threshold, double sigma, int gB
   /// Canny detector
   my_Space::Canny( *dst, *dst, Threshold, Threshold*ratio, cannyMaskSize );
   gettimeofday(&stop, NULL);
-  //printf("Canny wall time: %lf s\n\n", ((stop.tv_sec + stop.tv_usec*0.000001)-(start.tv_sec + start.tv_usec*0.000001))*PRESC);
+  printf("Canny wall time: %lf s\n\n", ((stop.tv_sec + stop.tv_usec*0.000001)-(start.tv_sec + start.tv_usec*0.000001))*PRESC);
   
  }
 

@@ -4,11 +4,19 @@
 #include <fcntl.h>
 #include <sys/mman.h>
 
+
+#include "opencv2/imgproc/imgproc.hpp"
+#include "opencv2/highgui/highgui.hpp"
+
 #include "global_parameters.h"
 #include "vdma_parameters.h"
 #include "vdma.h"
 #include "sepImageFilter.h"
 #include "sepImageFilter_parameters.h"
+
+using namespace cv;
+using namespace std;
+
 
 unsigned char* readBMP(char* filename, unsigned char ** info, unsigned char ** data, int *size, int *width, int *height);
 int writeBMP(char* filename, unsigned char * info, unsigned char * data, int size);
@@ -27,13 +35,25 @@ int main() {
   unsigned char vt_coeffs[] = {1, 4, 7, 4, 1};
   unsigned int norm = 289;
 
-  char in_file[]="lena_blurred_0.bmp";
+  char in_file[]="lena_gray.bmp";
   char out_file[]="lena_blurred.bmp";
   int size=0, width=0, height=0;
   unsigned char *img_data;
   unsigned char *img_info;
-  readBMP(in_file, &img_info, &img_data, &size, &width, &height);
-  writeBMP(out_file, img_info, img_data, size);
+  
+  Mat src = imread(in_file, 0);
+  width = src.cols;
+  height = src.rows;
+  size = src.cols * src.rows * src.channels();
+  printf("w=%d, h=%d, tot pixels=%d\n", width, height, size);
+  Mat dest;
+  dest.create(src.size(), src.type());
+
+  unsigned char * src_data = src.data;
+
+
+//  readBMP(in_file, &img_info, &img_data, &size, &width, &height);
+//  writeBMP(out_file, img_info, img_data, size);
 
   int frame_len = 1 * width * height;
 
@@ -78,6 +98,9 @@ int main() {
     return -1;
   }
 
+  //memcpy(write_fb, (void*)img_data, size);
+  memcpy(write_fb, src_data, src.rows*src.cols*src.channels());
+  
   vdma_start_triple_buffering_mod(&handle);
   sepImageFilter_start(&filter_handle);
   printf("VDMA and filter started.\n");
@@ -85,37 +108,39 @@ int main() {
   // Read the image
   
 
-  printf("Image read.\n");
+  //printf("Image read.\n");
   
   // Copy image to mm2s buffer
-  printf("memcpy..\n");
-  memcpy(write_fb, (void*)img_data, size);            // ?????
+  //printf("memcpy..\n");
+  
+
   //for(i=0; i<size/4; i++) ((unsigned int*)write_fb)[i]=((unsigned int *)img_data)[i];
 
   
-  printf("Debug: write buffer content:\n");
+  //printf("Debug: write buffer content:\n");
   //for(i=0; i<size; i++)
   	//printf("-d: img[%d][%d] = %d\n", i/width, i%width, ((volatile unsigned char *)write_fb)[i]);
-  printf("write buffer printed.\n");
+  //printf("write buffer printed.\n");
 
 
   // send fsync to VDMA  
-  printf("Sending fsync...\n");
+  //printf("Sending fsync...\n");
   //vdma_send_fsync(&handle);
 
   // wait for filter to finish
   printf("Waiting the filter to finish..\n");
-  while(sepImageFilter_running(&filter_handle) == 1);
+  while(sepImageFilter_running(&filter_handle) != 0);
 
   // read s2mm buffer
- 	printf("Debug: read buffer content:\n");
+ 	//printf("Debug: read buffer content:\n");
   //for(i=0; i<size; i++)
   	//printf("-d: img[%d][%d] = %d\n", i/width, i%width, ((volatile unsigned char *)read_fb)[i]);
   
-  printf("read buffer printed.\n");
+  //printf("read buffer printed.\n");
 
-  //writeBMP(out_file, img_info, read_fb, size);
-  
+  //writeBMP(out_file, img_info, (unsigned char *)write_fb, size);
+  dest.data = (unsigned char *)read_fb;
+  imwrite(out_file, dest);
 
   // Halt VDMA and unmap memory ranges
   //vdma_halt(&handle);

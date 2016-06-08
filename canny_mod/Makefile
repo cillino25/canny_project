@@ -4,6 +4,11 @@ else
 	exe_type=_rv64ima
 endif
 
+canny_mod-arm:
+	arm-xilinx-linux-gnueabi-g++ convolution.cpp gaussian_coefficients.c Canny_test.cpp opencv_Canny.cpp opencv_Gblur.cpp -o canny_mod_arm `pkg-config --cflags --libs opencv`
+cp-canny-arm: canny_mod-arm
+	scp canny_mod_arm zedboard:~
+
 canny_mod:
 	g++ -g -I/usr/local/include -L/usr/local/lib -I/home/stefano/TESI/openCV/include convolution.cpp gaussian_coefficients.c Canny_test.cpp opencv_Canny.cpp opencv_Gblur.cpp -o canny_mod `pkg-config --cflags --libs opencv`
 
@@ -35,4 +40,4 @@ cp_callgrind: valgrind
 clean:
 	rm -rf callgrind.out.* canny_mod canny_mod__rv64g canny_mod__rv64ima
 
-.PHONY: canny_mod canny_mod_metrics canny_mod_riscv canny_mod_riscv_elf valgrind gauss
+.PHONY: canny_mod canny_mod_metrics canny_mod_riscv canny_mod_riscv_elf valgrind gauss canny_mod-arm cp-canny-arm

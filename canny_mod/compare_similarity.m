@@ -7,20 +7,20 @@ img_ref=imread(ref);
 ref_gray='lena_gray.bmp';
 img_ref_gray=imread(ref_gray);
 
-blur0='lena_blurred_0.bmp';
-blur1='lena_blurred_1.bmp';
-blur2='lena_blurred_2.bmp';
-blur3='lena_blurred_3.bmp';
-blur4='lena_blurred_4.bmp';
-blur5='lena_blurred_5.bmp';
-blur6='lena_blurred_6.bmp';
-img_blur0=imread(blur0);
-img_blur1=imread(blur1);
-img_blur2=imread(blur2);
-img_blur3=imread(blur3);
-img_blur4=imread(blur4);
-img_blur5=imread(blur5);
-img_blur6=imread(blur6);
+%blur0='lena_blurred_0.bmp';
+%blur1='lena_blurred_1.bmp';
+%blur2='lena_blurred_2.bmp';
+%blur3='lena_blurred_3.bmp';
+%blur4='lena_blurred_4.bmp';
+%blur5='lena_blurred_5.bmp';
+%blur6='lena_blurred_6.bmp';
+%img_blur0=imread(blur0);
+%img_blur1=imread(blur1);
+%img_blur2=imread(blur2);
+%img_blur3=imread(blur3);
+%img_blur4=imread(blur4);
+%img_blur5=imread(blur5);
+%img_blur6=imread(blur6);
 
 % strings cannot be stored inside matrices or arrays, so we must create a
 % cell array
@@ -39,3 +39,5 @@ end
 fsims
 min(fsims)
 find(fsims == min(fsims))
+
+FeatureSIM(img(:,:,1), img(:,:,3))

@@ -39,7 +39,7 @@ int main(int argc, char **argv)
 		exit(0);
 	}
 
-	for(i=0; i<16; i++)
+	for(i=0; i<1; i++)
 		((volatile unsigned int *) mem_mmap)[i] = val;
 
 	printf("-Written 0x%x at 0x%x.\n", val, mem_address);

@@ -5,7 +5,7 @@ NG=$1
 NC=3
 SIG=$2
 
-for K in {0..3..1}
+for K in {0..2..2}
 do
 	CMD=`./canny_mod lena_secret.bmp $T $SIG $NG $NC $K`
 	echo "$CMD"

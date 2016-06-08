@@ -2,6 +2,7 @@ include Makefrag
 
 cur_dir=.
 
+opencv_arm_dir=/usr/share/opencv_arm
 test-VDMA_dir=$(cur_dir)/VDMA_test
 pipefr_dir=$(cur_dir)/canny_pipeline_fr
 comm_dir=$(cur_dir)/comm_test/arm
@@ -100,6 +101,11 @@ cp-test-VDMA-rv-fr: test-VDMA-rv-fr
 ####################################################################################
 ## VDMA test with fsync and filter
 
+test-filter-arm-cv:
+	$(ARM_CPP) $(pipefr_dir)/sepImageFilter.c $(pipefr_dir)/vdma.c $(pipefr_dir)/test-filter.cpp -o $(pipefr_dir)/test-filter-opencv -I$(opencv_arm_dir)/include -L$(opencv_arm_dir)/lib `pkg-config --cflags --libs opencv`
+cp-test-filter-arm-cv: test-filter-arm-cv
+	scp $(pipefr_dir)/test-filter-opencv zedboard:~/
+
 test-filter-arm:
 	$(ARM_CC) -c -std=c99 -o $(pipefr_dir)/vdma.o $(pipefr_dir)/vdma.c 
 	$(ARM_CC) -c -std=c99 -o $(pipefr_dir)/sepImageFilter.o $(pipefr_dir)/sepImageFilter.c 
@@ -153,8 +159,15 @@ upload_root: update_root cp-print-VDMA-arm cp_read_mem cp-test-VDMA-arm-fr
 
 ####################################################################################
 
-cp-all: cp-test-filter-arm cp_write_mem cp_read_mem cp-print-VDMA-arm
+cp-all: cp_write_mem cp_read_mem cp-print-VDMA-arm
 	scp canny_mod/lena_blurred_0.bmp zedboard:~
+
+cp-opencv-libs:
+	scp -r $(opencv_arm_dir)/bin/* zedboard:/usr/bin
+	scp -r $(opencv_arm_dir)/include/* zedboard:/usr/include
+	scp -r $(opencv_arm_dir)/lib/* zedboard:/usr/lib
+	scp -r $(opencv_arm_dir)/share/* zedboard:/usr/share
+	
 
 clean:
 	rm -rf $(pipefr_dir)/*.o

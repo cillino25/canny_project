@@ -125,26 +125,32 @@ namespace my_Space
 
 			
 		}else if(custom == 2){	// Custom Gaussian Separable 2D filter (integer >1 kernel coefficients, uchar data)
-			int h;
+			int h, i;
 			long long * tmp_kernel;
-
+			float * kernel = (float*)malloc(sx * sizeof(float));
 			get_custom_coeff_vector(sx, sigma1, &tmp_kernel, &norm);
 
-			convolve2DSeparable(data_in, data_out, cols, rows, tmp_kernel, sx, tmp_kernel, sx, norm*norm, DIV_NORMAL);			
+			for(i=0; i<sx; i++){
+				kernel[i] = tmp_kernel[i]/((float)norm);
+				//printf("-d: kernel[%d] = %f  =  tmp_kernel[%d] (=%lld) / norm (%lld)\n", i, kernel[i], i, tmp_kernel[i], norm);
+			}
+			//convolve2DSeparable(data_in, data_out, cols, rows, tmp_kernel, sx, tmp_kernel, sx, norm*norm, DIV_NORMAL);			
+			//Mat out_img = Mat(rows, cols, CV_8UC1, data_out);
+			//out_img.copyTo(_dst);
+			//imwrite("src_blurred_2.bmp", out_img);
 
-			Mat out_img = Mat(rows, cols, CV_8UC1, data_out);
 
-			out_img.copyTo(_dst);
-			imwrite("src_blurred_2.bmp", out_img);
+			//Mat K = (Mat_<double>(ksize,1) << 1./17, 4./17, 7./17, 4./17, 1./17);
+			Mat K = Mat(1, sx, CV_32FC1, kernel);
+			//for(i=0; i<sx; i++)
+			//	printf("K[%d] = %f\n", i, K.at<float>(0, i));
 
-			/*
-			Mat tmp;
-		  Size src_size=_dst.size();
-		  src_size.height=src_size.height-(sx/2);
-		  src_size.width=src_size.width-(sx/2);
-		  resize(_dst, tmp, src_size);
-			imwrite("src_blurred_2.bmp", tmp);
-			*/
+			cv::sepFilter2D(_src, _dst, -1 , K, K, Point( -1, -1 ), 0, BORDER_REPLICATE );
+			imwrite("src_blurred_2.bmp", _dst);
+
+
+			free(kernel);
+			
 
 		}else if(custom == 3){	// Custom Gaussian Separable 2D filter (integer >1 kernel coefficients, uchar data, SHIFT instead of division)
 			int h;

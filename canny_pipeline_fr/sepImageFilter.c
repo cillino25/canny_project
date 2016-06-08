@@ -89,7 +89,10 @@ int sepImageFilter_done(sepimgfilter_handle *handle){
 
 int sepImageFilter_running(sepimgfilter_handle *handle){
 	// (1<<2)=4 : ap_idle bit
-	return (sepImageFilter_get(handle, XSEPIMAGEFILTER_CONTROL_BUS_ADDR_AP_CTRL) & 4)==0;
+	if((sepImageFilter_get(handle, XSEPIMAGEFILTER_CONTROL_BUS_ADDR_AP_CTRL) & 4)==0)
+		return 1;
+	return 0;
+		
 }
 
 int sepImageFilter_ready(sepimgfilter_handle *handle){
@@ -99,7 +102,7 @@ int sepImageFilter_ready(sepimgfilter_handle *handle){
 
 
 void sepImageFilter_set(sepimgfilter_handle *handle, int num, unsigned int val){
-	printf("Setting address 0x%x: %d\n", handle->imgFilterVirtualAddress + (num>>2), sepImageFilter_get(handle, num));
+	//printf("Setting address 0x%x: %d\n", handle->imgFilterVirtualAddress + (num>>2), sepImageFilter_get(handle, num));
 	((volatile unsigned int *)handle->imgFilterVirtualAddress)[num>>2]=val;
 }
 

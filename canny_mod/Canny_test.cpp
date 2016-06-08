@@ -143,10 +143,10 @@ int main( int argc, char** argv )
   //printf("src_gray.height=%d, width=%d\n", s1.height, s1.width);
   
   //printf("CannyThreshold launched with\n  th=%d\n  sigma=%lf\n  gBlurMaskSize=%d\n  cannyMaskSize=%d\n\n", threshold, sigma, gblur, canny);
-  gettimeofday(&start, NULL);
+  //gettimeofday(&start, NULL);
   CannyThreshold(src_gray, &detected_edges, threshold, sigma, gblur, canny, custom);
-  gettimeofday(&stop, NULL);
-  printf("CannyThreshold total wall time: %lf s\n\n", ((stop.tv_sec + stop.tv_usec*0.000001)-(start.tv_sec + start.tv_usec*0.000001))*PRESC);
+  //gettimeofday(&stop, NULL);
+  //printf("CannyThreshold total wall time: %lf s\n\n", ((stop.tv_sec + stop.tv_usec*0.000001)-(start.tv_sec + start.tv_usec*0.000001))*PRESC);
 
 
 
@@ -202,7 +202,7 @@ int main( int argc, char** argv )
 
 void CannyThreshold(const Mat src, Mat *dst, int Threshold, double sigma, int gBlurMaskSize, int cannyMaskSize, int custom)
 {
-  //printf("**Gaussian blur start..\n");
+  printf("**Gaussian blur start..\n");
   gettimeofday(&start, NULL);
   my_Space::GaussianBlur(src, *dst, Size(gBlurMaskSize,gBlurMaskSize), sigma, sigma, BORDER_DEFAULT, custom);
   gettimeofday(&stop, NULL);

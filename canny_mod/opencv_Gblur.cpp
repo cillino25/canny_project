@@ -42,13 +42,13 @@ namespace my_Space
 		// Needed only for case 2
 		unsigned char * data_in;
 		unsigned char * data_out;
-		//data_in = in_img.data;
-		//data_out = (unsigned char *) malloc(cols*rows*sizeof(unsigned char));
+		data_in = in_img.data;
+		data_out = (unsigned char *) malloc(cols*rows*sizeof(unsigned char));
 		
 		int sx = ksize.width;  //printf("-d: sx = ksize.width = %d\n", sx);  (={3,5,7})
 		int sy = ksize.height; //printf("-d: sy = ksize.height = %d\n", sy); (={3,5,7})
 
-		long long norm;
+		long norm;
 		Mat kx, ky;
 		//Mat custom_kernel(sx, sy, CV_32F);
 		
@@ -127,15 +127,15 @@ namespace my_Space
 			
 		}else if(custom == 2){	// Custom Gaussian Separable 2D filter (integer >1 kernel coefficients, uchar data)
 			int h, i;
-			long long * tmp_kernel;
+			long * tmp_kernel;
 			float * kernel = (float*)malloc(sx * sizeof(float));
 			get_custom_coeff_vector(sx, sigma1, &tmp_kernel, &norm);
 
 			// For timing profiling (custom convolution with integer coefficients)
 			convolve2DSeparable(data_in, data_out, cols, rows, tmp_kernel, sx, tmp_kernel, sx, norm*norm, DIV_NORMAL);			
 			// Similar to _dst.data = data_out; for Mat, but with Output_Array?
-			//Mat out_img = Mat(rows, cols, CV_8UC1, data_out);
-			//out_img.copyTo(_dst);
+			Mat out_img = Mat(rows, cols, CV_8UC1, data_out);
+			out_img.copyTo(_dst);
 			//imwrite("src_blurred_2.bmp", out_img);
 
 
@@ -154,13 +154,13 @@ namespace my_Space
 
 		}else if(custom == 3){	// Custom Gaussian Separable 2D filter (integer >1 kernel coefficients, uchar data, SHIFT instead of division)
 			int h;
-			long long * tmp_kernel;
+			long * tmp_kernel;
 
 			get_custom_coeff_vector(sx, sigma1, &tmp_kernel, &norm);
 			
-			long long norm2 = round_to_pow2(norm*norm);
+			long norm2 = round_to_pow2(norm*norm);
 			
-			//////////////////////convolve2DSeparable(data_in, data_out, cols, rows, tmp_kernel, sx, tmp_kernel, sx, (long long) log2(norm2), DIV_SHIFT);
+			//////////////////////convolve2DSeparable(data_in, data_out, cols, rows, tmp_kernel, sx, tmp_kernel, sx, (long) log2(norm2), DIV_SHIFT);
 			
 
 			Mat out_img = Mat(rows, cols, CV_8UC1, data_out);
@@ -318,7 +318,7 @@ namespace my_Space
 	    return kernel;
 	}
 
-	void createCustomGaussianMask(int ksize, double sigma, Mat & kernel, long long *normalization, int type, int custom){
+	void createCustomGaussianMask(int ksize, double sigma, Mat & kernel, long *normalization, int type, int custom){
 		/*
 		int i=0, j=0;
 		long *coeffs;

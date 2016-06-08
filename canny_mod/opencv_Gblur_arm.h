@@ -14,8 +14,8 @@
 //#include "opencv2/imgproc/imgproc_c.h"
 #include "opencv2/core.hpp"
 
-#include "gaussian_coefficients.h"
-#include "convolution.h"
+#include "gaussian_coefficients_arm.h"
+#include "convolution_arm.h"
 
 
 using namespace cv;
@@ -74,7 +74,7 @@ namespace my_Space {
  */
 	Mat getGaussianKernel( int ksize, double sigma, int ktype = CV_64F );
 
-	void createCustomGaussianMask(int ksize, double sigma, Mat & kernel, long * normalization, int type, int custom);
+	void createCustomGaussianMask(int ksize, double sigma, Mat & kernel, int * normalization, int type, int custom);
 }
 
 #endif /* OPENCV_GBLUR_H_ */

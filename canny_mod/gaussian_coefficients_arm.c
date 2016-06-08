@@ -3,23 +3,23 @@
 #include <math.h>
 #include <string.h>
 
-#include "gaussian_coefficients.h"
+#include "gaussian_coefficients_arm.h"
 
 double       gf[MAX_N] = {0.};
 double       GF[MAX_N] = {0.};
-long long    GI[MAX_N] = {0};
-long long    mask[MAX_N][MAX_N] = {0};
-long long    mask2[MAX_N][MAX_N] = {0};
+int          GI[MAX_N] = {0};
+int          mask[MAX_N][MAX_N] = {0};
+int          mask2[MAX_N][MAX_N] = {0};
+
 
 
 /*
-
 int main(int argc, char **argv){
 	int n=5;
 	int i=0, j=0;
 	double sigma=1;
 
-	long long norm1 = 0, norm2 = 0, norm2_appr=0;
+	int norm1 = 0, norm2 = 0, norm2_appr=0;
 
 	if(argc == 1 ) printf("Help: ./gaussian_coefficients <dim_mask> <sigma>\n\n");
 
@@ -121,40 +121,40 @@ void get_float_coeffs(int n, double *gf, double *GF){
 	return;
 }
 
-void get_int_coeffs(int n, double *gf, long *GI){
+void get_int_coeffs(int n, double *gf, int *GI){
 	int i=0;
 	double alfa_d = 1/gf[0];
 //	printf("-d: alfa_d=1/gf[0]=%lf\n", alfa_d);
 
-	//long alfa_i = (long) alfa_d;
+	//int alfa_i = (int) alfa_d;
 //	printf("-d: alfa_i=(int)alfa_d=%d\n", alfa_i);
 
 
 	for(i=0; i<n; i++){
 		//GI[i]=round(alfa_i*gf[i]);
 		//printf("GI[%d]= alfa_i*gf[%d]=%d\n", i, i, GI[i]);
-		GI[i]=(long)round(alfa_d*gf[i]);
+		GI[i]=(int)round(alfa_d*gf[i]);
 		//printf("GI_[%d]=alfa_d*gf[%d]=%lf => %d\n", i, i,  alfa_d*gf[i], GI[i]);
 	}
 
 	return;
 }
 
-long long round_to_pow2(double x){
-	long k = round(x);
+int round_to_pow2(double x){
+	int k = round(x);
 	//printf("k=round(x)=%d\n", k);
-	long l = log2(k);
+	int l = log2(k);
 	//printf("l=log2(k)=%d\n", l);
 	//printf("%d - %d\n", abs(pow(2,l) - k), abs(pow(2,l+1) - k));
-	long appr = abs(pow(2,l) - k) < abs(pow(2,l+1) - k) ? pow(2,l) : pow(2, l+1);
+	int appr = abs(pow(2,l) - k) < abs(pow(2,l+1) - k) ? pow(2,l) : pow(2, l+1);
 	//printf("best pow-of-2 approximation is %d\n", appr);
 	return appr;
 }
 
 // Sum of Squared Errors for two matrices
-long long SSE(int dim, long long a[MAX_N][MAX_N], long long b[MAX_N][MAX_N]){
+int SSE(int dim, int a[MAX_N][MAX_N], int b[MAX_N][MAX_N]){
 	int i,j;
-	long err=0;
+	int err=0;
 	for(i=0; i<dim; i++)
 		for(j=0; j<dim; j++)
 			err += abs(a[i][j] - b[i][j]);//, 2);
@@ -162,11 +162,11 @@ long long SSE(int dim, long long a[MAX_N][MAX_N], long long b[MAX_N][MAX_N]){
 }
 
 
-void get_custom_coeff_vector(int n, double sigma, long ** kernel, long * normalization_factor){
+void get_custom_coeff_vector(int n, double sigma, int ** kernel, int * normalization_factor){
 	int i=0;
-	long  norm = 0;
+	int  norm = 0;
 	double gf[MAX_N]={0};
-	long * vector = (long *) calloc(n, sizeof(long));
+	int * vector = (int *) calloc(n, sizeof(int));
 	for(i=0; i<n; i++)
 		gf[i]=gaussian_sampling(n, i, sigma);
 	
@@ -181,19 +181,19 @@ void get_custom_coeff_vector(int n, double sigma, long ** kernel, long * normali
 	*normalization_factor = norm;
 }
 
-void get_custom_coeff_matrix(int n, double sigma, long ** kernel, long * normalization_factor){
+void get_custom_coeff_matrix(int n, double sigma, int ** kernel, int * normalization_factor){
 	int i=0,j=0;
 	double norm=0;
 	double gf[MAX_N] = {0};
-	//printf("Allocating %dx%d long matrix - sizeof(long)=%ld\n", n, n, sizeof(long));
+	//printf("Allocating %dx%d int matrix - sizeof(int)=%ld\n", n, n, sizeof(int));
 	
-	long * mask = (long*) calloc(n*n,sizeof(long));
+	int * mask = (int*) calloc(n*n,sizeof(int));
 	
 	for(i=0; i<n; i++){
 		gf[i] = gaussian_sampling(n, i, sigma);
 	}
 	
-	long GI[MAX_N] = {0};
+	int GI[MAX_N] = {0};
 	get_int_coeffs(n, gf, GI);
 	
 	for(i=0; i<n; i++){
@@ -209,20 +209,20 @@ void get_custom_coeff_matrix(int n, double sigma, long ** kernel, long * normali
 	*normalization_factor=norm;
 }
 
-void get_custom_pow2_coeff_matrix(int n, double sigma, long ** kernel, long * normalization_factor){
+void get_custom_pow2_coeff_matrix(int n, double sigma, int ** kernel, int * normalization_factor){
 	//printf("get_custom_pow2_coeff_matrix called.\n");
 	int i=0,j=0;
 	double norm=0;
 	double gf[MAX_N] = {0};
-	//printf("Allocating %dx%d long matrix - sizeof(long)=%ld\n", n, n, sizeof(long));
+	//printf("Allocating %dx%d int matrix - sizeof(int)=%ld\n", n, n, sizeof(int));
 	
-	long * mask = (long*) calloc(n*n,sizeof(long));
+	int * mask = (int*) calloc(n*n,sizeof(int));
 	
 	for(i=0; i<n; i++){
 		gf[i] = gaussian_sampling(n, i, sigma);
 	}
 
-	long GI[MAX_N] = {0};
+	int GI[MAX_N] = {0};
 	get_int_coeffs(n, gf, GI);
 	
 	for(i=0; i<n; i++){

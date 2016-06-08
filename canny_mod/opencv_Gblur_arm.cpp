@@ -5,14 +5,14 @@
  *      Author: michele
  */
 
-#include "opencv_Gblur.h"
+#include "opencv_Gblur_arm.h"
 
 namespace my_Space
 {
 	void GaussianBlur( InputArray _src, OutputArray _dst, Size ksize, double sigma1, double sigma2, int borderType, int custom)
 	{
 		int i=0, j=0;
-		printf("GaussianBlur modified used!\n");
+		//printf("GaussianBlur modified used!\n");
 
 		//Create a destination image with the same size and type of the input one
 		int type = _src.type();
@@ -35,12 +35,22 @@ namespace my_Space
 			return;
 		}
 
+		Mat in_img = _src.getMat();
+		//Mat out_img;
+		int cols = in_img.cols;
+		int rows = in_img.rows;
+		// Needed only for case 2
+		unsigned char * data_in;
+		unsigned char * data_out;
+		data_in = in_img.data;
+		data_out = (unsigned char *) malloc(cols*rows*sizeof(unsigned char));
 		
-		
-		int s = ksize.height;
-		long norm;
+		int sx = ksize.width;  //printf("-d: sx = ksize.width = %d\n", sx);  (={3,5,7})
+		int sy = ksize.height; //printf("-d: sy = ksize.height = %d\n", sy); (={3,5,7})
+
+		int norm;
 		Mat kx, ky;
-		Mat custom_kernel(s, s, CV_32F);
+		//Mat custom_kernel(sx, sy, CV_32F);
 		
 
 
@@ -48,37 +58,143 @@ namespace my_Space
 		// Filter the image using separable property of the Gaussian function, 1D convolutions applied on the rows
 		// and columns separately using kernel kx and ky.
 		
-		if(custom == 0){
+		if(custom == 0){		// OpenCV Gaussian Separable 2D filter
 			// Create 1D kernels (float)
 			my_Space::createGaussianKernels(kx, ky, type, ksize, sigma1, sigma2);
 
-			//void cv::sepFilter2D( InputArray _src, OutputArray _dst, int ddepth, InputArray _kernelX, InputArray _kernelY, Point anchor, double delta, int borderType )
-			printf(" -- Separable filter used\n");
+			// printf("### kx rows = %d, kx cols = %d\n", kx.rows, kx.cols);
+			// kx = (5,1) elements => column vector
+			// printf("### ky rows = %d, ky cols = %d\n", ky.rows, ky.cols);
+			// ky = (5,1) elements => column vector
+						
+			//printf(" -- Separable filter used\n");
 			cv::sepFilter2D(_src, _dst, CV_MAT_DEPTH(type), kx, ky, Point(-1,-1), 0, borderType );
-		}
-		else
-		{
-			// Create 2D custom kernel (float)
-			createCustomGaussianMask(s, sigma1, custom_kernel, &norm, CV_32F, custom);
 			
-			//void    cv::filter2D( InputArray _src, OutputArray _dst, int ddepth, InputArray _kernel, Point anchor0, double delta, int borderType )
-			printf(" -- Linear2D filter used with coefficients (norm=%ld)\n", norm);
-			for(i=0; i<s; i++){
-				for(j=0; j<s; j++){
-					printf("%6ld ", (long)(custom_kernel.at<float>(j,i)*norm));
+
+			//imwrite("src_blurred_0.bmp", _dst);
+			// resize image (custom convolution does not handle borders)
+			/*Mat tmp;
+		  Size src_size=_dst.size();
+		  src_size.height=src_size.height-(sx/2);
+		  src_size.width=src_size.width-(sx/2);
+		  resize(_dst, tmp, src_size);
+		  
+			imwrite("src_blurred_0.bmp", tmp);
+			*/
+
+		}else if(custom == 1){	// Custom Gaussian Separable 2D filter (float <1 kernel coefficients, uchar data)
+			int ii;
+			my_Space::createGaussianKernels(kx, ky, type, ksize, sigma1, sigma2);
+			
+
+			// Emulate custom == 0 for testing purposes
+			//cv::sepFilter2D(_src, _dst, CV_MAT_DEPTH(type), kx, ky, Point(-1,-1), 0, borderType );
+			//unsigned char * tmp = _dst.getMatRef().data;
+			
+			float * xKernel = (float*)malloc(sx * sizeof(float));
+			float * yKernel = (float*)malloc(sy * sizeof(float));
+			
+			for(ii=0; ii<sx; ii++) xKernel[ii] = kx.at<float>(ii, 0);
+			for(ii=0; ii<sy; ii++) yKernel[ii] = ky.at<float>(ii, 0);
+			
+			// bool convolve2DSeparable(unsigned char* in, unsigned char* out, int sizeX, int sizeY, float* xKernel, int kSizeX, float* yKernel, int kSizeY);
+			///////////////////////////convolve2DSeparable(data_in, data_out, cols, rows, xKernel, sx, yKernel, sy);
+			
+			// printf("\n\n\nTest equality:\n");
+			// Test blurred images equality
+			//for(i=0; i<rows*cols; i++){
+			//	if(abs(tmp[i] - data_out[i]) > 2) printf("Different at %d (%d, %d): sepFilter2D = %d != %d = convolve2DSeparable\n", i, i/rows, i%rows, tmp[i], data_out[i]);
+			//}
+
+
+			Mat out_img = Mat(rows, cols, CV_8UC1, data_out);
+
+			out_img.copyTo(_dst);
+			imwrite("src_blurred_1.bmp", out_img);
+
+			/*
+			Mat tmp;
+		  Size src_size=_dst.size();
+		  src_size.height=src_size.height-(sx/2);
+		  src_size.width=src_size.width-(sx/2);
+		  resize(_dst, tmp, src_size);
+		  
+			imwrite("src_blurred_1.bmp", tmp);
+			*/
+
+			free(xKernel); free(yKernel);
+
+			
+		}else if(custom == 2){	// Custom Gaussian Separable 2D filter (integer >1 kernel coefficients, uchar data)
+			int h, i;
+			int * tmp_kernel;
+			float * kernel = (float*)malloc(sx * sizeof(float));
+			get_custom_coeff_vector(sx, sigma1, &tmp_kernel, &norm);
+
+			// For timing profiling (custom convolution with integer coefficients)
+			
+			convolve2DSeparable(data_in, data_out, cols, rows, tmp_kernel, sx, tmp_kernel, sx, norm*norm);			
+			// Similar to _dst.data = data_out; for Mat, but with Output_Array?
+			Mat out_img = Mat(rows, cols, CV_8UC1, data_out);
+			out_img.copyTo(_dst);
+			//imwrite("src_blurred_2.bmp", out_img);
+
+
+			// For Image IQA: openCV convolution with approximated coefficients
+			//for(i=0; i<sx; i++){
+				//kernel[i] = tmp_kernel[i]/((float)norm);
+				//printf("-d: kernel[%d] = %f  =  tmp_kernel[%d] (=%lld) / norm (%lld)\n", i, kernel[i], i, tmp_kernel[i], norm);
+			//}
+			//Mat K = Mat(1, sx, CV_32FC1, kernel);
+			//cv::sepFilter2D(_src, _dst, -1 , K, K, Point( -1, -1 ), 0, BORDER_REPLICATE );
+			//imwrite("src_blurred_2.bmp", _dst);
+
+
+			free(kernel);
+			
+
+		}else if(custom == 3){	// Custom Gaussian Separable 2D filter (integer >1 kernel coefficients, uchar data, SHIFT instead of division)
+			int h;
+			int * tmp_kernel;
+
+			get_custom_coeff_vector(sx, sigma1, &tmp_kernel, &norm);
+			
+			int norm2 = round_to_pow2(norm*norm);
+			
+			//////////////////////convolve2DSeparable(data_in, data_out, cols, rows, tmp_kernel, sx, tmp_kernel, sx, (int) log2(norm2), DIV_SHIFT);
+			
+
+			Mat out_img = Mat(rows, cols, CV_8UC1, data_out);
+
+			out_img.copyTo(_dst);
+			imwrite("src_blurred_3.bmp", _dst);
+
+			
+
+		}else{					// Custom Linear2D filter applied
+
+			// Create 2D custom kernel (float)
+			/////////////createCustomGaussianMask(sx, sigma1, custom_kernel, &norm, CV_32F, custom);
+			
+			
+			printf(" -- Linear2D filter used with coefficients (norm=%lld)\n", norm);
+			for(i=0; i<sx; i++){
+				for(j=0; j<sx; j++){
+					//printf("%6ld ", (int)(custom_kernel.at<float>(j,i)*norm));
 				}
 				printf("\n");
 			}
-			cv::filter2D(_src, _dst, CV_MAT_DEPTH(type), custom_kernel, Point(-1,-1), 0, borderType);
+			//cv::filter2D(_src, _dst, CV_MAT_DEPTH(type), custom_kernel, Point(-1,-1), 0, borderType);
 		}
 		
-		imwrite("src_blurred.bmp", _dst);
-
+		//imwrite("src_blurred.bmp", _dst);
+		//free(data_out);
 	}
+
 
 	void createGaussianKernels( Mat & kx, Mat & ky, int type, Size ksize, double sigma1, double sigma2 )
 	{
-		printf("createGaussianKernels modified used!\n");
+		//printf("createGaussianKernels modified used!\n");
 
 		//Save the depth for each component of the image and set sigma2=sigma1 if sigma2 is lower than zero
 		int depth = CV_MAT_DEPTH(type);
@@ -111,7 +227,7 @@ namespace my_Space
 
 	Mat getGaussianKernel( int n, double sigma, int ktype )
 	{
-		printf("getGaussianKernel modified used!\n");
+		//printf("getGaussianKernel modified used!\n");
 
 	    const int SMALL_GAUSSIAN_SIZE = 7;
 
@@ -203,22 +319,23 @@ namespace my_Space
 	    return kernel;
 	}
 
-	void createCustomGaussianMask(int ksize, double sigma, Mat & kernel, long *normalization, int type, int custom){
+	void createCustomGaussianMask(int ksize, double sigma, Mat & kernel, int *normalization, int type, int custom){
+		/*
 		int i=0, j=0;
-		long *coeffs;
-		long norm;
-		if(custom == 1){
+		int *coeffs;
+		int norm;
+		if(custom == 4){
 			get_custom_coeff_matrix(ksize, sigma, &coeffs, &norm);
-		}else if(custom == 2){
+		}else if(custom == 5){
 			get_custom_pow2_coeff_matrix(ksize, sigma, &coeffs, &norm);
-		}else if(custom == 3){
+		}else if(custom == 6){
 			get_custom_pow2_coeff_matrix(ksize, sigma, &coeffs, &norm);
-			long tmp = round_to_pow2(norm);
+			int tmp = round_to_pow2(norm);
 			printf("-debug: Normalization factor = %ld, rounded = %ld, error = %lf\n", norm, tmp, (norm-tmp)/((double)norm));
 			norm = tmp;
 		}else{
 			get_custom_coeff_matrix(ksize, sigma, &coeffs, &norm);
-			long tmp = round_to_pow2(norm);
+			int tmp = round_to_pow2(norm);
 			printf("-debug: Normalization factor = %ld, rounded = %ld, error = %lf\n", norm, tmp, (norm-tmp)/((double)norm));
 			norm = tmp;
 		}
@@ -231,6 +348,7 @@ namespace my_Space
 		}
 		
 		*normalization=norm;
+		*/
 	}
 
 }// end namespace my_Space 

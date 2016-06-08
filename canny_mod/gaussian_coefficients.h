@@ -6,10 +6,10 @@
 double gaussian_sampling(int n, int i, double sigma);
 
 void get_float_coeffs(int n, double *gf, double *GF);
-void get_int_coeffs(int n, double *gf, long long *GI);
-void get_custom_coeff_vector(int n, double sigma, long long ** kernel, long long * normalization_factor);
-void get_custom_coeff_matrix(int n, double sigma, long long ** kernel, long long * normalization_factor);
-void get_custom_pow2_coeff_matrix(int n, double sigma, long long ** kernel, long long * normalization_factor);
+void get_int_coeffs(int n, double *gf, long *GI);
+void get_custom_coeff_vector(int n, double sigma, long ** kernel, long * normalization_factor);
+void get_custom_coeff_matrix(int n, double sigma, long ** kernel, long * normalization_factor);
+void get_custom_pow2_coeff_matrix(int n, double sigma, long ** kernel, long * normalization_factor);
 
 long long round_to_pow2(double x);
 

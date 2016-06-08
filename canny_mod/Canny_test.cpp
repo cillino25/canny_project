@@ -11,17 +11,8 @@
 #include <iostream>
 
 #include "opencv_funcs.h"
+#include "global.h"
 
-#define X86_PRESC 1
-#define RC_PRESC  1000/25
-#ifdef RC
-  #define PRESC   RC_PRESC
-#else
-  #define PRESC   X86_PRESC
-#endif 
-
-#define C1 (float) (0.01 * 255 * 0.01  * 255)
-#define C2 (float) (0.03 * 255 * 0.03  * 255)
 
 
 using namespace my_Space;
@@ -91,18 +82,6 @@ int main( int argc, char** argv )
     return -1;
   }
 
-  lena_ref=imread("lena_ref/lena_1.5_40.bmp", 0);
-
-  /// Load an image
-  src = imread( argv[1], 1);
-  if( !src.data ){
-    printf("No source data.\n"); 
-    return -1;
-  }
-
-  
-
-
   if(argc >= 2)
     threshold = atoi(argv[2]);
 
@@ -134,45 +113,57 @@ int main( int argc, char** argv )
   //}
 
 
+  //lena_ref=imread("lena_ref/lena_1.5_40.bmp", 0);
+  /// Load an image
+  gettimeofday(&start, NULL);
+  src = imread( argv[1], 1);
+  gettimeofday(&stop, NULL);
+  printf("Image read wall time: %lf s\n\n", ((stop.tv_sec + stop.tv_usec*0.000001)-(start.tv_sec + start.tv_usec*0.000001))*PRESC);
+  
+  
+  if( !src.data ){
+    printf("No source data.\n"); 
+    return -1;
+  }
+
   /// Create a matrix of the same type and size as src (for dst)
   dst.create( src.size(), src.type() );
 
   /// Convert the image to grayscale
+  gettimeofday(&start, NULL);
   cvtColor( src, src_gray, CV_BGR2GRAY );
+  gettimeofday(&stop, NULL);
+  printf("cvtColor wall time: %lf s\n\n", ((stop.tv_sec + stop.tv_usec*0.000001)-(start.tv_sec + start.tv_usec*0.000001))*PRESC);
   
-  /*
-  Mat tmp;
-  Size src_size=src.size();
-  src_size.height=src_size.height-(gblur/2);
-  src_size.width=src_size.width-(gblur/2);
-  resize(src_gray, tmp, src_size);
-  imwrite( "src_gray.bmp", tmp);
-  */
+  
+  
   imwrite("src_gray.bmp", src_gray);
 
   //Size s1 = src_gray.size();
   //printf("src_gray.height=%d, width=%d\n", s1.height, s1.width);
   
   //printf("CannyThreshold launched with\n  th=%d\n  sigma=%lf\n  gBlurMaskSize=%d\n  cannyMaskSize=%d\n\n", threshold, sigma, gblur, canny);
+  gettimeofday(&start, NULL);
   CannyThreshold(src_gray, &detected_edges, threshold, sigma, gblur, canny, custom);
-  img_blurred=imread("src_blurred.bmp", 0);
+  gettimeofday(&stop, NULL);
+  printf("CannyThreshold total wall time: %lf s\n\n", ((stop.tv_sec + stop.tv_usec*0.000001)-(start.tv_sec + start.tv_usec*0.000001))*PRESC);
 
 
-  /// Using Canny's output as a mask, we display our result
-  dst = Scalar::all(0);
 
   //printf("Img write: %s\n", res);
   gettimeofday(&start, NULL);
   imwrite(res, detected_edges);
   gettimeofday(&stop, NULL);
-  //printf("Image write wall time: %lf s\n\n", ((stop.tv_sec + stop.tv_usec*0.000001)-(start.tv_sec + start.tv_usec*0.000001))*PRESC);
+  printf("Image write wall time: %lf s\n\n", ((stop.tv_sec + stop.tv_usec*0.000001)-(start.tv_sec + start.tv_usec*0.000001))*PRESC);
   
+
+
   /**************************************************************/
   // Image Quality Assessment
 
   // PSNR evaluation
   #ifdef METRICS
-  
+  img_blurred=imread("src_blurred.bmp", 0);
   printf("PSNR evaluation\n");
   //printf("getPSNR(src_gray, detected_edges)  = %lf\n", getPSNR(src_gray, detected_edges));
   //printf("getPSNR(src_gray, lena_ref/lena_1.5_40.bmp)  = %lf\n", getPSNR(src_gray, lena_ref));
@@ -213,19 +204,16 @@ void CannyThreshold(const Mat src, Mat *dst, int Threshold, double sigma, int gB
 {
   //printf("**Gaussian blur start..\n");
   gettimeofday(&start, NULL);
-  /// Reduce noise with a kernel 3x3
   my_Space::GaussianBlur(src, *dst, Size(gBlurMaskSize,gBlurMaskSize), sigma, sigma, BORDER_DEFAULT, custom);
   gettimeofday(&stop, NULL);
-  //time2 = (double) getTickCount(); //getTickFrequency();
   printf("Gaussian Blur wall time: %lf s\n\n", ((stop.tv_sec + stop.tv_usec*0.000001)-(start.tv_sec + start.tv_usec*0.000001))*PRESC);
   
 
   //printf("Canny start..\n");
   gettimeofday(&start, NULL);
-  /// Canny detector
   my_Space::Canny( *dst, *dst, Threshold, Threshold*ratio, cannyMaskSize );
   gettimeofday(&stop, NULL);
-  printf("Canny wall time: %lf s\n\n", ((stop.tv_sec + stop.tv_usec*0.000001)-(start.tv_sec + start.tv_usec*0.000001))*PRESC);
+  printf("Canny Edge Detector total wall time: %lf s\n\n", ((stop.tv_sec + stop.tv_usec*0.000001)-(start.tv_sec + start.tv_usec*0.000001))*PRESC);
   
  }
 

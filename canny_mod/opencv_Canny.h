@@ -13,9 +13,6 @@
 #include "opencv2/highgui/highgui.hpp"
 //#include "opencv2/imgproc/imgproc_c.h"
 #include "opencv2/core.hpp"
-#include <stdlib.h>
-#include <stdio.h>
-#include <sys/time.h>
 
 
 using namespace cv;
@@ -36,6 +33,13 @@ namespace my_Space {
 	void Canny( InputArray image, OutputArray edges,
                 double threshold1, double threshold2,
                 int apertureSize = 3, bool L2gradient = false );
+
+	void nonMaxSuppress(Mat src, int cn, Mat dx, Mat dy, Mat gradient, ptrdiff_t mapstep, int* mag_buf[], uchar* map, int* maxsize, std::vector<uchar*> *stack, uchar*** stack_top, uchar*** stack_bottom,
+                double threshold1, double threshold2,
+                bool L2gradient = false );
+
+	void hysteresisThresh(ptrdiff_t mapstep, int* maxsize, std::vector<uchar*> *stack, uchar*** stack_top, uchar*** stack_bottom);
+
 	void Sobel( InputArray src, OutputArray dst, int ddepth,
 				int dx, int dy, int ksize = 3,
 				double scale = 1, double delta = 0,

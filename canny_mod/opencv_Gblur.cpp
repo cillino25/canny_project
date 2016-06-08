@@ -200,9 +200,10 @@ namespace my_Space
 		free(data_out);
 	}
 
+
 	void createGaussianKernels( Mat & kx, Mat & ky, int type, Size ksize, double sigma1, double sigma2 )
 	{
-		printf("createGaussianKernels modified used!\n");
+		//printf("createGaussianKernels modified used!\n");
 
 		//Save the depth for each component of the image and set sigma2=sigma1 if sigma2 is lower than zero
 		int depth = CV_MAT_DEPTH(type);
@@ -235,7 +236,7 @@ namespace my_Space
 
 	Mat getGaussianKernel( int n, double sigma, int ktype )
 	{
-		printf("getGaussianKernel modified used!\n");
+		//printf("getGaussianKernel modified used!\n");
 
 	    const int SMALL_GAUSSIAN_SIZE = 7;
 

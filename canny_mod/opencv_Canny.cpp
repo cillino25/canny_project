@@ -4,8 +4,13 @@
  *  Created on: 22 apr 2016
  *      Author: michele
  */
+#include <stdlib.h>
+#include <stdio.h>
 
+#include <sys/time.h>
+#include "global.h"
 #include "opencv_Canny.h"
+
 
 namespace my_Space
 {
@@ -14,6 +19,7 @@ namespace my_Space
 					int aperture_size, bool L2gradient )
 	{
 		//printf("Canny modified used!\n");
+		struct timeval start, stop;
 
 		const int type = _src.type();			//type of a matrix element (pixel)
 		const int depth = CV_MAT_DEPTH(type);	//type of each individual channel
@@ -47,12 +53,15 @@ namespace my_Space
 		// 1 channel matrices but each element is represented with 16bit signed (ex: -2*255 = -510 -> 16bit signed)
 		Mat dx(src.rows, src.cols, CV_16SC(cn));
 		Mat dy(src.rows, src.cols, CV_16SC(cn));
+		Mat gradient(src.rows, src.cols, CV_16SC(cn));
 
 		//Compute partial derivatives using Sobel operator/kernel
-	  my_Space::Sobel(src, dx, CV_16S, 1, 0, aperture_size, 1, 0, BORDER_REPLICATE);		//x component of the gradient
+		gettimeofday(&start, NULL);
+		my_Space::Sobel(src, dx, CV_16S, 1, 0, aperture_size, 1, 0, BORDER_REPLICATE);		//x component of the gradient
 		my_Space::Sobel(src, dy, CV_16S, 0, 1, aperture_size, 1, 0, BORDER_REPLICATE);		//y component of the gradient
-
-		/******* Compute absolute value and angle of the gradient at each point of the image **********/
+	  gettimeofday(&stop, NULL);
+	  printf("SobelDx AND SobelDy wall time: %lf s\n\n", ((stop.tv_sec + stop.tv_usec*0.000001)-(start.tv_sec + start.tv_usec*0.000001))*PRESC);
+		
 
 		if (L2gradient)
 		{
@@ -103,9 +112,35 @@ namespace my_Space
 			3   2   1
 		*/
 
-		#define CANNY_PUSH(d)   *(d) = uchar(2), *stack_top++ = (d)
-		#define CANNY_POP(d)     (d) = *--stack_top
+		gettimeofday(&start, NULL);
+		my_Space::nonMaxSuppress(src, cn, dx, dy, gradient, mapstep, mag_buf, map, &maxsize, &stack, &stack_top, &stack_bottom, low, high, L2gradient);
+	  gettimeofday(&stop, NULL);
+	  printf("nonMaxSuppress wall time: %lf s\n\n", ((stop.tv_sec + stop.tv_usec*0.000001)-(start.tv_sec + start.tv_usec*0.000001))*PRESC);
+		
 
+		gettimeofday(&start, NULL);
+		my_Space::hysteresisThresh(mapstep, &maxsize, &stack, &stack_top, &stack_bottom);
+		gettimeofday(&stop, NULL);
+	  printf("hysteresisThresh wall time: %lf s\n\n", ((stop.tv_sec + stop.tv_usec*0.000001)-(start.tv_sec + start.tv_usec*0.000001))*PRESC);
+		
+
+		// the final step, form the final image
+		const uchar* pmap = map + mapstep + 1;
+		uchar* pdst = dst.ptr();
+		for (int i = 0; i < src.rows; i++, pmap += mapstep, pdst += dst.step)
+		{
+			for (int j = 0; j < src.cols; j++)
+				pdst[j] = (uchar)-(pmap[j] >> 1);
+		}
+	}
+
+	void nonMaxSuppress(Mat src, int cn, Mat dx, Mat dy, Mat gradient, ptrdiff_t mapstep, int* mag_buf[], uchar* map, int* maxsize, std::vector<uchar*> *stack, uchar*** stack_top, uchar*** stack_bottom,
+					double low, double high,
+					bool L2gradient)
+	{
+
+		#define CANNY_PUSH(d)   *(d) = uchar(2), *(*stack_top)++ = (d)
+		#define CANNY_POP(d)     (d) = *--(*stack_top)
 		// calculate magnitude and angle of gradient, perform non-maxima suppression.
 		// fill the map with one of the following values:
 		//   0 - the pixel might belong to an edge
@@ -113,11 +148,13 @@ namespace my_Space
 		//   2 - the pixel does belong to an edge
 		for (int i = 0; i <= src.rows; i++)
 		{
+
 			int* _norm = mag_buf[(i > 0) + 1] + 1;
 			if (i < src.rows)
 			{
 				short* _dx = dx.ptr<short>(i);
 				short* _dy = dy.ptr<short>(i);
+				short* _gradient = gradient.ptr<short>(i);
 
 				if (!L2gradient)
 				{
@@ -164,13 +201,13 @@ namespace my_Space
 			const short* _x = dx.ptr<short>(i-1);
 			const short* _y = dy.ptr<short>(i-1);
 
-			if ((stack_top - stack_bottom) + src.cols > maxsize)
+			if ((*stack_top - *stack_bottom) + src.cols > *maxsize)
 			{
-				int sz = (int)(stack_top - stack_bottom);
-				maxsize = std::max(maxsize * 3/2, sz + src.cols);
-				stack.resize(maxsize);
-				stack_bottom = &stack[0];
-				stack_top = stack_bottom + sz;
+				int sz = (int)(*stack_top - *stack_bottom);
+				*maxsize = std::max(*maxsize * 3/2, sz + src.cols);
+				(*stack).resize(*maxsize);
+				*stack_bottom = &(*stack)[0];
+				*stack_top = *stack_bottom + sz;
 			}
 
 			int prev_flag = 0;
@@ -229,17 +266,24 @@ namespace my_Space
 			mag_buf[2] = _mag;
 		}
 
+		return;
+
+	}
+
+	void hysteresisThresh(ptrdiff_t mapstep, int* maxsize, std::vector<uchar*> *stack, uchar*** stack_top, uchar*** stack_bottom)
+	{
+
 		// now track the edges (hysteresis thresholding)
-		while (stack_top > stack_bottom)
+		while (*stack_top > *stack_bottom)
 		{
 			uchar* m;
-			if ((stack_top - stack_bottom) + 8 > maxsize)
+			if ((*stack_top - *stack_bottom) + 8 > *maxsize)
 			{
-				int sz = (int)(stack_top - stack_bottom);
-				maxsize = maxsize * 3/2;
-				stack.resize(maxsize);
-				stack_bottom = &stack[0];
-				stack_top = stack_bottom + sz;
+				int sz = (int)(*stack_top - *stack_bottom);
+				*maxsize = *maxsize * 3/2;
+				(*stack).resize(*maxsize);
+				*stack_bottom = &(*stack)[0];
+				*stack_top = *stack_bottom + sz;
 			}
 
 			CANNY_POP(m);
@@ -254,15 +298,8 @@ namespace my_Space
 			if (!m[mapstep+1])  CANNY_PUSH(m + mapstep + 1);
 		}
 
-		// the final pass, form the final image
-		const uchar* pmap = map + mapstep + 1;
-		uchar* pdst = dst.ptr();
-		for (int i = 0; i < src.rows; i++, pmap += mapstep, pdst += dst.step)
-		{
-			for (int j = 0; j < src.cols; j++)
-				pdst[j] = (uchar)-(pmap[j] >> 1);
-		}
 	}
+
 
 	void Sobel( InputArray _src, OutputArray _dst, int ddepth, int dx, int dy,
 					int ksize, double scale, double delta, int borderType )

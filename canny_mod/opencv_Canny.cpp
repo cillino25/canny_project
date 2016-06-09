@@ -56,11 +56,11 @@ namespace my_Space
 		Mat gradient(src.rows, src.cols, CV_16SC(cn));
 
 		//Compute partial derivatives using Sobel operator/kernel
-		//gettimeofday(&start, NULL);
+		gettimeofday(&start, NULL);
 		my_Space::Sobel(src, dx, CV_16S, 1, 0, aperture_size, 1, 0, BORDER_REPLICATE);		//x component of the gradient
 		my_Space::Sobel(src, dy, CV_16S, 0, 1, aperture_size, 1, 0, BORDER_REPLICATE);		//y component of the gradient
-	  //gettimeofday(&stop, NULL);
-	  //printf("SobelDx AND SobelDy wall time: %lf s\n\n", ((stop.tv_sec + stop.tv_usec*0.000001)-(start.tv_sec + start.tv_usec*0.000001))*PRESC);
+	  gettimeofday(&stop, NULL);
+	  printf("SobelDx AND SobelDy wall time: %lf s\n\n", ((stop.tv_sec + stop.tv_usec*0.000001)-(start.tv_sec + start.tv_usec*0.000001))*PRESC);
 		
 
 		if (L2gradient)
@@ -112,16 +112,16 @@ namespace my_Space
 			3   2   1
 		*/
 
-		//gettimeofday(&start, NULL);
+		gettimeofday(&start, NULL);
 		my_Space::nonMaxSuppress(src, cn, dx, dy, gradient, mapstep, mag_buf, map, &maxsize, &stack, &stack_top, &stack_bottom, low, high, L2gradient);
-	  //gettimeofday(&stop, NULL);
-	  //printf("nonMaxSuppress wall time: %lf s\n\n", ((stop.tv_sec + stop.tv_usec*0.000001)-(start.tv_sec + start.tv_usec*0.000001))*PRESC);
+	  gettimeofday(&stop, NULL);
+	  printf("nonMaxSuppress wall time: %lf s\n\n", ((stop.tv_sec + stop.tv_usec*0.000001)-(start.tv_sec + start.tv_usec*0.000001))*PRESC);
 		
 
-		//gettimeofday(&start, NULL);
+		gettimeofday(&start, NULL);
 		my_Space::hysteresisThresh(mapstep, &maxsize, &stack, &stack_top, &stack_bottom);
-		//gettimeofday(&stop, NULL);
-	  //printf("hysteresisThresh wall time: %lf s\n\n", ((stop.tv_sec + stop.tv_usec*0.000001)-(start.tv_sec + start.tv_usec*0.000001))*PRESC);
+		gettimeofday(&stop, NULL);
+	  printf("hysteresisThresh wall time: %lf s\n\n", ((stop.tv_sec + stop.tv_usec*0.000001)-(start.tv_sec + start.tv_usec*0.000001))*PRESC);
 		
 
 		// the final step, form the final image
@@ -325,6 +325,19 @@ namespace my_Space
 			else
 				ky *= scale;
 		}
+
+		// replace sepFilter2D with convolve2D
+		//convolve2DSeparable
+		//int i=0;
+		//printf("\n\nprinting kx kernel: \n");
+		//for(i=0; i<ksize; i++)
+		//	printf("%f ", kx.at<float>(0, i));
+		//
+		//printf("\n\nprinting ky kernel: \n");
+		//for(i=0; i<ksize; i++)
+		//	printf("%f ", ky.at<float>(0, i));
+		//printf("\n");
+
 		sepFilter2D( _src, _dst, ddepth, kx, ky, Point(-1, -1), delta, borderType );
 	}
 

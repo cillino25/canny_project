@@ -7,19 +7,19 @@
 
 double       gf[MAX_N] = {0.};
 double       GF[MAX_N] = {0.};
-long long    GI[MAX_N] = {0};
-long long    mask[MAX_N][MAX_N] = {0};
-long long    mask2[MAX_N][MAX_N] = {0};
+long         GI[MAX_N] = {0};
+long         mask[MAX_N][MAX_N] = {0};
+long         mask2[MAX_N][MAX_N] = {0};
+
 
 
 /*
-
 int main(int argc, char **argv){
 	int n=5;
 	int i=0, j=0;
 	double sigma=1;
 
-	long long norm1 = 0, norm2 = 0, norm2_appr=0;
+	long norm1 = 0, norm2 = 0, norm2_appr=0;
 
 	if(argc == 1 ) printf("Help: ./gaussian_coefficients <dim_mask> <sigma>\n\n");
 
@@ -52,32 +52,32 @@ int main(int argc, char **argv){
 	printf("Get integer approximated coefficients:\n");
 	get_int_coeffs(n, gf, GI);
 	for(i=0; i<n; i++){
-		printf("-d: GI[%d]=%lld\n", i, GI[i]);
+		printf("-d: GI[%d]=%ld\n", i, GI[i]);
 	}
-	printf("Normalization factor (1D) = %lld\n", norm1);
+	printf("Normalization factor (1D) = %ld\n", norm1);
 
 	printf("\nGaussian filter mask:\n");
 	for(i=0; i<n; i++){
 		for(j=0; j<n; j++){
 			mask[i][j] = GI[j]*GI[i];
 			norm2 += mask[i][j];
-			printf("%4lld ", mask[i][j]);
+			printf("%4ld ", mask[i][j]);
 		}
 		printf("\n");
 	}
 
-	printf("Normalization factor (2D) = %lld - rounded %lld - rel_error = %lf\n", norm2, round_to_pow2(norm2), (norm2-round_to_pow2(norm2))/((double)norm2) );
+	printf("Normalization factor (2D) = %ld - rounded %ld - rel_error = %lf\n", norm2, round_to_pow2(norm2), (norm2-round_to_pow2(norm2))/((double)norm2) );
 
 	printf("\nRounded to pow-of-2 Gaussian filter mask:\n");
 	for(i=0; i<n; i++){
 		for(j=0; j<n; j++){
 			mask2[i][j] = round_to_pow2(mask[i][j]);
 			norm2_appr += mask2[i][j];
-			printf("%4lld ", mask2[i][j]);
+			printf("%4ld ", mask2[i][j]);
 		}
 		printf("\n");
 	}
-	printf("Appr normalization factor (2D) = %lld - rounded %lld - rel_error = %lf\n", norm2_appr, round_to_pow2(norm2_appr), (norm2_appr-round_to_pow2(norm2_appr))/((double)norm2_appr) );
+	printf("Appr normalization factor (2D) = %ld - rounded %ld - rel_error = %lf\n", norm2_appr, round_to_pow2(norm2_appr), (norm2_appr-round_to_pow2(norm2_appr))/((double)norm2_appr) );
 
 	
 
@@ -85,13 +85,13 @@ int main(int argc, char **argv){
 	printf("\nErrors (mask - pow2_mask)\n");
 	for(i=0; i<n; i++){
 		for(j=0; j<n; j++){
-			printf("%4lld ", mask[i][j]-mask2[i][j]);
+			printf("%4ld ", mask[i][j]-mask2[i][j]);
 		}
 		printf("\n");
 	}
 	printf("\n");
 
-	printf("\nSSE(mask, mask2)=%lld\n", SSE(n, mask, mask2));
+	printf("\nSSE(mask, mask2)=%ld\n", SSE(n, mask, mask2));
 
 
 	printf("\n");
@@ -140,7 +140,7 @@ void get_int_coeffs(int n, double *gf, long *GI){
 	return;
 }
 
-long long round_to_pow2(double x){
+long round_to_pow2(double x){
 	long k = round(x);
 	//printf("k=round(x)=%d\n", k);
 	long l = log2(k);
@@ -152,7 +152,7 @@ long long round_to_pow2(double x){
 }
 
 // Sum of Squared Errors for two matrices
-long long SSE(int dim, long long a[MAX_N][MAX_N], long long b[MAX_N][MAX_N]){
+long SSE(int dim, long a[MAX_N][MAX_N], long b[MAX_N][MAX_N]){
 	int i,j;
 	long err=0;
 	for(i=0; i<dim; i++)

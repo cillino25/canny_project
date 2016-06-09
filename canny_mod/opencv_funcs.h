@@ -15,8 +15,8 @@
 //#include "opencv2/imgproc/imgproc_c.h"
 #include "opencv2/core.hpp"
 
-#include "opencv_Gblur_arm.h"
-#include "opencv_Canny_arm.h"
+#include "opencv_Gblur.h"
+#include "opencv_Canny.h"
 
 
 #endif /* OPENCV_FUNCS_H_ */

@@ -14,6 +14,8 @@
 //#include "opencv2/imgproc/imgproc_c.h"
 #include "opencv2/core.hpp"
 
+#include "convolution_arm.h"
+
 
 using namespace cv;
 
@@ -32,7 +34,7 @@ namespace my_Space {
  */
 	void Canny( InputArray image, OutputArray edges,
                 double threshold1, double threshold2,
-                int apertureSize = 3, bool L2gradient = false );
+                int apertureSize = 3, bool L2gradient = false, int custom = 0);
 
 	void nonMaxSuppress(Mat src, int cn, Mat dx, Mat dy, Mat gradient, ptrdiff_t mapstep, int* mag_buf[], uchar* map, int* maxsize, std::vector<uchar*> *stack, uchar*** stack_top, uchar*** stack_bottom,
                 double threshold1, double threshold2,
@@ -43,7 +45,7 @@ namespace my_Space {
 	void Sobel( InputArray src, OutputArray dst, int ddepth,
 				int dx, int dy, int ksize = 3,
 				double scale = 1, double delta = 0,
-				int borderType = BORDER_DEFAULT );
+				int borderType = BORDER_DEFAULT, int custom = 0);
 	void getDerivKernels( OutputArray kx, OutputArray ky,
 						  int dx, int dy, int ksize,
 						  bool normalize = false, int ktype = CV_32F );

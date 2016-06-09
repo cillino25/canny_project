@@ -2,5 +2,6 @@ out_images/
 mnt/
 busybox-1.24.1/
 root.bin
+rootcv.bin
 *.bin
 *.bmp

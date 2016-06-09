@@ -2,9 +2,10 @@ include Makefrag
 
 cur_dir=.
 
+canny_dir=$(cur_dir)/canny_mod
 opencv_arm_dir=/usr/share/opencv_arm
 test-VDMA_dir=$(cur_dir)/VDMA_test
-pipefr_dir=$(cur_dir)/canny_pipeline_fr
+pipe_dir=$(cur_dir)/canny_pipeline
 comm_dir=$(cur_dir)/comm_test/arm
 
 
@@ -32,36 +33,56 @@ mount_root:
 umount_root:
 	umount $(cur_dir)/mnt/
 
-.PHONY: create_root root.bin rootcv.bin mount umount_root
+mount_rootcv:
+	mount -o loop $(cur_dir)/rootcv.bin $(cur_dir)/mnt-cv/
+umount_rootcv:
+	umount $(cur_dir)/mnt-cv/
 
+.PHONY: create_root root.bin rootcv.bin mount umount_root mount_rootcv umount_rootcv
+
+
+
+####################################################################################
+## Canny_mod Rocketchip
+canny_mod-rv:
+	riscv64-unknown-linux-gnu-g++ -DRC=1 -I$RISCV/opencv/include -L$RISCV/opencv/lib -static $(canny_dir)/convolution_arm.cpp $(canny_dir)/gaussian_coefficients_arm.c $(canny_dir)/Canny_test_arm.cpp $(canny_dir)/opencv_Canny_arm.cpp $(canny_dir)/opencv_Gblur_arm.cpp -o $(canny_dir)/canny_mod$(exe_type) `pkg-config --cflags --libs --static opencv`
+cp-canny_mod-rv: canny_mod-rv
+	cp $(canny_dir)/canny_mod$(exe_type) mnt-cv/
+
+update_rootcv: mount_rootcv cp-canny_mod-rv umount_rootcv
+
+upload_rootcv: update_rootcv
+	scp $(cur_dir)/rootcv.bin zedboard:~/mnt/rootcv.bin
+
+.PHONY: canny_mod-rv cp-canny_mod-rv update_rootcv upload_rootcv
 
 ####################################################################################
 ## Complete ARM-RC-VDMA pipeline
 
 pipe_riscv:
-	$(RV_CC) $(pipefr_dir)/pipe_riscv.c $(pipefr_dir)/vdma.c -o $(pipefr_dir)/pipe_riscv_$(exe_type)
+	$(RV_CC) $(pipe_dir)/pipe_riscv.c $(pipe_dir)/vdma.c -o $(pipe_dir)/pipe_riscv_$(exe_type)
 
 pipe_arm:
-	$(ARM_CC) $(pipefr_dir)/pipe_arm.c $(pipefr_dir)/vdma.c -o $(pipefr_dir)/pipe_arm
+	$(ARM_CC) $(pipe_dir)/pipe_arm.c $(pipe_dir)/vdma.c -o $(pipe_dir)/pipe_arm
 
 cp_pipe_fr: pipe_arm pipe_riscv
-	scp $(pipefr_dir)/pipe_arm zedboard:~
-	cp $(pipefr_dir)/pipe_riscv_$(exe_type) mnt/pipe_fr
+	scp $(pipe_dir)/pipe_arm zedboard:~
+	cp $(pipe_dir)/pipe_riscv_$(exe_type) mnt/pipe_fr
 
 ####################################################################################
 ## Print VDMA registers
 
 print-VDMA-arm:
-	$(ARM_CC) $(pipefr_dir)/print_vdma_stats.c $(pipefr_dir)/vdma.c -o $(pipefr_dir)/print-VDMA
+	$(ARM_CC) $(pipe_dir)/print_vdma_stats.c $(pipe_dir)/vdma.c -o $(pipe_dir)/print-VDMA
 
 cp-print-VDMA-arm: print-VDMA-arm
-	scp $(pipefr_dir)/print-VDMA zedboard:~
+	scp $(pipe_dir)/print-VDMA zedboard:~
 
 print-VDMA-rv:
-	$(RV_CC) -DRC=1 $(pipefr_dir)/print_vdma_stats.c $(pipefr_dir)/vdma.c -o $(pipefr_dir)/print-VDMA_$(exe_type)
+	$(RV_CC) -DRC=1 $(pipe_dir)/print_vdma_stats.c $(pipe_dir)/vdma.c -o $(pipe_dir)/print-VDMA_$(exe_type)
 
 cp-print-VDMA-rv: print-VDMA-rv
-	cp $(pipefr_dir)/print-VDMA_$(exe_type) mnt
+	cp $(pipe_dir)/print-VDMA_$(exe_type) mnt
 
 .PHONY: print-VDMA-arm print-VDMA-rv
 ###################################################################################
@@ -85,42 +106,39 @@ cp-test-VDMA: test-VDMA-rv
 ## Free running version of VDMA test
 
 test-VDMA-arm-fr:
-	$(ARM_CC) $(pipefr_dir)/test-VDMA.c $(pipefr_dir)/vdma.c -o $(pipefr_dir)/test-VDMA
+	$(ARM_CC) $(pipe_dir)/test-VDMA.c $(pipe_dir)/vdma.c -o $(pipe_dir)/test-VDMA
 
 cp-test-VDMA-arm-fr: cp_read_mem cp_write_mem test-VDMA-arm-fr
-	scp $(pipefr_dir)/test-VDMA zedboard:~
+	scp $(pipe_dir)/test-VDMA zedboard:~
 
 test-VDMA-rv-fr:
-	$(RV_CC) -DRC=1 $(pipefr_dir)/test-VDMA.c $(pipefr_dir)/vdma.c -o $(pipefr_dir)/test-VDMA_$(exe_type)
+	$(RV_CC) -DRC=1 $(pipe_dir)/test-VDMA.c $(pipe_dir)/vdma.c -o $(pipe_dir)/test-VDMA_$(exe_type)
 
 cp-test-VDMA-rv-fr: test-VDMA-rv-fr
-	cp $(pipefr_dir)/test-VDMA_$(exe_type) mnt/
+	cp $(pipe_dir)/test-VDMA_$(exe_type) mnt/
 
 .PHONY: test-VDMA-rv-fr cp-test-VDMA-rv-fr test-VDMA-arm-fr cp-test-VDMA-arm-fr
 
 ####################################################################################
-## VDMA test with fsync and filter
+## sepImageFilter single frame complete application.
+## 
+## All convolutions will be executed from the HW accelerator (sepImageFilter), with 3 different calls:
+## first the global setting is done, and at each call the correct kernel is selected through a single-register write.
+##
 
-test-filter-arm-cv:
-	$(ARM_CPP) $(pipefr_dir)/sepImageFilter.c $(pipefr_dir)/vdma.c $(pipefr_dir)/test-filter.cpp -o $(pipefr_dir)/test-filter-opencv -I$(opencv_arm_dir)/include -L$(opencv_arm_dir)/lib `pkg-config --cflags --libs opencv`
-cp-test-filter-arm-cv: test-filter-arm-cv
-	scp $(pipefr_dir)/test-filter-opencv zedboard:~/
+test-filter-sf-arm-cv:
+	$(ARM_CPP) $(pipe_dir)/sepImageFilter.c $(pipe_dir)/vdma.c $(pipe_dir)/test-filter-sf.cpp -o $(pipe_dir)/test-filter-opencv -I$(opencv_arm_dir)/include -L$(opencv_arm_dir)/lib `pkg-config --cflags --libs opencv`
+cp-test-filter-sf-arm-cv: test-filter-sf-arm-cv
+	scp $(pipe_dir)/test-filter-opencv zedboard:~/
 
-test-filter-arm:
-	$(ARM_CC) -c -std=c99 -o $(pipefr_dir)/vdma.o $(pipefr_dir)/vdma.c 
-	$(ARM_CC) -c -std=c99 -o $(pipefr_dir)/sepImageFilter.o $(pipefr_dir)/sepImageFilter.c 
-	$(ARM_CPP) -c -std=c++0x -o $(pipefr_dir)/test-filter-arm.o $(pipefr_dir)/test-filter.cpp
-	$(ARM_CPP) -o $(pipefr_dir)/test-filter-arm $(pipefr_dir)/test-filter-arm.o $(pipefr_dir)/vdma.o $(pipefr_dir)/sepImageFilter.o
-cp-test-filter-arm: test-filter-arm
-	scp $(pipefr_dir)/test-filter-arm zedboard:~
 
 cp-lena-gray:
 	scp canny_mod/lena_gray.bmp zedboard:~
 	
 test-filter-rv:
-	$(RV_CC) $(pipefr_dir)/test-filter.c $(pipefr_dir)/vdma.c $(pipefr_dir)/sepImageFilter.c -o $(pipefr_dir)/test-filter_$(exe_type)
+	$(RV_CC) $(pipe_dir)/test-filter.c $(pipe_dir)/vdma.c $(pipe_dir)/sepImageFilter.c -o $(pipe_dir)/test-filter_$(exe_type)
 cp-test-filter-rv: test-filter-rv
-	cp $(pipefr_dir)/test-filter_$(exe_type) mnt/
+	cp $(pipe_dir)/test-filter_$(exe_type) mnt/
 
 
 .PHONY: test-filter-arm cp-test-filter-arm test-filter-rv cp-test-filter-rv
@@ -161,6 +179,7 @@ upload_root: update_root cp-print-VDMA-arm cp_read_mem cp-test-VDMA-arm-fr
 
 cp-all: cp_write_mem cp_read_mem cp-print-VDMA-arm
 	scp canny_mod/lena_blurred_0.bmp zedboard:~
+	scp canny_mod/lena_secret.bmp zedboard:~
 
 cp-opencv-libs:
 	scp -r $(opencv_arm_dir)/bin/* zedboard:/usr/bin
@@ -170,6 +189,6 @@ cp-opencv-libs:
 	
 
 clean:
-	rm -rf $(pipefr_dir)/*.o
+	rm -rf $(pipe_dir)/*.o
 
 .PHONY: clean

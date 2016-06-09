@@ -11,8 +11,8 @@ void get_custom_coeff_vector(int n, double sigma, long ** kernel, long * normali
 void get_custom_coeff_matrix(int n, double sigma, long ** kernel, long * normalization_factor);
 void get_custom_pow2_coeff_matrix(int n, double sigma, long ** kernel, long * normalization_factor);
 
-long long round_to_pow2(double x);
+long round_to_pow2(double x);
 
-long long SSE(int dim, long long a[MAX_N][MAX_N], long long b[MAX_N][MAX_N]);
+long SSE(int dim, long a[MAX_N][MAX_N], long b[MAX_N][MAX_N]);
 
 #endif

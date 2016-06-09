@@ -8,9 +8,12 @@
 #include <stdio.h>
 #include <string.h>
 #include <sys/time.h>
+//#include <sys/times.h>
+#include <time.h>
+#include <unistd.h> 
 #include <iostream>
 
-#include "opencv_funcs.h"
+#include "opencv_funcs_arm.h"
 #include "global.h"
 
 
@@ -115,6 +118,13 @@ int main( int argc, char** argv )
 
   //lena_ref=imread("lena_ref/lena_1.5_40.bmp", 0);
   /// Load an image
+  
+  
+  //printf("getTickFrequency() = %lf\n", getTickFrequency());
+  //printf("CLOCKS_PER_SEC = %ld\n", CLOCKS_PER_SEC);
+  //printf("CLK_TCK = %ld\n", sysconf(_SC_CLK_TCK));
+  
+
   gettimeofday(&start, NULL);
   src = imread( argv[1], 1);
   gettimeofday(&stop, NULL);
@@ -137,16 +147,16 @@ int main( int argc, char** argv )
   
   
   
-  imwrite("src_gray.bmp", src_gray);
+  //imwrite("src_gray.bmp", src_gray);
 
   //Size s1 = src_gray.size();
   //printf("src_gray.height=%d, width=%d\n", s1.height, s1.width);
   
   //printf("CannyThreshold launched with\n  th=%d\n  sigma=%lf\n  gBlurMaskSize=%d\n  cannyMaskSize=%d\n\n", threshold, sigma, gblur, canny);
-  //gettimeofday(&start, NULL);
+  gettimeofday(&start, NULL);
   CannyThreshold(src_gray, &detected_edges, threshold, sigma, gblur, canny, custom);
-  //gettimeofday(&stop, NULL);
-  //printf("CannyThreshold total wall time: %lf s\n\n", ((stop.tv_sec + stop.tv_usec*0.000001)-(start.tv_sec + start.tv_usec*0.000001))*PRESC);
+  gettimeofday(&stop, NULL);
+  printf("CannyThreshold total wall time: %lf s\n\n", ((stop.tv_sec + stop.tv_usec*0.000001)-(start.tv_sec + start.tv_usec*0.000001))*PRESC);
 
 
 
@@ -202,16 +212,20 @@ int main( int argc, char** argv )
 
 void CannyThreshold(const Mat src, Mat *dst, int Threshold, double sigma, int gBlurMaskSize, int cannyMaskSize, int custom)
 {
+  //clock_t t1, t2;
   //printf("**Gaussian blur start..\n");
   gettimeofday(&start, NULL);
+  //t1=clock();
   my_Space::GaussianBlur(src, *dst, Size(gBlurMaskSize,gBlurMaskSize), sigma, sigma, BORDER_DEFAULT, custom);
+  //t2=clock();
   gettimeofday(&stop, NULL);
-  printf("Gaussian Blur wall time: %lf s\n\n", ((stop.tv_sec + stop.tv_usec*0.000001)-(start.tv_sec + start.tv_usec*0.000001))*PRESC);
+  printf("Gaussian Blur wall time: %lf s ", ((stop.tv_sec + stop.tv_usec*0.000001)-(start.tv_sec + start.tv_usec*0.000001))*PRESC);
+  //printf("(clock: %lf)\n\n", (double)(t2 - t1)/CLOCKS_PER_SEC );
   
 
   //printf("Canny start..\n");
   gettimeofday(&start, NULL);
-  my_Space::Canny( *dst, *dst, Threshold, Threshold*ratio, cannyMaskSize );
+  my_Space::Canny( *dst, *dst, Threshold, Threshold*ratio, cannyMaskSize, false, custom);
   gettimeofday(&stop, NULL);
   printf("Canny Edge Detector total wall time: %lf s\n\n", ((stop.tv_sec + stop.tv_usec*0.000001)-(start.tv_sec + start.tv_usec*0.000001))*PRESC);
   

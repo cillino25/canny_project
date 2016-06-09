@@ -8,6 +8,9 @@
 #include <stdio.h>
 #include <string.h>
 #include <sys/time.h>
+//#include <sys/times.h>
+//#include <time.h>
+#include <unistd.h> 
 #include <iostream>
 
 #include "opencv_funcs.h"
@@ -112,7 +115,10 @@ int main( int argc, char** argv )
   //  }
   //}
 
-
+  //printf("getTickFrequency() = %lf\n", getTickFrequency());
+  //printf("CLOCKS_PER_SEC = %ld\n", CLOCKS_PER_SEC);
+  //printf("CLK_TCK = %ld\n", sysconf(_SC_CLK_TCK));
+  
   //lena_ref=imread("lena_ref/lena_1.5_40.bmp", 0);
   /// Load an image
   gettimeofday(&start, NULL);
@@ -202,12 +208,15 @@ int main( int argc, char** argv )
 
 void CannyThreshold(const Mat src, Mat *dst, int Threshold, double sigma, int gBlurMaskSize, int cannyMaskSize, int custom)
 {
-  printf("**Gaussian blur start..\n");
+  clock_t t1, t2;
+  //printf("**Gaussian blur start..\n");
   gettimeofday(&start, NULL);
+  //t1=clock();
   my_Space::GaussianBlur(src, *dst, Size(gBlurMaskSize,gBlurMaskSize), sigma, sigma, BORDER_DEFAULT, custom);
+  //t2=clock();
   gettimeofday(&stop, NULL);
   printf("Gaussian Blur wall time: %lf s\n\n", ((stop.tv_sec + stop.tv_usec*0.000001)-(start.tv_sec + start.tv_usec*0.000001))*PRESC);
-  
+  //printf("clock: %lf\n", (double)(t2 - t1)/CLOCKS_PER_SEC );
 
   //printf("Canny start..\n");
   gettimeofday(&start, NULL);

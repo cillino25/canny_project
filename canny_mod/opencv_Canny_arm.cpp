@@ -12,11 +12,12 @@
 #include "opencv_Canny_arm.h"
 
 
+
 namespace my_Space
 {
 	void Canny( InputArray _src, OutputArray _dst,
 					double low_thresh, double high_thresh,
-					int aperture_size, bool L2gradient )
+					int aperture_size, bool L2gradient, int custom)
 	{
 		//printf("Canny modified used!\n");
 		struct timeval start, stop;
@@ -56,11 +57,11 @@ namespace my_Space
 		Mat gradient(src.rows, src.cols, CV_16SC(cn));
 
 		//Compute partial derivatives using Sobel operator/kernel
-		//gettimeofday(&start, NULL);
-		my_Space::Sobel(src, dx, CV_16S, 1, 0, aperture_size, 1, 0, BORDER_REPLICATE);		//x component of the gradient
-		my_Space::Sobel(src, dy, CV_16S, 0, 1, aperture_size, 1, 0, BORDER_REPLICATE);		//y component of the gradient
-	  //gettimeofday(&stop, NULL);
-	  //printf("SobelDx AND SobelDy wall time: %lf s\n\n", ((stop.tv_sec + stop.tv_usec*0.000001)-(start.tv_sec + start.tv_usec*0.000001))*PRESC);
+		gettimeofday(&start, NULL);
+		my_Space::Sobel(src, dx, CV_16S, 1, 0, aperture_size, 1, 0, BORDER_REPLICATE, custom);		//x component of the gradient
+		my_Space::Sobel(src, dy, CV_16S, 0, 1, aperture_size, 1, 0, BORDER_REPLICATE, custom);		//y component of the gradient
+	  gettimeofday(&stop, NULL);
+	  printf("SobelDx AND SobelDy wall time: %lf s\n\n", ((stop.tv_sec + stop.tv_usec*0.000001)-(start.tv_sec + start.tv_usec*0.000001))*PRESC);
 		
 
 		if (L2gradient)
@@ -112,16 +113,16 @@ namespace my_Space
 			3   2   1
 		*/
 
-		//gettimeofday(&start, NULL);
+		gettimeofday(&start, NULL);
 		my_Space::nonMaxSuppress(src, cn, dx, dy, gradient, mapstep, mag_buf, map, &maxsize, &stack, &stack_top, &stack_bottom, low, high, L2gradient);
-	  //gettimeofday(&stop, NULL);
-	  //printf("nonMaxSuppress wall time: %lf s\n\n", ((stop.tv_sec + stop.tv_usec*0.000001)-(start.tv_sec + start.tv_usec*0.000001))*PRESC);
+	  gettimeofday(&stop, NULL);
+	  printf("nonMaxSuppress wall time: %lf s\n\n", ((stop.tv_sec + stop.tv_usec*0.000001)-(start.tv_sec + start.tv_usec*0.000001))*PRESC);
 		
 
-		//gettimeofday(&start, NULL);
+		gettimeofday(&start, NULL);
 		my_Space::hysteresisThresh(mapstep, &maxsize, &stack, &stack_top, &stack_bottom);
-		//gettimeofday(&stop, NULL);
-	  //printf("hysteresisThresh wall time: %lf s\n\n", ((stop.tv_sec + stop.tv_usec*0.000001)-(start.tv_sec + start.tv_usec*0.000001))*PRESC);
+		gettimeofday(&stop, NULL);
+	  printf("hysteresisThresh wall time: %lf s\n\n", ((stop.tv_sec + stop.tv_usec*0.000001)-(start.tv_sec + start.tv_usec*0.000001))*PRESC);
 		
 
 		// the final step, form the final image
@@ -302,7 +303,7 @@ namespace my_Space
 
 
 	void Sobel( InputArray _src, OutputArray _dst, int ddepth, int dx, int dy,
-					int ksize, double scale, double delta, int borderType )
+					int ksize, double scale, double delta, int borderType, int custom)
 	{
 		//printf("Sobel modified used!\n");
 
@@ -325,7 +326,39 @@ namespace my_Space
 			else
 				ky *= scale;
 		}
-		sepFilter2D( _src, _dst, ddepth, kx, ky, Point(-1, -1), delta, borderType );
+
+		if(custom == 0){
+			sepFilter2D( _src, _dst, ddepth, kx, ky, Point(-1, -1), delta, borderType );
+		}else if(custom == 2){
+			int i=0;
+			float * kernel_x = (float*)malloc(ksize * sizeof(float));
+			float * kernel_y = (float*)malloc(ksize * sizeof(float));
+			//printf("printing kx kernel: ");
+			for(i=0; i<ksize; i++){
+				kernel_x[i]=kx.at<float>(0, i);
+				kernel_y[i]=ky.at<float>(0, i);
+				//printf("%f ", kx.at<float>(0, i));
+			}
+				
+
+			//printf("printing ky kernel: ");
+			//for(i=0; i<ksize; i++)
+				//printf("%f ", ky.at<float>(0, i));
+			
+			// replace sepFilter2D with convolve2D
+			//bool convolve2DSeparable(unsigned short* in, unsigned short* out, int dataSizeX, int dataSizeY, float* kernelX, int kSizeX, float* kernelY, int kSizeY)
+			Mat in_img = _src.getMat();
+			//Mat out_img;
+			int cols = in_img.cols;
+			int rows = in_img.rows;
+			unsigned char * data_in = in_img.data;;
+			unsigned short * data_out = (unsigned short *) malloc(cols*rows*sizeof(unsigned short));
+			
+			convolve2DSeparable(data_in, data_out, cols, rows, kernel_x, ksize, kernel_y, ksize);
+			Mat out_img = Mat(rows, cols, CV_8UC1, data_out);
+			out_img.copyTo(_dst);
+		}
+		
 	}
 
 	void getDerivKernels( OutputArray kx, OutputArray ky, int dx, int dy,

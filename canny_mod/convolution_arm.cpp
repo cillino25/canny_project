@@ -1307,12 +1307,13 @@ bool convolve2DSeparable(unsigned char* in, unsigned char* out, int dataSizeX, i
 ///////////////////////////////////////////////////////////////////////////////
 // unsigned short (16-bit) version
 ///////////////////////////////////////////////////////////////////////////////
-bool convolve2DSeparable(unsigned short* in, unsigned short* out, int dataSizeX, int dataSizeY, 
+bool convolve2DSeparable(unsigned char* in, unsigned short* out, int dataSizeX, int dataSizeY, 
                          float* kernelX, int kSizeX, float* kernelY, int kSizeY)
 {
     int i, j, k, m, n;
     float *tmp, *sum;                               // intermediate data buffer
-    unsigned short *inPtr, *outPtr;                 // working pointers
+    unsigned char  *inPtr;
+    unsigned short *outPtr;                 // working pointers
     float *tmpPtr, *tmpPtr2;                        // working pointers
     int kCenter, kOffset, endIndex;                 // kernel indice
 

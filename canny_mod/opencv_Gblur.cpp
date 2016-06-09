@@ -176,7 +176,7 @@ namespace my_Space
 			/////////////createCustomGaussianMask(sx, sigma1, custom_kernel, &norm, CV_32F, custom);
 			
 			
-			printf(" -- Linear2D filter used with coefficients (norm=%lld)\n", norm);
+			printf(" -- Linear2D filter used with coefficients (norm=%ld)\n", norm);
 			for(i=0; i<sx; i++){
 				for(j=0; j<sx; j++){
 					//printf("%6ld ", (long)(custom_kernel.at<float>(j,i)*norm));

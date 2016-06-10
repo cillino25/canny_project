@@ -1,0 +1,270 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Product Version: Vivado v2015.3 (64-bit)              -->
+<!--                                                         -->
+<!-- Copyright 1986-2015 Xilinx, Inc. All Rights Reserved.   -->
+
+<Project Version="7" Minor="10" Path="/media/stefano/data_ext4/Dropbox/poliTO/tesi/vivado2015/ip_repo/genSepImageFilter_project/genSepImageFilter_project.xpr">
+  <DefaultLaunch Dir="$PRUNDIR"/>
+  <Configuration>
+    <Option Name="Id" Val="09c86b42c2d6449c8009df640b627e02"/>
+    <Option Name="Part" Val="xc7z020clg484-1"/>
+    <Option Name="CompiledLibDir" Val="$PCACHEDIR/compile_simlib"/>
+    <Option Name="CompiledLibDirModelSim" Val="$PCACHEDIR/compile_simlib/modelsim"/>
+    <Option Name="CompiledLibDirQuesta" Val="$PCACHEDIR/compile_simlib/questa"/>
+    <Option Name="CompiledLibDirIES" Val="$PCACHEDIR/compile_simlib/ies"/>
+    <Option Name="CompiledLibDirVCS" Val="$PCACHEDIR/compile_simlib/vcs"/>
+    <Option Name="CompiledLibDirRiviera" Val="$PCACHEDIR/compile_simlib/riviera"/>
+    <Option Name="CompiledLibDirActivehdl" Val="$PCACHEDIR/compile_simlib/activehdl"/>
+    <Option Name="TargetLanguage" Val="VHDL"/>
+    <Option Name="SimulatorLanguage" Val="VHDL"/>
+    <Option Name="BoardPart" Val="em.avnet.com:zed:part0:1.3"/>
+    <Option Name="ActiveSimSet" Val="sim_1"/>
+    <Option Name="DefaultLib" Val="xil_defaultlib"/>
+    <Option Name="IPRepoPath" Val="$PSRCDIR/sources_1/imports"/>
+    <Option Name="EnableCoreContainer" Val="FALSE"/>
+    <Option Name="CreateRefXciForCoreContainers" Val="FALSE"/>
+    <Option Name="IPUserFilesDir" Val="$PPRDIR/genSepImageFilter_project.ip_user_files"/>
+    <Option Name="IPStaticSourceDir" Val="$PPRDIR/genSepImageFilter_project.ip_user_files/ipstatic"/>
+    <Option Name="EnableBDX" Val="FALSE"/>
+  </Configuration>
+  <FileSets Version="1" Minor="31">
+    <FileSet Name="sources_1" Type="DesignSrcs" RelSrcDir="$PSRCDIR/sources_1">
+      <Filter Type="Srcs"/>
+      <File Path="$PSRCDIR/sources_1/imports/vhdl/sepImageFilter_mac_muladd_16ns_8s_24s_25_3.vhd">
+        <FileInfo>
+          <Attr Name="ImportPath" Val="$PPRDIR/../../../../../poliTO_private/tesi/sepFilter_IP/genSepFilter_New/ip/hdl/vhdl/sepImageFilter_mac_muladd_16ns_8s_24s_25_3.vhd"/>
+          <Attr Name="ImportTime" Val="1465482688"/>
+          <Attr Name="UsedIn" Val="synthesis"/>
+          <Attr Name="UsedIn" Val="simulation"/>
+        </FileInfo>
+      </File>
+      <File Path="$PSRCDIR/sources_1/imports/vhdl/sepImageFilter_mul_8s_27s_35_5.vhd">
+        <FileInfo>
+          <Attr Name="ImportPath" Val="$PPRDIR/../../../../../poliTO_private/tesi/sepFilter_IP/genSepFilter_New/ip/hdl/vhdl/sepImageFilter_mul_8s_27s_35_5.vhd"/>
+          <Attr Name="ImportTime" Val="1465482688"/>
+          <Attr Name="UsedIn" Val="synthesis"/>
+          <Attr Name="UsedIn" Val="simulation"/>
+        </FileInfo>
+      </File>
+      <File Path="$PSRCDIR/sources_1/imports/vhdl/sepImageFilter_mul_mul_16ns_8s_24_3.vhd">
+        <FileInfo>
+          <Attr Name="ImportPath" Val="$PPRDIR/../../../../../poliTO_private/tesi/sepFilter_IP/genSepFilter_New/ip/hdl/vhdl/sepImageFilter_mul_mul_16ns_8s_24_3.vhd"/>
+          <Attr Name="ImportTime" Val="1465482688"/>
+          <Attr Name="UsedIn" Val="synthesis"/>
+          <Attr Name="UsedIn" Val="simulation"/>
+        </FileInfo>
+      </File>
+      <File Path="$PSRCDIR/sources_1/imports/vhdl/sepImageFilter_mac_muladd_16ns_8s_25s_26_3.vhd">
+        <FileInfo>
+          <Attr Name="ImportPath" Val="$PPRDIR/../../../../../poliTO_private/tesi/sepFilter_IP/genSepFilter_New/ip/hdl/vhdl/sepImageFilter_mac_muladd_16ns_8s_25s_26_3.vhd"/>
+          <Attr Name="ImportTime" Val="1465482688"/>
+          <Attr Name="UsedIn" Val="synthesis"/>
+          <Attr Name="UsedIn" Val="simulation"/>
+        </FileInfo>
+      </File>
+      <File Path="$PSRCDIR/sources_1/imports/vhdl/sepImageFilter_mux_3to1_sel2_20_1.vhd">
+        <FileInfo>
+          <Attr Name="ImportPath" Val="$PPRDIR/../../../../../poliTO_private/tesi/sepFilter_IP/genSepFilter_New/ip/hdl/vhdl/sepImageFilter_mux_3to1_sel2_20_1.vhd"/>
+          <Attr Name="ImportTime" Val="1465482688"/>
+          <Attr Name="UsedIn" Val="synthesis"/>
+          <Attr Name="UsedIn" Val="simulation"/>
+        </FileInfo>
+      </File>
+      <File Path="$PSRCDIR/sources_1/imports/vhdl/sepImageFilter_vt_macOp.vhd">
+        <FileInfo>
+          <Attr Name="ImportPath" Val="$PPRDIR/../../../../../poliTO_private/tesi/sepFilter_IP/genSepFilter_New/ip/hdl/vhdl/sepImageFilter_vt_macOp.vhd"/>
+          <Attr Name="ImportTime" Val="1465511269"/>
+          <Attr Name="UsedIn" Val="synthesis"/>
+          <Attr Name="UsedIn" Val="simulation"/>
+        </FileInfo>
+      </File>
+      <File Path="$PSRCDIR/sources_1/imports/vhdl/sepImageFilter_vt_filter_lineBuffer_V.vhd">
+        <FileInfo>
+          <Attr Name="ImportPath" Val="$PPRDIR/../../../../../poliTO_private/tesi/sepFilter_IP/genSepFilter_New/ip/hdl/vhdl/sepImageFilter_vt_filter_lineBuffer_V.vhd"/>
+          <Attr Name="ImportTime" Val="1465482688"/>
+          <Attr Name="UsedIn" Val="synthesis"/>
+          <Attr Name="UsedIn" Val="simulation"/>
+        </FileInfo>
+      </File>
+      <File Path="$PSRCDIR/sources_1/imports/vhdl/sepImageFilter_mux_7to1_sel3_27_1.vhd">
+        <FileInfo>
+          <Attr Name="ImportPath" Val="$PPRDIR/../../../../../poliTO_private/tesi/sepFilter_IP/genSepFilter_New/ip/hdl/vhdl/sepImageFilter_mux_7to1_sel3_27_1.vhd"/>
+          <Attr Name="ImportTime" Val="1465482688"/>
+          <Attr Name="UsedIn" Val="synthesis"/>
+          <Attr Name="UsedIn" Val="simulation"/>
+        </FileInfo>
+      </File>
+      <File Path="$PSRCDIR/sources_1/imports/vhdl/sepImageFilter_mux_3to1_sel2_8_1.vhd">
+        <FileInfo>
+          <Attr Name="ImportPath" Val="$PPRDIR/../../../../../poliTO_private/tesi/sepFilter_IP/genSepFilter_New/ip/hdl/vhdl/sepImageFilter_mux_3to1_sel2_8_1.vhd"/>
+          <Attr Name="ImportTime" Val="1465511271"/>
+          <Attr Name="UsedIn" Val="synthesis"/>
+          <Attr Name="UsedIn" Val="simulation"/>
+        </FileInfo>
+      </File>
+      <File Path="$PSRCDIR/sources_1/imports/vhdl/sepImageFilter_hz_macOp.vhd">
+        <FileInfo>
+          <Attr Name="ImportPath" Val="$PPRDIR/../../../../../poliTO_private/tesi/sepFilter_IP/genSepFilter_New/ip/hdl/vhdl/sepImageFilter_hz_macOp.vhd"/>
+          <Attr Name="ImportTime" Val="1465511269"/>
+          <Attr Name="UsedIn" Val="synthesis"/>
+          <Attr Name="UsedIn" Val="simulation"/>
+        </FileInfo>
+      </File>
+      <File Path="$PSRCDIR/sources_1/imports/vhdl/sepImageFilter_sdiv_38s_21ns_38_42.vhd">
+        <FileInfo>
+          <Attr Name="ImportPath" Val="$PPRDIR/../../../../../poliTO_private/tesi/sepFilter_IP/genSepFilter_New/ip/hdl/vhdl/sepImageFilter_sdiv_38s_21ns_38_42.vhd"/>
+          <Attr Name="ImportTime" Val="1465482688"/>
+          <Attr Name="UsedIn" Val="synthesis"/>
+          <Attr Name="UsedIn" Val="simulation"/>
+        </FileInfo>
+      </File>
+      <File Path="$PSRCDIR/sources_1/imports/vhdl/sepImageFilter_CONTROL_BUS_s_axi.vhd">
+        <FileInfo>
+          <Attr Name="ImportPath" Val="$PPRDIR/../../../../../poliTO_private/tesi/sepFilter_IP/genSepFilter_New/ip/hdl/vhdl/sepImageFilter_CONTROL_BUS_s_axi.vhd"/>
+          <Attr Name="ImportTime" Val="1465482688"/>
+          <Attr Name="UsedIn" Val="synthesis"/>
+          <Attr Name="UsedIn" Val="simulation"/>
+        </FileInfo>
+      </File>
+      <File Path="$PSRCDIR/sources_1/imports/vhdl/sepImageFilter_hz_filter.vhd">
+        <FileInfo>
+          <Attr Name="ImportPath" Val="$PPRDIR/../../../../../poliTO_private/tesi/sepFilter_IP/genSepFilter_New/ip/hdl/vhdl/sepImageFilter_hz_filter.vhd"/>
+          <Attr Name="ImportTime" Val="1465482685"/>
+          <Attr Name="UsedIn" Val="synthesis"/>
+          <Attr Name="UsedIn" Val="simulation"/>
+        </FileInfo>
+      </File>
+      <File Path="$PSRCDIR/sources_1/imports/vhdl/sepImageFilter_division.vhd">
+        <FileInfo>
+          <Attr Name="ImportPath" Val="$PPRDIR/../../../../../poliTO_private/tesi/sepFilter_IP/genSepFilter_New/ip/hdl/vhdl/sepImageFilter_division.vhd"/>
+          <Attr Name="ImportTime" Val="1465511270"/>
+          <Attr Name="UsedIn" Val="synthesis"/>
+          <Attr Name="UsedIn" Val="simulation"/>
+        </FileInfo>
+      </File>
+      <File Path="$PSRCDIR/sources_1/imports/vhdl/sepImageFilter_axisInt_in.vhd">
+        <FileInfo>
+          <Attr Name="ImportPath" Val="$PPRDIR/../../../../../poliTO_private/tesi/sepFilter_IP/genSepFilter_New/ip/hdl/vhdl/sepImageFilter_axisInt_in.vhd"/>
+          <Attr Name="ImportTime" Val="1465511269"/>
+          <Attr Name="UsedIn" Val="synthesis"/>
+          <Attr Name="UsedIn" Val="simulation"/>
+        </FileInfo>
+      </File>
+      <File Path="$PSRCDIR/sources_1/imports/vhdl/sepImageFilter_vt_filter.vhd">
+        <FileInfo>
+          <Attr Name="ImportPath" Val="$PPRDIR/../../../../../poliTO_private/tesi/sepFilter_IP/genSepFilter_New/ip/hdl/vhdl/sepImageFilter_vt_filter.vhd"/>
+          <Attr Name="ImportTime" Val="1465511269"/>
+          <Attr Name="UsedIn" Val="synthesis"/>
+          <Attr Name="UsedIn" Val="simulation"/>
+        </FileInfo>
+      </File>
+      <File Path="$PSRCDIR/sources_1/imports/vhdl/sepImageFilter_controlUnit.vhd">
+        <FileInfo>
+          <Attr Name="ImportPath" Val="$PPRDIR/../../../../../poliTO_private/tesi/sepFilter_IP/genSepFilter_New/ip/hdl/vhdl/sepImageFilter_controlUnit.vhd"/>
+          <Attr Name="ImportTime" Val="1465511268"/>
+          <Attr Name="UsedIn" Val="synthesis"/>
+          <Attr Name="UsedIn" Val="simulation"/>
+        </FileInfo>
+      </File>
+      <File Path="$PSRCDIR/sources_1/imports/vhdl/sepImageFilter_mul_11ns_11ns_21_3.vhd">
+        <FileInfo>
+          <Attr Name="ImportPath" Val="$PPRDIR/../../../../../poliTO_private/tesi/sepFilter_IP/genSepFilter_New/ip/hdl/vhdl/sepImageFilter_mul_11ns_11ns_21_3.vhd"/>
+          <Attr Name="ImportTime" Val="1465482688"/>
+          <Attr Name="UsedIn" Val="synthesis"/>
+          <Attr Name="UsedIn" Val="simulation"/>
+        </FileInfo>
+      </File>
+      <File Path="$PSRCDIR/sources_1/imports/vhdl/sepImageFilter_axisInt_out.vhd">
+        <FileInfo>
+          <Attr Name="ImportPath" Val="$PPRDIR/../../../../../poliTO_private/tesi/sepFilter_IP/genSepFilter_New/ip/hdl/vhdl/sepImageFilter_axisInt_out.vhd"/>
+          <Attr Name="ImportTime" Val="1465482686"/>
+          <Attr Name="UsedIn" Val="synthesis"/>
+          <Attr Name="UsedIn" Val="simulation"/>
+        </FileInfo>
+      </File>
+      <File Path="$PSRCDIR/sources_1/imports/vhdl/sepImageFilter_kernelSel.vhd">
+        <FileInfo>
+          <Attr Name="ImportPath" Val="$PPRDIR/../../../../../poliTO_private/tesi/sepFilter_IP/genSepFilter_New/ip/hdl/vhdl/sepImageFilter_kernelSel.vhd"/>
+          <Attr Name="ImportTime" Val="1465511268"/>
+          <Attr Name="UsedIn" Val="synthesis"/>
+          <Attr Name="UsedIn" Val="simulation"/>
+        </FileInfo>
+      </File>
+      <File Path="$PSRCDIR/sources_1/imports/vhdl/sepImageFilter.vhd">
+        <FileInfo>
+          <Attr Name="ImportPath" Val="$PPRDIR/../../../../../poliTO_private/tesi/sepFilter_IP/genSepFilter_New/ip/hdl/vhdl/sepImageFilter.vhd"/>
+          <Attr Name="ImportTime" Val="1465511270"/>
+          <Attr Name="UsedIn" Val="synthesis"/>
+          <Attr Name="UsedIn" Val="simulation"/>
+        </FileInfo>
+      </File>
+      <Config>
+        <Option Name="DesignMode" Val="RTL"/>
+        <Option Name="TopModule" Val="sepImageFilter"/>
+        <Option Name="TopAutoSet" Val="TRUE"/>
+      </Config>
+    </FileSet>
+    <FileSet Name="constrs_1" Type="Constrs" RelSrcDir="$PSRCDIR/constrs_1">
+      <Filter Type="Constrs"/>
+      <Config>
+        <Option Name="ConstrsType" Val="XDC"/>
+      </Config>
+    </FileSet>
+    <FileSet Name="sim_1" Type="SimulationSrcs" RelSrcDir="$PSRCDIR/sim_1">
+      <Config>
+        <Option Name="DesignMode" Val="RTL"/>
+        <Option Name="TopModule" Val="sepImageFilter"/>
+        <Option Name="TopLib" Val="xil_defaultlib"/>
+        <Option Name="TopAutoSet" Val="TRUE"/>
+        <Option Name="SrcSet" Val="sources_1"/>
+      </Config>
+    </FileSet>
+  </FileSets>
+  <Simulators>
+    <Simulator Name="XSim">
+      <Option Name="Description" Val="Vivado Simulator"/>
+      <Option Name="CompiledLib" Val="0"/>
+    </Simulator>
+    <Simulator Name="ModelSim">
+      <Option Name="Description" Val="ModelSim Simulator"/>
+    </Simulator>
+    <Simulator Name="Questa">
+      <Option Name="Description" Val="Questa Advanced Simulator"/>
+    </Simulator>
+    <Simulator Name="IES">
+      <Option Name="Description" Val="Incisive Enterprise Simulator (IES)"/>
+    </Simulator>
+    <Simulator Name="VCS">
+      <Option Name="Description" Val="Verilog Compiler Simulator (VCS)"/>
+    </Simulator>
+    <Simulator Name="Riviera">
+      <Option Name="Description" Val="Riviera-PRO Simulator"/>
+    </Simulator>
+  </Simulators>
+  <Runs Version="1" Minor="10">
+    <Run Id="synth_1" Type="Ft3:Synth" SrcSet="sources_1" Part="xc7z020clg484-1" ConstrsSet="constrs_1" Description="Vivado Synthesis Defaults" State="current" IncludeInArchive="true">
+      <Strategy Version="1" Minor="2">
+        <StratHandle Name="Vivado Synthesis Defaults" Flow="Vivado Synthesis 2015">
+          <Desc>Vivado Synthesis Defaults</Desc>
+        </StratHandle>
+        <Step Id="synth_design"/>
+      </Strategy>
+    </Run>
+    <Run Id="impl_1" Type="Ft2:EntireDesign" Part="xc7z020clg484-1" ConstrsSet="constrs_1" Description="Vivado Implementation Defaults" State="current" SynthRun="synth_1" IncludeInArchive="true">
+      <Strategy Version="1" Minor="2">
+        <StratHandle Name="Vivado Implementation Defaults" Flow="Vivado Implementation 2015">
+          <Desc>Vivado Implementation Defaults</Desc>
+        </StratHandle>
+        <Step Id="init_design"/>
+        <Step Id="opt_design"/>
+        <Step Id="power_opt_design"/>
+        <Step Id="place_design"/>
+        <Step Id="post_place_power_opt_design"/>
+        <Step Id="phys_opt_design"/>
+        <Step Id="route_design"/>
+        <Step Id="post_route_phys_opt_design"/>
+        <Step Id="write_bitstream"/>
+      </Strategy>
+    </Run>
+  </Runs>
+</Project>

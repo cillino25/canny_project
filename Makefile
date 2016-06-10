@@ -126,10 +126,13 @@ cp-test-VDMA-rv-fr: test-VDMA-rv-fr
 ## first the global setting is done, and at each call the correct kernel is selected through a single-register write.
 ##
 
+test-filter-sf:
+	$(CPP) -I/usr/local/include -L/usr/local/lib -I/home/stefano/TESI/openCV/include $(pipe_dir)/sepImageFilter.c $(pipe_dir)/vdma.c $(pipe_dir)/test-filter-sf.cpp -o $(pipe_dir)/test-filter-sf -I$(opencv_arm_dir)/include -L$(opencv_arm_dir)/lib `pkg-config --cflags --libs opencv`
+
 test-filter-sf-arm-cv:
-	$(ARM_CPP) $(pipe_dir)/sepImageFilter.c $(pipe_dir)/vdma.c $(pipe_dir)/test-filter-sf.cpp -o $(pipe_dir)/test-filter-opencv -I$(opencv_arm_dir)/include -L$(opencv_arm_dir)/lib `pkg-config --cflags --libs opencv`
+	$(ARM_CPP) $(pipe_dir)/sepImageFilter.c $(pipe_dir)/vdma.c $(pipe_dir)/test-filter-sf.cpp -o $(pipe_dir)/test-filter-arm-sf -I$(opencv_arm_dir)/include -L$(opencv_arm_dir)/lib `pkg-config --cflags --libs opencv`
 cp-test-filter-sf-arm-cv: test-filter-sf-arm-cv
-	scp $(pipe_dir)/test-filter-opencv zedboard:~/
+	scp $(pipe_dir)/test-filter-arm-sf zedboard:~/
 
 
 cp-lena-gray:

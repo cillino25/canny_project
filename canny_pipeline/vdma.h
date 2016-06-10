@@ -2,9 +2,6 @@
 #define VDMA_H_
 
 
-#ifdef __cplusplus
-    extern "C" {
-#endif
 
 
 typedef struct {
@@ -60,8 +57,6 @@ void vdma_send_fsync(vdma_handle *handle);
 void fill_buffer(unsigned int * fbAddr, int length, unsigned int val);
 int cmp_buffer(unsigned int * fbAddr, int length, unsigned int val);
 
-#ifdef __cplusplus
-    }
-#endif
+
 
 #endif

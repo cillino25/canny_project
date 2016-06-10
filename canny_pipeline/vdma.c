@@ -1,6 +1,4 @@
-#ifdef __cplusplus
-    extern "C" {
-#endif
+
 
 #include <stdio.h>
 #include <string.h>
@@ -473,6 +471,3 @@ int cmp_buffer(unsigned int * fbAddr, int length, unsigned int val){
   return 0;
 }
 
-#ifdef __cplusplus
-    }
-#endif

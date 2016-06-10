@@ -1,3 +1,5 @@
+CC=gcc
+CPP=g++
 RV_CC=riscv64-unknown-linux-gnu-gcc
 ARM_CC=arm-xilinx-linux-gnueabi-gcc
 ARM_CPP=arm-xilinx-linux-gnueabi-g++

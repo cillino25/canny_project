@@ -49,12 +49,13 @@ int main(int argc, char **argv){
 	}
 
 
-	printf("Get integer approximated coefficients:\n");
+	printf("\n\nGet integer approximated coefficients:\n");
 	get_int_coeffs(n, gf, GI);
 	for(i=0; i<n; i++){
 		printf("-d: GI[%d]=%ld\n", i, GI[i]);
+		norm1 += GI[i];
 	}
-	printf("Normalization factor (1D) = %ld\n", norm1);
+	printf("Normalization factor (1D) = %ld\n\n", norm1*norm1);
 
 	printf("\nGaussian filter mask:\n");
 	for(i=0; i<n; i++){

@@ -1,9 +1,4 @@
-/*
- * Canny_test.cpp
- *
- *  Created on: 21 apr 2016
- *      Author: michele
- */
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -30,10 +25,7 @@ using namespace std;
 //Mat src_gray;
 //Mat detected_edges;
 
-int edgeThresh = 1;
-int const max_lowThreshold = 100;
 int ratio = 3;
-char* window_name = (char*)"Edge Map";
 struct timeval start, stop;
 
 
@@ -47,25 +39,19 @@ double psnr(Mat & img_src, Mat & img_compressed);
 double ssim(Mat & img_src, Mat & img_compressed, int block_size, bool show_progress);
 
 
-
-/**
- * @function CannyThreshold
- * @brief Trackbar callback - Canny thresholds input with a ratio 1:3
- */
 void CannyThreshold(const Mat src, Mat *dst, int Threshold, double sigma, int gBlurMaskSize, int cannyMaskSize, int custom); 
 
 
 /** @function main */
-int main( int argc, char** argv )
+int main( int argc, char **argv )
 {
-
-  char res[256] = "result.bmp";
-  struct timeval start, stop;
+  int i=0, j=0;
+  //struct timeval start, stop;
   int threshold = 50;
   double sigma = 1.5;
   int gblur=5, canny=3;
   int custom = 0;
-  int i=0, j=0;
+  char res[256] = "result.bmp";
 
   printf("\n## cmd: ");
   for(i=0;i<argc;i++)
@@ -216,6 +202,7 @@ void CannyThreshold(const Mat src, Mat *dst, int Threshold, double sigma, int gB
   //printf("**Gaussian blur start..\n");
   gettimeofday(&start, NULL);
   //t1=clock();
+  
   my_Space::GaussianBlur(src, *dst, Size(gBlurMaskSize,gBlurMaskSize), sigma, sigma, BORDER_DEFAULT, custom);
   //t2=clock();
   gettimeofday(&stop, NULL);

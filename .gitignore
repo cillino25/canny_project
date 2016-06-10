@@ -5,3 +5,7 @@ root.bin
 rootcv.bin
 *.bin
 *.bmp
+BOOT.bin.VDMA_genSepImageFilter-1fb
+BOOT.bin.VDMA_genSepImageFilter-1fb-fsync
+BOOT.bin.VDMA_genSepImageFilter-3fb-fsync
+

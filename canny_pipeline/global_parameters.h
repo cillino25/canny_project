@@ -31,7 +31,7 @@
 #define BUFFER_MEM_READ_START_ADDRESS        0x1F400000
 #define BUFFER_MEM_WRITE_START_ADDRESS       0x1F700000
 /* Buffer size = 1M */
-#define BUFFER_SIZE				             0x00100000
+#define BUFFER_SIZE				                   0x00100000
 
 
 #define MEM2VDMA_BUFFER1_BASEADDR		(BUFFER_MEM_READ_START_ADDRESS)

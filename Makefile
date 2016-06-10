@@ -85,6 +85,7 @@ cp-print-VDMA-rv: print-VDMA-rv
 	cp $(pipe_dir)/print-VDMA_$(exe_type) mnt
 
 .PHONY: print-VDMA-arm print-VDMA-rv
+
 ###################################################################################
 ## Basic VDMA test (alternative folder)
 
@@ -122,8 +123,7 @@ cp-test-VDMA-rv-fr: test-VDMA-rv-fr
 ####################################################################################
 ## sepImageFilter single frame complete application.
 ## 
-## All convolutions will be executed from the HW accelerator (sepImageFilter), with 3 different calls:
-## first the global setting is done, and at each call the correct kernel is selected through a single-register write.
+## Main purpose is to test filter correct functionalities (three different configurations)
 ##
 
 test-filter-sf:
@@ -143,8 +143,24 @@ test-filter-rv:
 cp-test-filter-rv: test-filter-rv
 	cp $(pipe_dir)/test-filter_$(exe_type) mnt/
 
-
 .PHONY: test-filter-arm cp-test-filter-arm test-filter-rv cp-test-filter-rv
+
+#####################################################################################################
+## Modified Canny Edge Detection algorithm with sepImageFilter acceleration - single frame version.
+## 
+## All convolutions will be executed from the HW accelerator (sepImageFilter), with 3 different calls:
+## first the global setting is done, and at each call the correct kernel is selected through a single-register write.
+##
+canny-mod-filter-sf:
+	$(CPP) -I/usr/local/include -L/usr/local/lib -I/home/stefano/TESI/openCV/include $(pipe_dir)/sepImageFilter.c $(pipe_dir)/vdma.c $(pipe_dir)/canny_mod_filter_sf.cpp -o $(pipe_dir)/canny_mod_filter_sf `pkg-config --cflags --libs opencv`
+
+canny-mod-filter-sf-arm:
+	$(ARM_CPP) -I$(opencv_arm_dir)/include -L$(opencv_arm_dir)/lib $(pipe_dir)/sepImageFilter.c $(pipe_dir)/vdma.c $(pipe_dir)/openCV_HW_filter.cpp $(pipe_dir)/canny_mod_filter_sf.cpp -o $(pipe_dir)/canny_mod_filter_sf `pkg-config --cflags --libs opencv`
+cp-canny-mod-filter-sf-arm: canny-mod-filter-sf-arm
+	scp $(pipe_dir)/canny_mod_filter_sf zedboard:~
+
+.PHONY: canny-mod-filter-sf canny-mod-filter-sf-arm cp-canny-mod-filter-sf-arm
+
 ####################################################################################
 ## Write and read memory utilities
 
@@ -168,6 +184,7 @@ cp_read_mem: read_mem
 	scp $(comm_dir)/read_mem zedboard:~
 
 .PHONY: read_mem cp_read_mem write_mem cp_write_mem write_mem-rv cp_write_mem-rv
+
 ####################################################################################
 
 update_root: mount_root cp_pipe_fr cp_read_mem cp-test-VDMA cp-test-VDMA-rv-fr cp-print-VDMA-rv cp_write_mem-rv
@@ -181,9 +198,8 @@ upload_root: update_root cp-print-VDMA-arm cp_read_mem cp-test-VDMA-arm-fr
 ####################################################################################
 
 cp-all: cp_write_mem cp_read_mem cp-print-VDMA-arm
-	scp canny_mod/lena_blurred_0.bmp zedboard:~
-	scp canny_mod/lena_secret.bmp zedboard:~
-
+	scp canny_mod/lena_blurred_0.bmp canny_mod/lena_secret.bmp canny_mod/lena_gray.bmp zedboard:~
+	
 cp-opencv-libs:
 	scp -r $(opencv_arm_dir)/bin/* zedboard:/usr/bin
 	scp -r $(opencv_arm_dir)/include/* zedboard:/usr/include

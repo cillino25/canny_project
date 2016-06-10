@@ -17,7 +17,7 @@ int main(int argc, char **argv)
 	unsigned int page_size = sysconf(_SC_PAGESIZE);
 	unsigned int mem_address = 0x1F000000;
 	unsigned int val = 1;
-
+	unsigned int pos = 1;
 
 	int i = 0;
 
@@ -26,6 +26,9 @@ int main(int argc, char **argv)
 	}
 	if(argc >= 3){
 		val = strtoul(argv[2], NULL, 0);
+	}
+	if(argc >= 4){
+		pos = strtoul(argv[3], NULL, 0);
 	}
 
 	if ((fd_mem = open("/dev/mem", O_RDWR | O_SYNC)) == -1){
@@ -39,7 +42,7 @@ int main(int argc, char **argv)
 		exit(0);
 	}
 
-	for(i=0; i<1; i++)
+	for(i=0; i<pos; i++)
 		((volatile unsigned int *) mem_mmap)[i] = val;
 
 	printf("-Written 0x%x at 0x%x.\n", val, mem_address);

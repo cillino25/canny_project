@@ -31,7 +31,7 @@ int main() {
 
  
   int mem;
-  void *read_fb1, *read_fb2, *read_fb3, *write_fb;
+  void *read_fb, *write_fb;
   unsigned int page_size = sysconf(_SC_PAGESIZE);
 
 
@@ -77,8 +77,6 @@ int main() {
 
   vdma_setup(&handle, page_size, AXI_VDMA_BASEADDR, width, height, 2*PIXEL_CHANNELS, BUFFER_SIZE, MEM2VDMA_BUFFER1_BASEADDR, MEM2VDMA_BUFFER2_BASEADDR, MEM2VDMA_BUFFER3_BASEADDR, VDMA2MEM_BUFFER1_BASEADDR, VDMA2MEM_BUFFER2_BASEADDR, VDMA2MEM_BUFFER3_BASEADDR, AXI_PULSER);
 
-  vdma_setParams(&handle, AXI_VDMA_BASEADDR, width, height, 2*PIXEL_CHANNELS, BUFFER_SIZE, MEM2VDMA_BUFFER1_BASEADDR, MEM2VDMA_BUFFER2_BASEADDR, MEM2VDMA_BUFFER3_BASEADDR, VDMA2MEM_BUFFER1_BASEADDR, VDMA2MEM_BUFFER2_BASEADDR, VDMA2MEM_BUFFER3_BASEADDR);
-
   sepImageFilter_setupHandle(&filter_handle, &handle.vdmaHandler, page_size, AXI_SEPIMGFILTER);
   
   sepImageFilter_setupHandleParams(&filter_handle, width, height, k0_hz_coeffs, k0_vt_coeffs, norm0, k1_hz_coeffs, k1_vt_coeffs, norm1, k2_hz_coeffs, k2_vt_coeffs, norm2);
@@ -92,18 +90,8 @@ int main() {
     return -1;
   }
 
-  read_fb1 = (unsigned int*)mmap(NULL, BUFFER_SIZE, PROT_READ | PROT_WRITE, MAP_SHARED, handle.vdmaHandler, VDMA2MEM_BUFFER1_BASEADDR);
-  if(((unsigned int *)read_fb1) == MAP_FAILED) {
-    printf("vdmaVirtualAddress mapping for absolute memory access failed.\n");
-    return -1;
-  }
-  read_fb2 = (unsigned int*)mmap(NULL, BUFFER_SIZE, PROT_READ | PROT_WRITE, MAP_SHARED, handle.vdmaHandler, VDMA2MEM_BUFFER2_BASEADDR);
-  if(((unsigned int *)read_fb2) == MAP_FAILED) {
-    printf("vdmaVirtualAddress mapping for absolute memory access failed.\n");
-    return -1;
-  }
-  read_fb3 = (unsigned int*)mmap(NULL, BUFFER_SIZE, PROT_READ | PROT_WRITE, MAP_SHARED, handle.vdmaHandler, VDMA2MEM_BUFFER3_BASEADDR);
-  if(((unsigned int *)read_fb3) == MAP_FAILED) {
+  read_fb = (unsigned int*)mmap(NULL, BUFFER_SIZE, PROT_READ | PROT_WRITE, MAP_SHARED, handle.vdmaHandler, VDMA2MEM_BUFFER1_BASEADDR);
+  if(((unsigned int *)read_fb) == MAP_FAILED) {
     printf("vdmaVirtualAddress mapping for absolute memory access failed.\n");
     return -1;
   }
@@ -120,65 +108,38 @@ int main() {
   // Write first image
   sepImageFilter_config(&filter_handle, 1, 0, 0);
   sepImageFilter_start(&filter_handle);
-  vdma_send_fsync(&handle);
   
   while(sepImageFilter_running(&filter_handle) != 0);
-
-  vdma_reset_fsync(&handle);
   
-  dest.data = (unsigned char*)read_fb1;
+  dest.data = (unsigned char*)read_fb;
   imwrite("lena_blurred_0.bmp", dest);
 
 
   // Write second image
-  printf("Setting out buffer at 0x%x\n", VDMA2MEM_BUFFER2_BASEADDR);
-  //vdma_setFbInOut(&handle, MEM2VDMA_BUFFER1_BASEADDR, VDMA2MEM_BUFFER2_BASEADDR);
-  //vdma_write_size(&handle);
-  vdma_reset(&handle);
-  vdma_setParams(&handle, AXI_VDMA_BASEADDR, width, height, 2*PIXEL_CHANNELS, BUFFER_SIZE, MEM2VDMA_BUFFER1_BASEADDR, MEM2VDMA_BUFFER2_BASEADDR, MEM2VDMA_BUFFER3_BASEADDR, VDMA2MEM_BUFFER2_BASEADDR, VDMA2MEM_BUFFER2_BASEADDR, VDMA2MEM_BUFFER3_BASEADDR);
-  vdma_start_triple_buffering_mod(&handle);
-
   sepImageFilter_config(&filter_handle, 1, 0, 1);
   sepImageFilter_start(&filter_handle);
-  vdma_send_fsync(&handle);
   
   while(sepImageFilter_running(&filter_handle) != 0);
   
-  vdma_reset_fsync(&handle);
-
-  dest.data = (unsigned char*)read_fb2;
+  dest.data = (unsigned char*)read_fb;
   imwrite("lena_blurred_1.bmp", dest);
 
 
   // Write third image
-  printf("Setting out buffer at 0x%x\n", VDMA2MEM_BUFFER3_BASEADDR);
-  //vdma_setFbInOut(&handle, MEM2VDMA_BUFFER1_BASEADDR, VDMA2MEM_BUFFER3_BASEADDR);
-  //vdma_write_size(&handle);
-  vdma_reset(&handle);
-  vdma_setParams(&handle, AXI_VDMA_BASEADDR, width, height, 2*PIXEL_CHANNELS, BUFFER_SIZE, MEM2VDMA_BUFFER1_BASEADDR, MEM2VDMA_BUFFER2_BASEADDR, MEM2VDMA_BUFFER3_BASEADDR, VDMA2MEM_BUFFER3_BASEADDR, VDMA2MEM_BUFFER2_BASEADDR, VDMA2MEM_BUFFER3_BASEADDR);
-  vdma_start_triple_buffering_mod(&handle);
-
   sepImageFilter_config(&filter_handle, 1, 0, 2);
   sepImageFilter_start(&filter_handle);
-  vdma_send_fsync(&handle);
   
   while(sepImageFilter_running(&filter_handle) != 0);
-
-  vdma_reset_fsync(&handle);
-
   
-
-  dest.data = (unsigned char*)read_fb3;
+  dest.data = (unsigned char*)read_fb;
   imwrite("lena_blurred_2.bmp", dest);
 
-  //while(1);
+
 
   // Halt VDMA and unmap memory ranges
   vdma_halt(&handle);
 
-  munmap(read_fb1, BUFFER_SIZE);
-  munmap(read_fb2, BUFFER_SIZE);
-  munmap(read_fb3, BUFFER_SIZE);
+  munmap(read_fb, BUFFER_SIZE);
   munmap(write_fb, BUFFER_SIZE);
   printf("Bye!\n");
 

@@ -12,7 +12,8 @@
 
 
 
-int vdma_setup(vdma_handle *handle, unsigned int page_size, unsigned int baseAddr, int width, int height, int pixelChannels, int max_buffer_size, long fb1Addr_mm2s, long fb2Addr_mm2s, long fb3Addr_mm2s, long fb1Addr_s2mm, long fb2Addr_s2mm, long fb3Addr_s2mm, long pulser_baseAddr) {
+int vdma_setup(vdma_handle *handle, unsigned int page_size, unsigned int baseAddr, int width, int height, int pixelChannels, int max_buffer_size, long fb1Addr_mm2s, long fb2Addr_mm2s, long fb3Addr_mm2s, long fb1Addr_s2mm, long fb2Addr_s2mm, long fb3Addr_s2mm, long pulser_baseAddr)
+{
     handle->baseAddr=baseAddr;
     handle->width=width;
     handle->height=height;
@@ -137,10 +138,30 @@ int vdma_setup(vdma_handle *handle, unsigned int page_size, unsigned int baseAdd
     return 0;
 }
 
+int vdma_setParams(vdma_handle *handle, unsigned int baseAddr, int width, int height, int pixelChannels, int max_buffer_size, long fb1Addr_mm2s, long fb2Addr_mm2s, long fb3Addr_mm2s, long fb1Addr_s2mm, long fb2Addr_s2mm, long fb3Addr_s2mm)
+{
+  handle->baseAddr=baseAddr;
+  handle->width=width;
+  handle->height=height;
+  handle->pixelChannels=pixelChannels;
+  handle->fbLength=pixelChannels*width*height;
+  handle->fb1PhysicalAddress_mm2s = fb1Addr_mm2s;
+  handle->fb2PhysicalAddress_mm2s = fb2Addr_mm2s;
+  handle->fb3PhysicalAddress_mm2s = fb3Addr_mm2s;
+  handle->fb1PhysicalAddress_s2mm = fb1Addr_s2mm;
+  handle->fb2PhysicalAddress_s2mm = fb2Addr_s2mm;
+  handle->fb3PhysicalAddress_s2mm = fb3Addr_s2mm;
 
-void vdma_halt(vdma_handle *handle) {
+  return 0;
+}
+
+void vdma_reset(vdma_handle *handle){
     vdma_set(handle, OFFSET_VDMA_S2MM_CONTROL_REGISTER, VDMA_CONTROL_REGISTER_RESET);
     vdma_set(handle, OFFSET_VDMA_MM2S_CONTROL_REGISTER, VDMA_CONTROL_REGISTER_RESET);
+}
+
+void vdma_halt(vdma_handle *handle) {
+    vdma_reset(handle);
     munmap(handle->vdmaVirtualAddress, AXI_VDMA_REG_SPACE);
     munmap(handle->fb1VirtualAddress_mm2s, handle->fbLength);
     munmap(handle->fb2VirtualAddress_mm2s, handle->fbLength);
@@ -242,7 +263,7 @@ void vdma_start_triple_buffering_mod(vdma_handle *handle) {
     // Do not mask interrupts
     vdma_set(handle, OFFSET_VDMA_S2MM_IRQ_MASK, 0xf);
 
-    int interrupt_frame_count = 3;
+    int interrupt_frame_count = 1;
 
     //printf("-d: start s2mm\n");
     // Start both S2MM and MM2S in triple buffering mode
@@ -293,6 +314,10 @@ void vdma_start_triple_buffering_mod(vdma_handle *handle) {
     vdma_set(handle, OFFSET_VDMA_MM2S_FRMDLY_STRIDE, handle->width*handle->pixelChannels);
 
     
+    vdma_write_size(handle);
+}
+
+void vdma_write_size(vdma_handle *handle){
     // Write horizontal size (bytes)
     vdma_set(handle, OFFSET_VDMA_S2MM_HSIZE, handle->width*handle->pixelChannels);
     vdma_set(handle, OFFSET_VDMA_MM2S_HSIZE, handle->width*handle->pixelChannels);
@@ -391,7 +416,7 @@ int vdma_s2mm_idle(vdma_handle *handle) {
 
 int vdma_mm2s_running(vdma_handle *handle) {
     // Check whether VDMA is running, that is ready to start transfers
-    return (vdma_get(handle, OFFSET_VDMA_MM2S_STATUS_REGISTER)&1)==1;
+    return (vdma_get(handle, OFFSET_VDMA_MM2S_STATUS_REGISTER)&1)==0;
 }
 
 int vdma_mm2s_idle(vdma_handle *handle) {
@@ -447,8 +472,24 @@ void print_vdma_stats(vdma_handle *handle) {
 
 void vdma_send_fsync(vdma_handle *handle){
   *((volatile unsigned int *)handle->pulserVirtualAddress) = 1;
+  printf("written %d at pulser\n", *((volatile unsigned int *)handle->pulserVirtualAddress) );
   //*((volatile unsigned int *)handle->pulserVirtualAddress) = 0;
 }
+
+void vdma_reset_fsync(vdma_handle *handle){
+  *((volatile unsigned int *)handle->pulserVirtualAddress) = 0;
+  printf("written %d at pulser\n", *((volatile unsigned int *)handle->pulserVirtualAddress) );
+  //*((volatile unsigned int *)handle->pulserVirtualAddress) = 0;
+}
+
+
+void vdma_setFbInOut(vdma_handle *handle, unsigned int fb_in, unsigned int fb_out){
+  vdma_set(handle, OFFSET_VDMA_MM2S_FRAMEBUFFER1, fb_in);
+  vdma_set(handle, OFFSET_VDMA_S2MM_FRAMEBUFFER1, fb_out);
+}
+
+
+
 
 // Length parameter must be in bytes!
 void fill_buffer(unsigned int * fbAddr, int length, unsigned int val){

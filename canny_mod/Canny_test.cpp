@@ -154,7 +154,7 @@ int main( int argc, char** argv )
   //gettimeofday(&stop, NULL);
   //printf("CannyThreshold total wall time: %lf s\n\n", ((stop.tv_sec + stop.tv_usec*0.000001)-(start.tv_sec + start.tv_usec*0.000001))*PRESC);
 
-
+  printf("src_gray step: %ld\n", src_gray.step.buf[1]);
 
   //printf("Img write: %s\n", res);
   gettimeofday(&start, NULL);

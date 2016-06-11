@@ -4,6 +4,10 @@
 		"selected_items":
 		[
 			[
+				"lena_",
+				"lena_gray"
+			],
+			[
 				"CL",
 				"CLOCKS_PER_SEC"
 			],
@@ -510,10 +514,6 @@
 			[
 				"rvali",
 				"m00_axi_rvalid"
-			],
-			[
-				"rlas",
-				"m00_axi_rlast"
 			]
 		]
 	},
@@ -531,7 +531,7 @@
 			"file": "/media/stefano/data_ext4/Dropbox/poliTO/tesi/canny_project/Makefile",
 			"settings":
 			{
-				"buffer_size": 6830,
+				"buffer_size": 7828,
 				"line_ending": "Unix"
 			}
 		},
@@ -539,7 +539,23 @@
 			"file": "Canny_test_arm.cpp",
 			"settings":
 			{
-				"buffer_size": 12476,
+				"buffer_size": 12201,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "opencv_Canny.cpp",
+			"settings":
+			{
+				"buffer_size": 14227,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "opencv_Gblur.cpp",
+			"settings":
+			{
+				"buffer_size": 11884,
 				"line_ending": "Unix"
 			}
 		},
@@ -668,11 +684,13 @@
 	},
 	"expanded_folders":
 	[
-		"/media/stefano/data_ext4/Dropbox/poliTO/tesi/canny_project/canny_mod",
 		"/usr/share/opencv/opencv-3.0.0/modules"
 	],
 	"file_history":
 	[
+		"/media/stefano/data_ext4/Dropbox/poliTO/tesi/canny_project/canny_mod/opencv_Gblur.h",
+		"/usr/share/opencv/opencv-3.0.0/modules/imgcodecs/include/opencv2/imgcodecs.hpp",
+		"/media/stefano/data_ext4/Dropbox/poliTO/tesi/vivado2015/ip_repo/genSepImageFilter_project/genSepImageFilter_project.srcs/sources_1/imports/vhdl/sepImageFilter_axisInt_out.vhd",
 		"/media/stefano/data_ext4/Dropbox/poliTO/tesi/canny_project/.gitignore",
 		"/home/stefano/riscv_exports.sh",
 		"/media/stefano/data_ext4/Dropbox/poliTO/tesi/canny_project/canny_mod/opencv_Canny.cpp",
@@ -697,7 +715,6 @@
 		"/media/stefano/data_ext4/Dropbox/poliTO/tesi/canny_project/canny_mod/convolution_arm.cpp",
 		"/media/stefano/data_ext4/Dropbox/poliTO/tesi/canny_project/canny_mod/gaussian_coefficients_arm.h",
 		"/media/stefano/data_ext4/Dropbox/poliTO/tesi/canny_project/canny_mod/gaussian_coefficients_arm.c",
-		"/media/stefano/data_ext4/Dropbox/poliTO/tesi/canny_project/canny_mod/opencv_Gblur.h",
 		"/media/stefano/data_ext4/Dropbox/poliTO/tesi/canny_project/canny_mod/compare_similarity.m",
 		"/media/stefano/data_ext4/Dropbox/poliTO/tesi/canny_project/canny_mod/FeatureSIM.m",
 		"/media/stefano/data_ext4/Dropbox/poliTO/tesi/canny_project/canny_mod/convolution.cpp",
@@ -798,9 +815,7 @@
 		"/media/stefano/data_ext4/Dropbox/poliTO/tesi/canny/Makefile",
 		"/media/stefano/data_ext4/Dropbox/poliTO/tesi/canny/canny_mod/Makefile",
 		"/media/stefano/data_ext4/Dropbox/poliTO/tesi/canny/quality_metrics_OpenCV.h",
-		"/media/stefano/data_ext4/Dropbox/poliTO/tesi/canny/quality_metrics_OpenCV.cpp",
-		"/media/stefano/data_ext4/Dropbox/poliTO/tesi/canny/gaussian_coefficients.h",
-		"/media/stefano/data_ext4/Dropbox/poliTO/tesi/canny/gaussian_coefficients.c"
+		"/media/stefano/data_ext4/Dropbox/poliTO/tesi/canny/quality_metrics_OpenCV.cpp"
 	],
 	"find":
 	{
@@ -819,6 +834,13 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"struct",
+			"window_name",
+			"ratio",
+			"max_lowThreshold",
+			"edgeThresh",
+			"test-filter-rv",
+			"ap_const_lv2_3",
 			"CLOCKS_PER_SEC",
 			"$(cur_dir)/openCV/canny_mod",
 			"long",
@@ -939,14 +961,7 @@
 			"syscall",
 			"ecall",
 			"scall",
-			"start",
-			"trap_entry",
-			"handle_trap",
-			"write_csr",
-			"1337",
-			"tohost_exit",
-			"thread_entry",
-			"init_tls"
+			"start"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -1033,7 +1048,7 @@
 	"groups":
 	[
 		{
-			"selected": 2,
+			"selected": 5,
 			"sheets":
 			[
 				{
@@ -1061,7 +1076,7 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 3,
+					"stack_index": 5,
 					"type": "text"
 				},
 				{
@@ -1070,15 +1085,15 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 6830,
+						"buffer_size": 7828,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								168,
-								168
+								4792,
+								4792
 							]
 						],
 						"settings":
@@ -1086,10 +1101,10 @@
 							"syntax": "Packages/Makefile/Makefile.sublime-syntax"
 						},
 						"translation.x": 0.0,
-						"translation.y": 0.0,
+						"translation.y": 2223.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 1,
+					"stack_index": 4,
 					"type": "text"
 				},
 				{
@@ -1098,15 +1113,15 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 12476,
+						"buffer_size": 12201,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								5606,
-								5606
+								6343,
+								6343
 							]
 						],
 						"settings":
@@ -1116,14 +1131,72 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 3456.0,
+						"translation.y": 3591.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 0,
+					"stack_index": 3,
 					"type": "text"
 				},
 				{
 					"buffer": 3,
+					"file": "opencv_Canny.cpp",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 14227,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								2006,
+								2006
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/C++/C++.sublime-syntax",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 228.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 2,
+					"type": "text"
+				},
+				{
+					"buffer": 4,
+					"file": "opencv_Gblur.cpp",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 11884,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								109,
+								109
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/C++/C++.sublime-syntax",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 1,
+					"type": "text"
+				},
+				{
+					"buffer": 5,
 					"file": "global.h",
 					"semi_transient": false,
 					"settings":
@@ -1147,11 +1220,11 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 4,
+					"stack_index": 0,
 					"type": "text"
 				},
 				{
-					"buffer": 4,
+					"buffer": 6,
 					"file": "opencv_Canny_arm.cpp",
 					"semi_transient": false,
 					"settings":
@@ -1176,11 +1249,11 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 2,
+					"stack_index": 6,
 					"type": "text"
 				},
 				{
-					"buffer": 5,
+					"buffer": 7,
 					"file": "opencv_Canny_arm.h",
 					"semi_transient": false,
 					"settings":
@@ -1201,14 +1274,14 @@
 							"syntax": "Packages/C++/C++.sublime-syntax"
 						},
 						"translation.x": 0.0,
-						"translation.y": 333.0,
+						"translation.y": 351.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 6,
+					"stack_index": 8,
 					"type": "text"
 				},
 				{
-					"buffer": 6,
+					"buffer": 8,
 					"file": "opencv_Gblur_arm.cpp",
 					"semi_transient": false,
 					"settings":
@@ -1233,11 +1306,11 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 9,
+					"stack_index": 11,
 					"type": "text"
 				},
 				{
-					"buffer": 7,
+					"buffer": 9,
 					"file": "opencv_Gblur_arm.h",
 					"semi_transient": false,
 					"settings":
@@ -1261,11 +1334,11 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 8,
+					"stack_index": 10,
 					"type": "text"
 				},
 				{
-					"buffer": 8,
+					"buffer": 10,
 					"file": "gaussian_coefficients_arm.c",
 					"semi_transient": false,
 					"settings":
@@ -1287,14 +1360,14 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 1787.0,
+						"translation.y": 1886.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 11,
+					"stack_index": 13,
 					"type": "text"
 				},
 				{
-					"buffer": 9,
+					"buffer": 11,
 					"file": "convolution_arm.cpp",
 					"semi_transient": false,
 					"settings":
@@ -1317,14 +1390,14 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 23311.0,
+						"translation.y": 24606.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 10,
+					"stack_index": 12,
 					"type": "text"
 				},
 				{
-					"buffer": 10,
+					"buffer": 12,
 					"file": "convolution_arm.h",
 					"semi_transient": false,
 					"settings":
@@ -1345,14 +1418,14 @@
 							"syntax": "Packages/C++/C++.sublime-syntax"
 						},
 						"translation.x": 81.0,
-						"translation.y": 486.0,
+						"translation.y": 513.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 7,
+					"stack_index": 9,
 					"type": "text"
 				},
 				{
-					"buffer": 11,
+					"buffer": 13,
 					"file": "/usr/share/riscv_src/Makefile",
 					"semi_transient": false,
 					"settings":
@@ -1373,10 +1446,10 @@
 							"syntax": "Packages/Makefile/Makefile.sublime-syntax"
 						},
 						"translation.x": 0.0,
-						"translation.y": 1134.0,
+						"translation.y": 1197.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 5,
+					"stack_index": 7,
 					"type": "text"
 				}
 			]
@@ -1384,7 +1457,7 @@
 	],
 	"incremental_find":
 	{
-		"height": 26.0
+		"height": 27.0
 	},
 	"input":
 	{
@@ -1425,7 +1498,7 @@
 	"project": "canny_mod.sublime-project",
 	"replace":
 	{
-		"height": 64.0
+		"height": 50.0
 	},
 	"save_all_on_build": true,
 	"select_file":

@@ -46,6 +46,7 @@ namespace my_Space
 		if (low_thresh > high_thresh)
 			std::swap(low_thresh, high_thresh);
 
+
 		Mat src = _src.getMat();
 		Mat dst = _dst.getMat();
 
@@ -61,6 +62,9 @@ namespace my_Space
 		my_Space::Sobel(src, dy, CV_16S, 0, 1, aperture_size, 1, 0, BORDER_REPLICATE);		//y component of the gradient
 	  gettimeofday(&stop, NULL);
 	  printf("SobelDx AND SobelDy wall time: %lf s\n\n", ((stop.tv_sec + stop.tv_usec*0.000001)-(start.tv_sec + start.tv_usec*0.000001))*PRESC);
+		
+		imwrite("dx_test.bmp", dx);
+		imwrite("dy_test.bmp", dy);
 		
 
 		if (L2gradient)
@@ -113,7 +117,7 @@ namespace my_Space
 		*/
 
 		gettimeofday(&start, NULL);
-		my_Space::nonMaxSuppress(src, cn, dx, dy, gradient, mapstep, mag_buf, map, &maxsize, &stack, &stack_top, &stack_bottom, low, high, L2gradient);
+		my_Space::nonMaxSuppress(src.rows, src.cols, cn, dx, dy, gradient, mapstep, mag_buf, map, &maxsize, &stack, &stack_top, &stack_bottom, low, high, L2gradient);
 	  gettimeofday(&stop, NULL);
 	  printf("nonMaxSuppress wall time: %lf s\n\n", ((stop.tv_sec + stop.tv_usec*0.000001)-(start.tv_sec + start.tv_usec*0.000001))*PRESC);
 		
@@ -134,9 +138,8 @@ namespace my_Space
 		}
 	}
 
-	void nonMaxSuppress(Mat src, int cn, Mat dx, Mat dy, Mat gradient, ptrdiff_t mapstep, int* mag_buf[], uchar* map, int* maxsize, std::vector<uchar*> *stack, uchar*** stack_top, uchar*** stack_bottom,
-					double low, double high,
-					bool L2gradient)
+	void nonMaxSuppress(int rows, int cols, int cn, Mat dx, Mat dy, Mat gradient, ptrdiff_t mapstep, int* mag_buf[], uchar* map, int* maxsize, std::vector<uchar*> *stack, uchar*** stack_top, uchar*** stack_bottom,
+					double low, double high, bool L2gradient)
 	{
 
 		#define CANNY_PUSH(d)   *(d) = uchar(2), *(*stack_top)++ = (d)
@@ -146,32 +149,32 @@ namespace my_Space
 		//   0 - the pixel might belong to an edge
 		//   1 - the pixel can not belong to an edge
 		//   2 - the pixel does belong to an edge
-		for (int i = 0; i <= src.rows; i++)
+		for (int i = 0; i <= rows; i++)
 		{
 
 			int* _norm = mag_buf[(i > 0) + 1] + 1;
-			if (i < src.rows)
+			if (i < rows)
 			{
 				short* _dx = dx.ptr<short>(i);
 				short* _dy = dy.ptr<short>(i);
-				short* _gradient = gradient.ptr<short>(i);
+				//short* _gradient = gradient.ptr<short>(i);
 
 				if (!L2gradient)
 				{
-					int j = 0, width = src.cols * cn;
+					int j = 0, width = cols * cn;
 					for ( ; j < width; ++j)
 						_norm[j] = std::abs(int(_dx[j])) + std::abs(int(_dy[j]));
 				}
 				else
 				{
-					int j = 0, width = src.cols * cn;
+					int j = 0, width = cols * cn;
 					for ( ; j < width; ++j)
 						_norm[j] = int(_dx[j])*_dx[j] + int(_dy[j])*_dy[j];
 				}
 
 				if (cn > 1)
 				{
-					for(int j = 0, jn = 0; j < src.cols; ++j, jn += cn)
+					for(int j = 0, jn = 0; j < cols; ++j, jn += cn)
 					{
 						int maxIdx = jn;
 						for(int k = 1; k < cn; ++k)
@@ -181,7 +184,7 @@ namespace my_Space
 						_dy[j] = _dy[maxIdx];
 					}
 				}
-				_norm[-1] = _norm[src.cols] = 0;
+				_norm[-1] = _norm[cols] = 0;
 			}
 			else
 				memset(_norm-1, 0, /* cn* */mapstep*sizeof(int));
@@ -192,7 +195,7 @@ namespace my_Space
 				continue;
 
 			uchar* _map = map + mapstep*i + 1;
-			_map[-1] = _map[src.cols] = 1;
+			_map[-1] = _map[cols] = 1;
 
 			int* _mag = mag_buf[1] + 1; // take the central row
 			ptrdiff_t magstep1 = mag_buf[2] - mag_buf[1];
@@ -201,17 +204,17 @@ namespace my_Space
 			const short* _x = dx.ptr<short>(i-1);
 			const short* _y = dy.ptr<short>(i-1);
 
-			if ((*stack_top - *stack_bottom) + src.cols > *maxsize)
+			if ((*stack_top - *stack_bottom) + cols > *maxsize)
 			{
 				int sz = (int)(*stack_top - *stack_bottom);
-				*maxsize = std::max(*maxsize * 3/2, sz + src.cols);
+				*maxsize = std::max(*maxsize * 3/2, sz + cols);
 				(*stack).resize(*maxsize);
 				*stack_bottom = &(*stack)[0];
 				*stack_top = *stack_bottom + sz;
 			}
 
 			int prev_flag = 0;
-			for (int j = 0; j < src.cols; j++)
+			for (int j = 0; j < cols; j++)
 			{
 				#define CANNY_SHIFT 15
 				const int TG22 = (int)(0.4142135623730950488016887242097*(1<<CANNY_SHIFT) + 0.5);

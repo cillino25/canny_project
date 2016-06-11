@@ -8,7 +8,7 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <string.h>
-#include <time.h>
+#include <sys/time.h>
 #include <sys/mman.h>
 
 #include "opencv2/imgproc/imgproc.hpp"
@@ -35,7 +35,7 @@ struct timeval start, stop;
 
 int main(int argc, char **argv) {
   int i=0;
-  int threshold = 50;
+  int thresh = 50, ratio=3;
   double sigma = 1.5;
   int gblur=5, canny=3;
   int custom = 0;
@@ -45,23 +45,29 @@ int main(int argc, char **argv) {
   sepimgfilter_handle filter_handle;
  
   int mem;
-  void *read_fb, *write_fb;
+  void *gb_in_fb, *gb_out_fb, *sobel_dx_out_fb, *sobel_dy_out_fb, *out_img_fb;
+  unsigned int gb_in_fb_addr        = MEM2VDMA_BUFFER1_BASEADDR;
+  unsigned int gb_out_fb_addr       = MEM2VDMA_BUFFER2_BASEADDR;
+  unsigned int sobel_dx_out_fb_addr = MEM2VDMA_BUFFER3_BASEADDR;
+  unsigned int sobel_dy_out_fb_addr = VDMA2MEM_BUFFER1_BASEADDR;
+  unsigned int out_img_fb_addr      = VDMA2MEM_BUFFER2_BASEADDR;
+
   unsigned int page_size = sysconf(_SC_PAGESIZE);
 
   // N=5, s=1
-  unsigned char k0_hz_coeffs[] = {0, 1, 4, 7, 4, 1, 0};
-  unsigned char k0_vt_coeffs[] = {0, 1, 4, 7, 4, 1, 0};
+  int k0_hz_coeffs[] = {0, 1, 4, 7, 4, 1, 0};
+  int k0_vt_coeffs[] = {0, 1, 4, 7, 4, 1, 0};
   unsigned int  norm0 = 289;
 
   // N=3, s=0.4
-  unsigned char k1_hz_coeffs[] = {0, 0, 1, 23, 1, 0, 0};
-  unsigned char k1_vt_coeffs[] = {0, 0, 1, 23, 1, 0, 0};
-  unsigned int  norm1 = 625;
+  int k1_hz_coeffs[] = {0, 0, -1, 0, 1, 0, 0};
+  int k1_vt_coeffs[] = {0, 0, 1, 2, 1, 0, 0};
+  unsigned int  norm1 = 0;
 
   // N=7, s=1
-  unsigned char k2_hz_coeffs[] = {1, 12, 55, 90, 55, 12, 1};
-  unsigned char k2_vt_coeffs[] = {1, 12, 55, 90, 55, 12, 1};
-  unsigned int  norm2 = 51076;
+  int k2_hz_coeffs[] = {0, 0, 1, 2, 1, 0, 0};
+  int k2_vt_coeffs[] = {0, 0, -1, 0, 1, 0, 0};
+  unsigned int  norm2 = 0;
 
   //char in_file[]="lena_gray.bmp";
   char out_file[]="lena_blurred_2.bmp";
@@ -69,8 +75,8 @@ int main(int argc, char **argv) {
   unsigned short *img_data;
   unsigned short *img_info;
 
-  Mat dest;
-  //Mat src_gray;
+  
+  
 
   unsigned char * src_data;
 
@@ -79,7 +85,7 @@ int main(int argc, char **argv) {
     return -1;
   }
   if(argc >= 2)
-    threshold = atoi(argv[2]);
+    thresh = atoi(argv[2]);
 
   if(argc > 3)
     sigma = (double)atof(argv[3]);
@@ -119,96 +125,95 @@ int main(int argc, char **argv) {
   sepImageFilter_setupHandleParams(&filter_handle, width, height, k0_hz_coeffs, k0_vt_coeffs, norm0, k1_hz_coeffs, k1_vt_coeffs, norm1, k2_hz_coeffs, k2_vt_coeffs, norm2);
   sepImageFilter_setupFilter(&filter_handle);
 
-  write_fb = (unsigned int*)mmap(NULL, BUFFER_SIZE, PROT_READ | PROT_WRITE, MAP_SHARED, vdma_handle.vdmaHandler, MEM2VDMA_BUFFER1_BASEADDR);
-  if(((unsigned int *)write_fb) == MAP_FAILED) {
+  gb_in_fb = (unsigned int*)mmap(NULL, BUFFER_SIZE, PROT_READ | PROT_WRITE, MAP_SHARED, vdma_handle.vdmaHandler, gb_in_fb_addr);
+  if(((unsigned int *)gb_in_fb) == MAP_FAILED) {
     printf("vdmaVirtualAddress mapping for absolute memory access failed.\n");
     return -1;
   }
 
-  read_fb = (unsigned int*)mmap(NULL, BUFFER_SIZE, PROT_READ | PROT_WRITE, MAP_SHARED, vdma_handle.vdmaHandler, VDMA2MEM_BUFFER1_BASEADDR);
-  if(((unsigned int *)read_fb) == MAP_FAILED) {
+  gb_out_fb = (unsigned int*)mmap(NULL, BUFFER_SIZE, PROT_READ | PROT_WRITE, MAP_SHARED, vdma_handle.vdmaHandler, gb_out_fb_addr);
+  if(((unsigned int *)gb_out_fb) == MAP_FAILED) {
     printf("vdmaVirtualAddress mapping for absolute memory access failed.\n");
     return -1;
   }
 
+  sobel_dx_out_fb = (unsigned int*)mmap(NULL, BUFFER_SIZE, PROT_READ | PROT_WRITE, MAP_SHARED, vdma_handle.vdmaHandler, sobel_dx_out_fb_addr);
+  if(((unsigned int *)sobel_dx_out_fb) == MAP_FAILED) {
+    printf("vdmaVirtualAddress mapping for absolute memory access failed.\n");
+    return -1;
+  }
 
+  sobel_dy_out_fb = (unsigned int*)mmap(NULL, BUFFER_SIZE, PROT_READ | PROT_WRITE, MAP_SHARED, vdma_handle.vdmaHandler, sobel_dy_out_fb_addr);
+  if(((unsigned int *)sobel_dy_out_fb) == MAP_FAILED) {
+    printf("vdmaVirtualAddress mapping for absolute memory access failed.\n");
+    return -1;
+  }
+
+  out_img_fb = (unsigned int*)mmap(NULL, BUFFER_SIZE, PROT_READ | PROT_WRITE, MAP_SHARED, vdma_handle.vdmaHandler, out_img_fb_addr);
+  if(((unsigned int *)out_img_fb) == MAP_FAILED) {
+    printf("vdmaVirtualAddress mapping for absolute memory access failed.\n");
+    return -1;
+  }
 
   /************************************************************************/
   /* Load the frames that will be computed
   /************************************************************************/
-
+  Mat gb_dest;
   Mat src_gray(height, width, CV_16U);
+  Mat dx(height, width, CV_16SC(1));
+  Mat dy(height, width, CV_16SC(1));
+  Mat dest(height, width, CV_8U);
 
-  // Set image data at the write_fb address (to avoid another memory copy): next loaded frames will go directly to write_fb (?)
-  src_gray.data = (unsigned char *)write_fb;
-  dest.create(src_gray.size(), src_gray.type());
-  dest.data = (unsigned char*)read_fb;
+  // Set image data at the gb_in_fb address (to avoid another memory copy): next loaded frames will go directly to gb_in_fb (?)
+  src_gray.data = (unsigned char *)gb_in_fb;
+  gb_dest.create(src_gray.size(), src_gray.type());
+  gb_dest.data = (unsigned char*)gb_out_fb;
+
+  dx.data = (unsigned char*)sobel_dx_out_fb;
+  dy.data = (unsigned char*)sobel_dy_out_fb;
+
+  //dest.data = (unsigned char*)out_img_fb;
   
-
+  /******************************************************************************/
   /*********************************** LOOP BEGINS ******************************/
 
   src_gray_tmp = imread(argv[1], CV_LOAD_IMAGE_GRAYSCALE);
 
   // Final application will take frames from VideoCapture with pixels in CV_16U format, so this conversion will not be needed.
-  // convertTo will put new frame into write_fb
+  // convertTo will put new frame into gb_in_fb
   src_gray_tmp.convertTo(src_gray, CV_16U);
 
+  gettimeofday(&start, NULL);
+  GaussianBlur_HW(&vdma_handle, &filter_handle, width, height, gb_in_fb_addr, gb_out_fb_addr);
+  gettimeofday(&stop, NULL);
+  printf("\nGaussianBlur_HW wall time: %lf s\n\n", ((stop.tv_sec + stop.tv_usec*0.000001)-(start.tv_sec + start.tv_usec*0.000001))*PRESC);
 
-  GaussianBlur_HW(&vdma_handle, &filter_handle, width, height, MEM2VDMA_BUFFER1_BASEADDR, MEM2VDMA_BUFFER2_BASEADDR);
+  imwrite("lena_blurred_0.bmp", gb_dest);
 
-  imwrite("lena_blurred_0.bmp", dest);
+  gettimeofday(&start, NULL);
+  Canny_HW(&vdma_handle, &filter_handle, dest, dx, dy, width, height, gb_out_fb_addr, sobel_dx_out_fb_addr, sobel_dy_out_fb_addr, (double)thresh, ((double)thresh*ratio), canny, false );
+  gettimeofday(&stop, NULL);
+  printf("Canny Edge Detector wall time: %lf s\n\n", ((stop.tv_sec + stop.tv_usec*0.000001)-(start.tv_sec + start.tv_usec*0.000001))*PRESC);
+  //SobelDx_HW(&vdma_handle, &filter_handle, width, height, gb_out_fb_addr, sobel_dx_out_fb_addr);
+  //SobelDy_HW(&vdma_handle, &filter_handle, width, height, gb_out_fb_addr, sobel_dy_out_fb_addr);  
 
-  return 0;
+  imwrite("result.bmp", dest);
+  imwrite("dx.bmp", dx);
+  imwrite("dy.bmp", dy);
 
 
 
 
 
-
-  //print_vdma_stats(&vdma_handle);
-  printf("Setting up done.\n");
   
-
-  memcpy(write_fb, src_data, src_gray.rows*src_gray.cols*2);
-  
-  
-  
-
-  // Write first image
-  sepImageFilter_config(&filter_handle, 1, 0, 0);
-  sepImageFilter_start(&filter_handle);
-  
-  while(sepImageFilter_running(&filter_handle) != 0);
-  
-  
-
-
-  // Write second image
-  sepImageFilter_config(&filter_handle, 1, 0, 1);
-  sepImageFilter_start(&filter_handle);
-  
-  while(sepImageFilter_running(&filter_handle) != 0);
-  
-  dest.data = (unsigned char*)read_fb;
-  imwrite("lena_blurred_1.bmp", dest);
-
-
-  // Write third image
-  sepImageFilter_config(&filter_handle, 1, 0, 2);
-  sepImageFilter_start(&filter_handle);
-  
-  while(sepImageFilter_running(&filter_handle) != 0);
-  
-  dest.data = (unsigned char*)read_fb;
-  imwrite("lena_blurred_2.bmp", dest);
 
 
 
   // Halt VDMA and unmap memory ranges
   vdma_halt(&vdma_handle);
 
-  munmap(read_fb, BUFFER_SIZE);
-  munmap(write_fb, BUFFER_SIZE);
+  munmap(gb_out_fb, BUFFER_SIZE);
+  munmap(gb_in_fb, BUFFER_SIZE);
   printf("Bye!\n");
 
   return 0;

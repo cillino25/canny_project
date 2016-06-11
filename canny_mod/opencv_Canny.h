@@ -34,9 +34,8 @@ namespace my_Space {
                 double threshold1, double threshold2,
                 int apertureSize = 3, bool L2gradient = false );
 
-	void nonMaxSuppress(Mat src, int cn, Mat dx, Mat dy, Mat gradient, ptrdiff_t mapstep, int* mag_buf[], uchar* map, int* maxsize, std::vector<uchar*> *stack, uchar*** stack_top, uchar*** stack_bottom,
-                double threshold1, double threshold2,
-                bool L2gradient = false );
+	void nonMaxSuppress(int rows, int cols, int cn, Mat dx, Mat dy, Mat gradient, ptrdiff_t mapstep, int* mag_buf[], uchar* map, int* maxsize, std::vector<uchar*> *stack, uchar*** stack_top, uchar*** stack_bottom,
+                double threshold1, double threshold2, bool L2gradient = false );
 
 	void hysteresisThresh(ptrdiff_t mapstep, int* maxsize, std::vector<uchar*> *stack, uchar*** stack_top, uchar*** stack_bottom);
 

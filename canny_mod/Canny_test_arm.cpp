@@ -206,7 +206,7 @@ void CannyThreshold(const Mat src, Mat *dst, int Threshold, double sigma, int gB
   my_Space::GaussianBlur(src, *dst, Size(gBlurMaskSize,gBlurMaskSize), sigma, sigma, BORDER_DEFAULT, custom);
   //t2=clock();
   gettimeofday(&stop, NULL);
-  printf("Gaussian Blur wall time: %lf s ", ((stop.tv_sec + stop.tv_usec*0.000001)-(start.tv_sec + start.tv_usec*0.000001))*PRESC);
+  printf("Gaussian Blur wall time: %lf s\n\n", ((stop.tv_sec + stop.tv_usec*0.000001)-(start.tv_sec + start.tv_usec*0.000001))*PRESC);
   //printf("(clock: %lf)\n\n", (double)(t2 - t1)/CLOCKS_PER_SEC );
   
 

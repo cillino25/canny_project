@@ -1,11 +1,14 @@
 /*
- * opencv_Canny.cpp
+ * opencv_Canny_arm.cpp
  *
  *  Created on: 22 apr 2016
- *      Author: michele
+ *  
  */
 #include <stdlib.h>
 #include <stdio.h>
+#include <unistd.h>
+#include <fcntl.h>
+#include <sys/mman.h>
 
 #include <sys/time.h>
 #include "global.h"
@@ -47,13 +50,48 @@ namespace my_Space
 		if (low_thresh > high_thresh)
 			std::swap(low_thresh, high_thresh);
 
-		Mat src = _src.getMat();
-		Mat dst = _dst.getMat();
+		int fd;
+		if((fd = open("/dev/mem", O_RDWR | O_SYNC)) == -1){
+			printf("Error opening /dev/mem\nExiting..\n");
+			return;
+		}
+
+		void *src_p, *dst_p, *dx_p, *dy_p;
+		unsigned int src_addr = 0x1F800000;
+		unsigned int dst_addr = 0x1F500000;
+		unsigned int dx_addr  = 0x1F600000;
+		unsigned int dy_addr  = 0x1F700000;
+
+		unsigned int buffer_size = 0x100000;
+
+		src_p = mmap(NULL, buffer_size, PROT_READ|PROT_WRITE, MAP_SHARED, fd, src_addr);
+		if(src_p == MAP_FAILED) {printf("Error mapping src_p.\n"); return;}
+		dst_p = mmap(NULL, buffer_size, PROT_READ|PROT_WRITE, MAP_SHARED, fd, dst_addr);
+		if(dst_p == MAP_FAILED) {printf("Error mapping src_p.\n"); return;}
+		dx_p  = mmap(NULL, buffer_size, PROT_READ|PROT_WRITE, MAP_SHARED, fd, dx_addr);
+		if(dx_p == MAP_FAILED)  {printf("Error mapping src_p.\n"); return;}
+		dy_p  = mmap(NULL, buffer_size, PROT_READ|PROT_WRITE, MAP_SHARED, fd, dy_addr);
+		if(dy_p == MAP_FAILED)  {printf("Error mapping src_p.\n"); return;}
+
+
+		Mat src;
+		src.data = (unsigned char*) src_p;
+		src = _src.getMat();
+
+		Mat dst;
+		dst.data = (unsigned char *) dst_p;
+		dst = _dst.getMat();
 
 		//create partial derivative matrices. Size is the same of the source image.
 		// 1 channel matrices but each element is represented with 16bit signed (ex: -2*255 = -510 -> 16bit signed)
 		Mat dx(src.rows, src.cols, CV_16SC(cn));
+		dx.data = (unsigned char *) dx_p;
+
 		Mat dy(src.rows, src.cols, CV_16SC(cn));
+		dy.data = (unsigned char *) dy_p;
+
+		
+
 		Mat gradient(src.rows, src.cols, CV_16SC(cn));
 
 		//Compute partial derivatives using Sobel operator/kernel

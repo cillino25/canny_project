@@ -328,81 +328,6 @@ void vdma_write_size(vdma_handle *handle){
 }
 
 
-// Triple buffering original version
-/*
-void vdma_start_triple_buffering(vdma_handle *handle) {
-    // Reset VDMA
-    //printf("-d: 1\n");
-    vdma_set(handle, OFFSET_VDMA_S2MM_CONTROL_REGISTER, VDMA_CONTROL_REGISTER_RESET);
-    vdma_set(handle, OFFSET_VDMA_MM2S_CONTROL_REGISTER, VDMA_CONTROL_REGISTER_RESET);
-
-    // Wait for reset to finish
-    //printf("-d: 2\n");
-    while((vdma_get(handle, OFFSET_VDMA_S2MM_CONTROL_REGISTER) & VDMA_CONTROL_REGISTER_RESET)==4);
-    while((vdma_get(handle, OFFSET_VDMA_MM2S_CONTROL_REGISTER) & VDMA_CONTROL_REGISTER_RESET)==4);
-
-    // Clear all error bits in status register
-    //printf("-d: 3\n");
-    vdma_set(handle, OFFSET_VDMA_S2MM_STATUS_REGISTER, 0);
-    vdma_set(handle, OFFSET_VDMA_MM2S_STATUS_REGISTER, 0);
-
-    // Do not mask interrupts
-    vdma_set(handle, OFFSET_VDMA_S2MM_IRQ_MASK, 0xf);
-
-    int interrupt_frame_count = 1;
-
-    // Start both S2MM and MM2S in triple buffering mode
-    vdma_set(handle, OFFSET_VDMA_S2MM_CONTROL_REGISTER,
-        (interrupt_frame_count << 16) |
-        VDMA_CONTROL_REGISTER_START |
-        VDMA_CONTROL_REGISTER_GENLOCK_ENABLE |
-        VDMA_CONTROL_REGISTER_GenlockSrc |
-        VDMA_CONTROL_REGISTER_CIRCULAR_PARK);
-    vdma_set(handle, OFFSET_VDMA_MM2S_CONTROL_REGISTER,
-        (interrupt_frame_count << 16) |
-        VDMA_CONTROL_REGISTER_START |
-        VDMA_CONTROL_REGISTER_GENLOCK_ENABLE |
-        VDMA_CONTROL_REGISTER_GenlockSrc |
-        VDMA_CONTROL_REGISTER_CIRCULAR_PARK);
-    
-
-
-    while((vdma_get(handle, OFFSET_VDMA_S2MM_CONTROL_REGISTER)&1)==0 || (vdma_get(handle, OFFSET_VDMA_S2MM_STATUS_REGISTER)&1)==1) {
-        printf("Waiting for VDMA to start running...\n");
-        #ifndef RC
-          sleep(1);
-        #else
-          printf("..........................................................");
-        #endif
-    }
-
-    // Extra register index, use first 16 frame pointer registers
-    vdma_set(handle, OFFSET_VDMA_S2MM_REG_INDEX, 0);
-
-    // Write physical addresses to control register
-    vdma_set(handle, OFFSET_VDMA_S2MM_FRAMEBUFFER1, (unsigned int)handle->fb1PhysicalAddress_mm2s);
-    vdma_set(handle, OFFSET_VDMA_MM2S_FRAMEBUFFER1, (unsigned int)handle->fb1PhysicalAddress_mm2s);
-    vdma_set(handle, OFFSET_VDMA_S2MM_FRAMEBUFFER2, (unsigned int)handle->fb2PhysicalAddress_mm2s);
-    vdma_set(handle, OFFSET_VDMA_MM2S_FRAMEBUFFER2, (unsigned int)handle->fb2PhysicalAddress_mm2s);
-    vdma_set(handle, OFFSET_VDMA_S2MM_FRAMEBUFFER3, (unsigned int)handle->fb3PhysicalAddress_mm2s);
-    vdma_set(handle, OFFSET_VDMA_MM2S_FRAMEBUFFER3, (unsigned int)handle->fb3PhysicalAddress_mm2s);
-
-    // Write Park pointer register
-    vdma_set(handle, OFFSET_PARK_PTR_REG, 0);
-
-    // Frame delay and stride (bytes)
-    vdma_set(handle, OFFSET_VDMA_S2MM_FRMDLY_STRIDE, handle->width*handle->pixelChannels);
-    vdma_set(handle, OFFSET_VDMA_MM2S_FRMDLY_STRIDE, handle->width*handle->pixelChannels);
-
-    // Write horizontal size (bytes)
-    vdma_set(handle, OFFSET_VDMA_S2MM_HSIZE, handle->width*handle->pixelChannels);
-    vdma_set(handle, OFFSET_VDMA_MM2S_HSIZE, handle->width*handle->pixelChannels);
-
-    // Write vertical size (lines), this actually starts the transfer
-    vdma_set(handle, OFFSET_VDMA_S2MM_VSIZE, handle->height);
-    vdma_set(handle, OFFSET_VDMA_MM2S_VSIZE, handle->height);
-}
-*/
 
 int vdma_s2mm_running(vdma_handle *handle) {
     // Check whether VDMA is running, that is ready to start transfers
@@ -472,13 +397,13 @@ void print_vdma_stats(vdma_handle *handle) {
 
 void vdma_send_fsync(vdma_handle *handle){
   *((volatile unsigned int *)handle->pulserVirtualAddress) = 1;
-  printf("written %d at pulser\n", *((volatile unsigned int *)handle->pulserVirtualAddress) );
+  //printf("written %d at pulser\n", *((volatile unsigned int *)handle->pulserVirtualAddress) );
   //*((volatile unsigned int *)handle->pulserVirtualAddress) = 0;
 }
 
 void vdma_reset_fsync(vdma_handle *handle){
   *((volatile unsigned int *)handle->pulserVirtualAddress) = 0;
-  printf("written %d at pulser\n", *((volatile unsigned int *)handle->pulserVirtualAddress) );
+  //printf("written %d at pulser\n", *((volatile unsigned int *)handle->pulserVirtualAddress) );
   //*((volatile unsigned int *)handle->pulserVirtualAddress) = 0;
 }
 

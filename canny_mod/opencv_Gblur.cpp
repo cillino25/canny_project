@@ -186,7 +186,7 @@ namespace my_Space
 			//cv::filter2D(_src, _dst, CV_MAT_DEPTH(type), custom_kernel, Point(-1,-1), 0, borderType);
 		}
 		
-		//imwrite("src_blurred.bmp", _dst);
+		imwrite("src_blurred.bmp", _dst);
 		//free(data_out);
 	}
 

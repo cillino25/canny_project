@@ -103,6 +103,7 @@ int main( int argc, char** argv )
   if(argc > 7)
     strcpy(res, argv[7]);
 
+
   //printf("Result image will be %s\n", res);
 
 

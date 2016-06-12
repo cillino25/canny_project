@@ -127,7 +127,7 @@ cp-test-VDMA-rv-fr: test-VDMA-rv-fr
 ##
 
 test-filter-sf:
-	$(CPP) -I/usr/local/include -L/usr/local/lib -I/home/stefano/TESI/openCV/include $(pipe_dir)/sepImageFilter.c $(pipe_dir)/vdma.c $(pipe_dir)/test-filter-sf.cpp -o $(pipe_dir)/test-filter-sf -I$(opencv_arm_dir)/include -L$(opencv_arm_dir)/lib `pkg-config --cflags --libs opencv`
+	$(CPP) -I/usr/local/include -L/usr/local/lib -I/home/stefano/TESI/openCV/include $(pipe_dir)/sepImageFilter.c $(pipe_dir)/vdma.c $(pipe_dir)/test-filter-sf.cpp -o $(pipe_dir)/test-filter-sf `pkg-config --cflags --libs opencv`
 
 test-filter-sf-arm-cv:
 	$(ARM_CPP) $(pipe_dir)/sepImageFilter.c $(pipe_dir)/vdma.c $(pipe_dir)/test-filter-sf.cpp -o $(pipe_dir)/test-filter-arm-sf -I$(opencv_arm_dir)/include -L$(opencv_arm_dir)/lib `pkg-config --cflags --libs opencv`
@@ -151,15 +151,15 @@ cp-test-filter-rv: test-filter-rv
 ## All convolutions will be executed from the HW accelerator (sepImageFilter), with 3 different calls:
 ## first the global setting is done, and at each call the correct kernel is selected through a single-register write.
 ##
-canny-mod-filter-sf:
-	$(CPP) -I/usr/local/include -L/usr/local/lib -I/home/stefano/TESI/openCV/include $(pipe_dir)/sepImageFilter.c $(pipe_dir)/vdma.c $(pipe_dir)/canny_mod_filter_sf.cpp -o $(pipe_dir)/canny_mod_filter_sf `pkg-config --cflags --libs opencv`
+img-comparison:
+	$(CPP) -I/usr/local/include -L/usr/local/lib -I/home/stefano/TESI/openCV/include $(canny_dir)/imageComparison.cpp -o $(canny_dir)/imageComparison `pkg-config --cflags --libs opencv`
 
 canny-mod-filter-sf-arm:
-	$(ARM_CPP) -I$(opencv_arm_dir)/include -L$(opencv_arm_dir)/lib $(pipe_dir)/sepImageFilter.c $(pipe_dir)/vdma.c $(pipe_dir)/openCV_HW_filter.cpp $(pipe_dir)/canny_mod_filter_sf.cpp -o $(pipe_dir)/canny_mod_filter_sf `pkg-config --cflags --libs opencv`
+	$(ARM_CPP) -I$(opencv_arm_dir)/include -L$(opencv_arm_dir)/lib $(pipe_dir)/sepImageFilter.c $(pipe_dir)/vdma.c $(pipe_dir)/openCV_HW_filter.cpp $(pipe_dir)/gaussian_coefficients_arm.c $(pipe_dir)/canny_mod_filter_sf.cpp -o $(pipe_dir)/canny_mod_filter_sf `pkg-config --cflags --libs opencv`
 cp-canny-mod-filter-sf-arm: canny-mod-filter-sf-arm
 	scp $(pipe_dir)/canny_mod_filter_sf zedboard:~
 
-.PHONY: canny-mod-filter-sf canny-mod-filter-sf-arm cp-canny-mod-filter-sf-arm
+.PHONY: canny-mod-filter-sf canny-mod-filter-sf-arm cp-canny-mod-filter-sf-arm img-comparison
 
 ####################################################################################
 ## Write and read memory utilities

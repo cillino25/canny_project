@@ -14,10 +14,13 @@
 #include "opencv2/imgproc/imgproc.hpp"
 #include "opencv2/highgui/highgui.hpp"
 
-#include "../canny_mod/opencv_funcs.h"
+
 #include "../canny_mod/global.h"
 
+
 #include "openCV_HW_filter.h"
+
+#include "gaussian_coefficients_arm.h"
 
 #include "global_parameters.h"
 #include "vdma_parameters.h"
@@ -25,7 +28,7 @@
 #include "sepImageFilter.h"
 #include "sepImageFilter_parameters.h"
 
-using namespace my_Space;
+//using namespace my_Space;
 using namespace cv;
 using namespace std;
 
@@ -36,8 +39,8 @@ struct timeval start, stop;
 int main(int argc, char **argv) {
   int i=0;
   int thresh = 50, ratio=3;
-  double sigma = 1.5;
-  int gblur=5, canny=3;
+  double sigma = 1;
+  int nGblur=5, nCanny=3;
   int custom = 0;
   char res[256] = "result.bmp";
 
@@ -54,20 +57,6 @@ int main(int argc, char **argv) {
 
   unsigned int page_size = sysconf(_SC_PAGESIZE);
 
-  // N=5, s=1
-  int k0_hz_coeffs[] = {0, 1, 4, 7, 4, 1, 0};
-  int k0_vt_coeffs[] = {0, 1, 4, 7, 4, 1, 0};
-  unsigned int  norm0 = 289;
-
-  // N=3, s=0.4
-  int k1_hz_coeffs[] = {0, 0, -1, 0, 1, 0, 0};
-  int k1_vt_coeffs[] = {0, 0, 1, 2, 1, 0, 0};
-  unsigned int  norm1 = 0;
-
-  // N=7, s=1
-  int k2_hz_coeffs[] = {0, 0, 1, 2, 1, 0, 0};
-  int k2_vt_coeffs[] = {0, 0, -1, 0, 1, 0, 0};
-  unsigned int  norm2 = 0;
 
   //char in_file[]="lena_gray.bmp";
   char out_file[]="lena_blurred_2.bmp";
@@ -91,16 +80,89 @@ int main(int argc, char **argv) {
     sigma = (double)atof(argv[3]);
 
   if(argc > 4)
-    gblur = atoi(argv[4]);
+    nGblur = atoi(argv[4]);
 
   if(argc > 5)
-    canny = atoi(argv[5]);
+    nCanny = atoi(argv[5]);
 
   if(argc > 6)
     custom = atoi(argv[6]);
 
-  if(argc > 7)
-    strcpy(res, argv[7]);
+  if((nGblur!=3)&&(nGblur!=5)&&(nGblur!=7)){ printf("nGblur mask size must be in {3,5,7}.\n"); return -1; }
+  if((nGblur==3)&&((sigma<0.4)||(sigma>1))){ printf("With GBlur_size=3 sigma must be 0.4 < sigma < 1.\n"); return -1; }
+  if((nGblur==5)&&((sigma<0.8)||(sigma>1.3))){ printf("With GBlur_size=5 sigma must be 0.8 < sigma < 1.3.\n"); return -1; }
+  if((nGblur==7)&&((sigma<1)||(sigma>1.5))){ printf("With GBlur_size=7 sigma must be 1 < sigma < 1.5.\n"); return -1; }
+  if((nCanny!=3)&&(nCanny!=5)&&(nCanny!=7)){ printf("nCanny mask size must be in {3,5,7}.\n"); return -1; }
+
+  // Gaussian Blur Kernel coefficients
+  // N=5, s=1
+  //int k0_hz_coeffs[] = {0, 1, 4, 7, 4, 1, 0};
+  //int k0_vt_coeffs[] = {0, 1, 4, 7, 4, 1, 0};
+  //unsigned int  norm0 = 289;
+
+  int *k0_hz_coeffs = (int*) malloc(KERNEL_COEFFS * sizeof(int));
+  int *k0_vt_coeffs = (int*) malloc(KERNEL_COEFFS * sizeof(int));
+  int norm0=0;
+
+  
+  //get_custom_coeff_vector(nGblur, sigma, &k0_vt_coeffs, NULL);
+
+  if(nGblur != KERNEL_COEFFS){
+    int * tmp_kernel = (int*) malloc(KERNEL_COEFFS*sizeof(int));
+    get_custom_coeff_vector(nGblur, sigma, &tmp_kernel, &norm0);
+    norm0 *= norm0;
+    for(i=0; i<nGblur; i++){
+      k0_hz_coeffs[i+(KERNEL_COEFFS-nGblur)/2] = tmp_kernel[i];
+      k0_vt_coeffs[i+(KERNEL_COEFFS-nGblur)/2] = tmp_kernel[i];
+    }
+    free(tmp_kernel);
+  }else{
+    get_custom_coeff_vector(nGblur, sigma, &k0_hz_coeffs, &norm0);
+    get_custom_coeff_vector(nGblur, sigma, &k0_vt_coeffs, &norm0);
+    norm0 *= norm0;
+  }
+  
+  int *k1_hz_coeffs;
+  int *k1_vt_coeffs;
+  int norm1=0;
+  int *k2_hz_coeffs;
+  int *k2_vt_coeffs;
+  int norm2=0;
+
+  if(nCanny==3){
+    int k1_hz[] = {0, 0, -1, 0, 1, 0, 0}; k1_hz_coeffs=k1_hz;
+    int k1_vt[] = {0, 0,  1, 2, 1, 0, 0}; k1_vt_coeffs=k1_vt;
+    int k2_hz[] = {0, 0,  1, 2, 1, 0, 0}; k2_hz_coeffs=k2_hz;
+    int k2_vt[] = {0, 0, -1, 0, 1, 0, 0}; k2_vt_coeffs=k2_vt;
+    norm1=norm2=2;
+  }else if(nCanny==5){
+    int k1_hz[] = {0, -1, -2, 0, 2, 1, 0}; k1_hz_coeffs=k1_hz;
+    int k1_vt[] = {0,  1,  4, 6, 4, 1, 0}; k1_vt_coeffs=k1_vt;
+    int k2_hz[] = {0,  1,  4, 6, 4, 1, 0}; k2_hz_coeffs=k2_hz;
+    int k2_vt[] = {0, -1, -2, 0, 2, 1, 0}; k2_vt_coeffs=k2_vt;
+    norm1=norm2=2;
+  }else if(nCanny==7){ 
+    int k1_hz[] = {-1, -4, -5, 0,   5, 4, 1}; k1_hz_coeffs=k1_hz;
+    int k1_vt[] = { 1,  6, 15, 20, 15, 6, 1}; k1_vt_coeffs=k1_vt;
+    int k2_hz[] = { 1,  6, 15, 20, 15, 6, 1}; k2_hz_coeffs=k2_hz;
+    int k2_vt[] = {-1, -4, -5, 0,   5, 4, 1}; k2_vt_coeffs=k2_vt;
+    norm1=norm2=2;
+  }else{
+    int k1_hz[KERNEL_COEFFS]={0}; k1_hz_coeffs=k1_hz;
+    int k1_vt[KERNEL_COEFFS]={0}; k1_vt_coeffs=k1_vt;
+    int k2_hz[KERNEL_COEFFS]={0}; k2_hz_coeffs=k2_hz;
+    int k2_vt[KERNEL_COEFFS]={0}; k2_vt_coeffs=k2_vt;
+  }
+
+  //printf("k0_hz_coeffs: "); for(i=0; i<KERNEL_COEFFS; i++) printf("%d ", k0_hz_coeffs[i]); printf("\n");
+  //printf("k0_vt_coeffs: "); for(i=0; i<KERNEL_COEFFS; i++) printf("%d ", k0_vt_coeffs[i]); printf("\n");
+  //printf("norm0 = %d\n", norm0);
+  //printf("k1_hz_coeffs: "); for(i=0; i<KERNEL_COEFFS; i++) printf("%d ", k1_hz_coeffs[i]); printf("\n");
+  //printf("k1_vt_coeffs: "); for(i=0; i<KERNEL_COEFFS; i++) printf("%d ", k1_vt_coeffs[i]); printf("\n");
+  //printf("norm1 = %d\n", norm1);
+  //printf("k2_hz_coeffs: "); for(i=0; i<KERNEL_COEFFS; i++) printf("%d ", k2_hz_coeffs[i]); printf("\n");
+  //printf("k2_vt_coeffs: "); for(i=0; i<KERNEL_COEFFS; i++) printf("%d ", k2_vt_coeffs[i]); printf("\n");
+  //printf("norm2 = %d\n", norm2);
 
   /************************************************************************/
   /* Load the first sacrifical frame in order to get video parameters
@@ -169,9 +231,6 @@ int main(int argc, char **argv) {
   gb_dest.create(src_gray.size(), src_gray.type());
   gb_dest.data = (unsigned char*)gb_out_fb;
 
-  dx.data = (unsigned char*)sobel_dx_out_fb;
-  dy.data = (unsigned char*)sobel_dy_out_fb;
-
   //dest.data = (unsigned char*)out_img_fb;
   
   /******************************************************************************/
@@ -191,7 +250,7 @@ int main(int argc, char **argv) {
   imwrite("lena_blurred_0.bmp", gb_dest);
 
   gettimeofday(&start, NULL);
-  Canny_HW(&vdma_handle, &filter_handle, dest, dx, dy, width, height, gb_out_fb_addr, sobel_dx_out_fb_addr, sobel_dy_out_fb_addr, (double)thresh, ((double)thresh*ratio), canny, false );
+  Canny_HW(&vdma_handle, &filter_handle, dest, dx, sobel_dx_out_fb, dy, sobel_dy_out_fb, width, height, gb_out_fb_addr, sobel_dx_out_fb_addr, sobel_dy_out_fb_addr, (double)thresh, ((double)thresh*ratio), nCanny, false );
   gettimeofday(&stop, NULL);
   printf("Canny Edge Detector wall time: %lf s\n\n", ((stop.tv_sec + stop.tv_usec*0.000001)-(start.tv_sec + start.tv_usec*0.000001))*PRESC);
   //SobelDx_HW(&vdma_handle, &filter_handle, width, height, gb_out_fb_addr, sobel_dx_out_fb_addr);
@@ -211,7 +270,8 @@ int main(int argc, char **argv) {
 
   // Halt VDMA and unmap memory ranges
   vdma_halt(&vdma_handle);
-
+  free(k0_hz_coeffs);
+  free(k0_vt_coeffs);
   munmap(gb_out_fb, BUFFER_SIZE);
   munmap(gb_in_fb, BUFFER_SIZE);
   printf("Bye!\n");

@@ -27,8 +27,8 @@ void sepImageFilter_setupFilter(sepimgfilter_handle *handle){
 	sepImageFilter_set(handle, XSEPIMAGEFILTER_CONTROL_BUS_ADDR_VT_KERNELS_0_2_V_DATA, handle->vt_kernel[0][2]);
 	sepImageFilter_set(handle, XSEPIMAGEFILTER_CONTROL_BUS_ADDR_VT_KERNELS_0_3_V_DATA, handle->vt_kernel[0][3]);
 	sepImageFilter_set(handle, XSEPIMAGEFILTER_CONTROL_BUS_ADDR_VT_KERNELS_0_4_V_DATA, handle->vt_kernel[0][4]);
-	sepImageFilter_set(handle, XSEPIMAGEFILTER_CONTROL_BUS_ADDR_HZ_KERNELS_0_5_V_DATA, handle->hz_kernel[0][5]);
-	sepImageFilter_set(handle, XSEPIMAGEFILTER_CONTROL_BUS_ADDR_HZ_KERNELS_0_6_V_DATA, handle->hz_kernel[0][6]);
+	sepImageFilter_set(handle, XSEPIMAGEFILTER_CONTROL_BUS_ADDR_VT_KERNELS_0_5_V_DATA, handle->vt_kernel[0][5]);
+	sepImageFilter_set(handle, XSEPIMAGEFILTER_CONTROL_BUS_ADDR_VT_KERNELS_0_6_V_DATA, handle->vt_kernel[0][6]);
 	sepImageFilter_set(handle, XSEPIMAGEFILTER_CONTROL_BUS_ADDR_DIVISOR_0_V_DATA, handle->normalization[0]);
 
 	// Set kernel 1
@@ -44,8 +44,8 @@ void sepImageFilter_setupFilter(sepimgfilter_handle *handle){
 	sepImageFilter_set(handle, XSEPIMAGEFILTER_CONTROL_BUS_ADDR_VT_KERNELS_1_2_V_DATA, handle->vt_kernel[1][2]);
 	sepImageFilter_set(handle, XSEPIMAGEFILTER_CONTROL_BUS_ADDR_VT_KERNELS_1_3_V_DATA, handle->vt_kernel[1][3]);
 	sepImageFilter_set(handle, XSEPIMAGEFILTER_CONTROL_BUS_ADDR_VT_KERNELS_1_4_V_DATA, handle->vt_kernel[1][4]);
-	sepImageFilter_set(handle, XSEPIMAGEFILTER_CONTROL_BUS_ADDR_HZ_KERNELS_1_5_V_DATA, handle->hz_kernel[1][5]);
-	sepImageFilter_set(handle, XSEPIMAGEFILTER_CONTROL_BUS_ADDR_HZ_KERNELS_1_6_V_DATA, handle->hz_kernel[1][6]);
+	sepImageFilter_set(handle, XSEPIMAGEFILTER_CONTROL_BUS_ADDR_VT_KERNELS_1_5_V_DATA, handle->vt_kernel[1][5]);
+	sepImageFilter_set(handle, XSEPIMAGEFILTER_CONTROL_BUS_ADDR_VT_KERNELS_1_6_V_DATA, handle->vt_kernel[1][6]);
 	sepImageFilter_set(handle, XSEPIMAGEFILTER_CONTROL_BUS_ADDR_DIVISOR_1_V_DATA, handle->normalization[1]);
 
 	// Set kernel 2
@@ -61,8 +61,8 @@ void sepImageFilter_setupFilter(sepimgfilter_handle *handle){
 	sepImageFilter_set(handle, XSEPIMAGEFILTER_CONTROL_BUS_ADDR_VT_KERNELS_2_2_V_DATA, handle->vt_kernel[2][2]);
 	sepImageFilter_set(handle, XSEPIMAGEFILTER_CONTROL_BUS_ADDR_VT_KERNELS_2_3_V_DATA, handle->vt_kernel[2][3]);
 	sepImageFilter_set(handle, XSEPIMAGEFILTER_CONTROL_BUS_ADDR_VT_KERNELS_2_4_V_DATA, handle->vt_kernel[2][4]);
-	sepImageFilter_set(handle, XSEPIMAGEFILTER_CONTROL_BUS_ADDR_HZ_KERNELS_2_5_V_DATA, handle->hz_kernel[2][5]);
-	sepImageFilter_set(handle, XSEPIMAGEFILTER_CONTROL_BUS_ADDR_HZ_KERNELS_2_6_V_DATA, handle->hz_kernel[2][6]);
+	sepImageFilter_set(handle, XSEPIMAGEFILTER_CONTROL_BUS_ADDR_VT_KERNELS_2_5_V_DATA, handle->vt_kernel[2][5]);
+	sepImageFilter_set(handle, XSEPIMAGEFILTER_CONTROL_BUS_ADDR_VT_KERNELS_2_6_V_DATA, handle->vt_kernel[2][6]);
 	sepImageFilter_set(handle, XSEPIMAGEFILTER_CONTROL_BUS_ADDR_DIVISOR_2_V_DATA, handle->normalization[2]);
 }
 
@@ -97,8 +97,8 @@ void sepImageFilter_setupHandleParams(sepimgfilter_handle *handle, unsigned int 
   sepImageFilter_setKernel2_HzCoeffs(handle, k2_hz_coeffs);
   sepImageFilter_setKernel2_VtCoeffs(handle, k2_vt_coeffs);
   sepImageFilter_setKernel2_NormalizationFactor(handle, norm2);
-
 }
+
 void sepImageFilter_setImageSize(sepimgfilter_handle *handle, unsigned int width, unsigned int height){
 	handle->width=width;
 	handle->height=height;
@@ -106,35 +106,48 @@ void sepImageFilter_setImageSize(sepimgfilter_handle *handle, unsigned int width
 
 // Kernel 0 parameters
 void sepImageFilter_setKernel0_HzCoeffs(sepimgfilter_handle *handle, int * coeffs){
-	for (int i = 0; i < KERNEL_COEFFS; ++i)	handle->hz_kernel[0][i] = coeffs[i];
+	for (int i = 0; i < KERNEL_COEFFS; i++)	handle->hz_kernel[0][i] = (unsigned char)coeffs[i];
+	//printf("sepImageFilter kernel0 hz coeffs: "); for(int i=0; i<KERNEL_COEFFS; i++) printf("%d ", handle->hz_kernel[0][i]); printf("\n");
 }
 void sepImageFilter_setKernel0_VtCoeffs(sepimgfilter_handle *handle, int * coeffs){
-	for (int i = 0; i < KERNEL_COEFFS; ++i)	handle->vt_kernel[0][i] = coeffs[i];
+	for (int i = 0; i < KERNEL_COEFFS; i++)	handle->vt_kernel[0][i] = coeffs[i];
+	//printf("sepImageFilter kernel0 vt coeffs: "); for(int i=0; i<KERNEL_COEFFS; i++) printf("%d ", handle->vt_kernel[0][i]); printf("\n");
 }
 void sepImageFilter_setKernel0_NormalizationFactor(sepimgfilter_handle *handle, unsigned int norm){
 	handle->normalization[0] = norm;
+	//printf("sepImageFilter kernel 0 norm = %d\n", handle->normalization[0]);
 }
 
 // Kernel 1 parameters
 void sepImageFilter_setKernel1_HzCoeffs(sepimgfilter_handle *handle, int * coeffs){
-	for (int i = 0; i < KERNEL_COEFFS; ++i)	handle->hz_kernel[1][i] = coeffs[i];
+	for (int i = 0; i < KERNEL_COEFFS; i++)	handle->hz_kernel[1][i] = (char)coeffs[i];
+	//printf("sepImageFilter kernel1 hz coeffs: "); for(int i=0; i<KERNEL_COEFFS; i++) printf("%d ", (int)handle->hz_kernel[1][i]); printf("\n");
+	//printf("sepImageFilter kernel1 hz coeffs: "); for(int i=0; i<KERNEL_COEFFS; i++) printf("%d ", coeffs[i]); printf("\n");
 }
 void sepImageFilter_setKernel1_VtCoeffs(sepimgfilter_handle *handle, int * coeffs){
-	for (int i = 0; i < KERNEL_COEFFS; ++i)	handle->vt_kernel[1][i] = coeffs[i];
+	for (int i = 0; i < KERNEL_COEFFS; i++)	handle->vt_kernel[1][i] = (char)coeffs[i];
+	//printf("sepImageFilter kernel1 vt coeffs: "); for(int i=0; i<KERNEL_COEFFS; i++) printf("%d ", (int)handle->vt_kernel[1][i]); printf("\n");
+	//printf("sepImageFilter kernel1 vt coeffs: "); for(int i=0; i<KERNEL_COEFFS; i++) printf("%d ", coeffs[i]); printf("\n");
 }
 void sepImageFilter_setKernel1_NormalizationFactor(sepimgfilter_handle *handle, unsigned int norm){
 	handle->normalization[1] = norm;
+	//printf("sepImageFilter kernel 1 norm = %d\n", handle->normalization[1]);
 }
 
 // Kernel 2 parameters
 void sepImageFilter_setKernel2_HzCoeffs(sepimgfilter_handle *handle, int * coeffs){
-	for (int i = 0; i < KERNEL_COEFFS; ++i)	handle->hz_kernel[2][i] = coeffs[i];
+	for (int i = 0; i < KERNEL_COEFFS; i++)	handle->hz_kernel[2][i] = (char)coeffs[i];
+	//printf("sepImageFilter kernel2 hz coeffs: "); for(int i=0; i<KERNEL_COEFFS; i++) printf("%d ", (int)handle->hz_kernel[2][i]); printf("\n");
+	//printf("sepImageFilter kernel2 hz coeffs: "); for(int i=0; i<KERNEL_COEFFS; i++) printf("%d ", coeffs[i]); printf("\n");
 }
 void sepImageFilter_setKernel2_VtCoeffs(sepimgfilter_handle *handle, int * coeffs){
-	for (int i = 0; i < KERNEL_COEFFS; ++i)	handle->vt_kernel[2][i] = coeffs[i];
+	for (int i = 0; i < KERNEL_COEFFS; i++)	handle->vt_kernel[2][i] = (char)coeffs[i];
+	//printf("sepImageFilter kernel2 vt coeffs: "); for(int i=0; i<KERNEL_COEFFS; i++) printf("%d ", (int)handle->vt_kernel[2][i]); printf("\n");
+	//printf("sepImageFilter kernel2 vt coeffs: "); for(int i=0; i<KERNEL_COEFFS; i++) printf("%d ", coeffs[i]); printf("\n");
 }
 void sepImageFilter_setKernel2_NormalizationFactor(sepimgfilter_handle *handle, unsigned int norm){
 	handle->normalization[2] = norm;
+	//printf("sepImageFilter kernel 2 norm = %d\n", handle->normalization[2]);
 }
 
 /*

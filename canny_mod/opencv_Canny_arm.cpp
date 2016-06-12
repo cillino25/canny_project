@@ -84,23 +84,33 @@ namespace my_Space
 
 		//create partial derivative matrices. Size is the same of the source image.
 		// 1 channel matrices but each element is represented with 16bit signed (ex: -2*255 = -510 -> 16bit signed)
-		Mat dx(src.rows, src.cols, CV_16SC(cn));
-		dx.data = (unsigned char *) dx_p;
+		Mat dx_tmp(src.rows, src.cols, CV_16SC(cn));
+		dx_tmp.data = (unsigned char *) dx_p;
+		Mat dy_tmp(src.rows, src.cols, CV_16SC(cn));
+		dy_tmp.data = (unsigned char *) dy_p;
 
-		Mat dy(src.rows, src.cols, CV_16SC(cn));
-		dy.data = (unsigned char *) dy_p;
 
+		//Mat dx(src.rows, src.cols, CV_16SC(cn));
+		//dx.data = (unsigned char *) dx_p;
+		//Mat dy(src.rows, src.cols, CV_16SC(cn));
+		//dy.data = (unsigned char *) dy_p;
 		
 
 		Mat gradient(src.rows, src.cols, CV_16SC(cn));
 
 		//Compute partial derivatives using Sobel operator/kernel
 		gettimeofday(&start, NULL);
-		my_Space::Sobel(src, dx, CV_16S, 1, 0, aperture_size, 1, 0, BORDER_REPLICATE, custom);		//x component of the gradient
-		my_Space::Sobel(src, dy, CV_16S, 0, 1, aperture_size, 1, 0, BORDER_REPLICATE, custom);		//y component of the gradient
+		my_Space::Sobel(src, dx_tmp, CV_16S, 1, 0, aperture_size, 1, 0, BORDER_REPLICATE, custom);		//x component of the gradient
+		my_Space::Sobel(src, dy_tmp, CV_16S, 0, 1, aperture_size, 1, 0, BORDER_REPLICATE, custom);		//y component of the gradient
+		//my_Space::Sobel(src, dx, CV_16S, 1, 0, aperture_size, 1, 0, BORDER_REPLICATE, custom);		//x component of the gradient
+		//my_Space::Sobel(src, dy, CV_16S, 0, 1, aperture_size, 1, 0, BORDER_REPLICATE, custom);		//y component of the gradient
 	  gettimeofday(&stop, NULL);
 	  printf("SobelDx AND SobelDy wall time: %lf s\n\n", ((stop.tv_sec + stop.tv_usec*0.000001)-(start.tv_sec + start.tv_usec*0.000001))*PRESC);
 		
+	  Mat dx;
+	  dx_tmp.copyTo(dx);
+	  Mat dy;
+	  dy_tmp.copyTo(dy);
 
 		if (L2gradient)
 		{
@@ -355,6 +365,9 @@ namespace my_Space
 
 		Mat kx, ky;
 		my_Space::getDerivKernels( kx, ky, dx, dy, ksize, false, ktype );
+
+		
+
 		if( scale != 1 )
 		{
 			// usually the smoothing part is the slowest to compute,

@@ -331,15 +331,15 @@ namespace my_Space
 
 		// replace sepFilter2D with convolve2D
 		//convolve2DSeparable
-		//int i=0;
-		//printf("\n\nprinting kx kernel: \n");
-		//for(i=0; i<ksize; i++)
-		//	printf("%f ", kx.at<float>(0, i));
-		//
-		//printf("\n\nprinting ky kernel: \n");
-		//for(i=0; i<ksize; i++)
-		//	printf("%f ", ky.at<float>(0, i));
-		//printf("\n");
+		int i=0;
+		printf("\n\nprinting kx kernel: \n");
+		for(i=0; i<ksize; i++)
+			printf("%f ", kx.at<float>(0, i));
+		
+		printf("\n\nprinting ky kernel: \n");
+		for(i=0; i<ksize; i++)
+			printf("%f ", ky.at<float>(0, i));
+		printf("\n");
 
 		sepFilter2D( _src, _dst, ddepth, kx, ky, Point(-1, -1), delta, borderType );
 	}

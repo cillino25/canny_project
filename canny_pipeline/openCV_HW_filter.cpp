@@ -102,19 +102,14 @@ void SobelDy_HW(vdma_handle *vdma_handle, sepimgfilter_handle *filter_handle, un
 }
 
 
-void Canny_HW( vdma_handle *vdma_handle, sepimgfilter_handle *filter_handle, Mat dst_img, Mat sobelDxOut, Mat sobelDyOut, unsigned int width, unsigned int height, unsigned int sobelIn_fbAddr, unsigned int sobelDxOut_fbAddr, unsigned int sobelDyOut_fbAddr, double low_thresh, double high_thresh, int aperture_size, bool L2gradient )
+void Canny_HW( vdma_handle *vdma_handle, sepimgfilter_handle *filter_handle, Mat dst_img, Mat sobelDxOut, void * dx_virtAddr, Mat sobelDyOut, void * dy_virtAddr, unsigned int width, unsigned int height, unsigned int sobelIn_fbAddr, unsigned int sobelDxOut_fbAddr, unsigned int sobelDyOut_fbAddr, double low_thresh, double high_thresh, int aperture_size, bool L2gradient )
 {
 	//printf("Canny HARDWARE used!\n");
 	struct timeval start, stop;
 
-	//const int type = _src.type();			//type of a matrix element (pixel)
 	const int depth = CV_16U;	//type of each individual channel
 	const int cn = 1;			//number of channels of the image
-	//const Size size = _src.size();			//matrix size: Size(cols, rows) . When the matrix is more than 2-dimensional, the returned size is (-1, -1).
-
-	//Check that channels are of type CV_8U (Unsigned 8bit) and create a destination matrix of the same type
-	//CV_Assert( depth == CV_8U );
-	//_dst.create(size, CV_8U);
+	
 
 	//if L1_norm and aperture_size is negative
 	if (!L2gradient && (aperture_size & CV_CANNY_L2_GRADIENT) == CV_CANNY_L2_GRADIENT)
@@ -132,21 +127,21 @@ void Canny_HW( vdma_handle *vdma_handle, sepimgfilter_handle *filter_handle, Mat
 	if (low_thresh > high_thresh)
 		std::swap(low_thresh, high_thresh);
 
-	//Mat src = _src.getMat();
-	//Mat dst = _dst.getMat();
-
-	//create partial derivative matrices. Size is the same of the source image.
-	// 1 channel matrices but each element is represented with 16bit signed (ex: -2*255 = -510 -> 16bit signed)
-	//Mat dx(src.rows, src.cols, CV_16SC(cn));
-	//Mat dy(src.rows, src.cols, CV_16SC(cn));
-	//Mat gradient(src.rows, src.cols, CV_16SC(cn));
 
 	//Compute partial derivatives using Sobel operator/kernel
 	gettimeofday(&start, NULL);
 	SobelDx_HW(vdma_handle, filter_handle, width, height, sobelIn_fbAddr, sobelDxOut_fbAddr);
 	SobelDy_HW(vdma_handle, filter_handle, width, height, sobelIn_fbAddr, sobelDyOut_fbAddr); 
   gettimeofday(&stop, NULL);
-  printf("SobelDx AND SobelDy wall time: %lf ms\n\n", ((stop.tv_sec + stop.tv_usec*0.000001)-(start.tv_sec + start.tv_usec*0.000001))*PRESC *1000);
+  printf("SobelDx AND SobelDy wall time: %lf ms\n", ((stop.tv_sec + stop.tv_usec*0.000001)-(start.tv_sec + start.tv_usec*0.000001))*PRESC *1000);
+	
+
+	// Copy the images back into OS memory (cached), so nonMaxSuppress will benefit of cacheable memory
+	gettimeofday(&start, NULL);
+  memcpy((void*)sobelDxOut.data, dx_virtAddr, width*height*sizeof(short));
+  memcpy((void*)sobelDyOut.data, dy_virtAddr, width*height*sizeof(short));
+  gettimeofday(&stop, NULL);
+  printf("...copying wall time: %lf ms\n\n", ((stop.tv_sec + stop.tv_usec*0.000001)-(start.tv_sec + start.tv_usec*0.000001))*PRESC *1000);
 	
 
 	if (L2gradient)
@@ -194,16 +189,17 @@ void Canny_HW( vdma_handle *vdma_handle, sepimgfilter_handle *filter_handle, Mat
 	
 
 	// the final step, form the final image
+	gettimeofday(&start, NULL);
 	const uchar* pmap = map + mapstep + 1;
-	
-
 	uchar* pdst = dst_img.ptr();
-
 	for (int i = 0; i < height; i++, pmap += mapstep, pdst += dst_img.step)
 	{
 		for (int j = 0; j < width; j++)
 			pdst[j] = (uchar)-(pmap[j] >> 1);
 	}
+	gettimeofday(&stop, NULL);
+  printf("Final image creation wall time: %lf s\n\n", ((stop.tv_sec + stop.tv_usec*0.000001)-(start.tv_sec + start.tv_usec*0.000001))*PRESC);
+	
 }
 
 

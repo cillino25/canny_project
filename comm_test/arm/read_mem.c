@@ -78,10 +78,10 @@ int main(int argc, char **argv)
 	printf("Memory mapped at address %p.\n", mem_mmap);
 
 
-	printf("Values in memory:\n");
+	printf("Values in memory (addresses are in byte):\n");
 	for (i = 0; i < range; i++)
 	{
-		printf("[%d]:  %8x	%p\n", i, *((volatile unsigned int *)mem_mmap+i), mem_mmap+i);
+		printf("[0x%x]:  %8x	%p\n", i*4, *((volatile unsigned int *)mem_mmap+i), mem_mmap+i);
 	}
 
 

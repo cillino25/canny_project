@@ -45,16 +45,11 @@ umount_rootcv:
 ####################################################################################
 ## Canny_mod Rocketchip
 canny_mod-rv:
-	riscv64-unknown-linux-gnu-g++ -DRC=1 -I$RISCV/opencv/include -L$RISCV/opencv/lib -static $(canny_dir)/convolution_arm.cpp $(canny_dir)/gaussian_coefficients_arm.c $(canny_dir)/Canny_test_arm.cpp $(canny_dir)/opencv_Canny_arm.cpp $(canny_dir)/opencv_Gblur_arm.cpp -o $(canny_dir)/canny_mod$(exe_type) `pkg-config --cflags --libs --static opencv`
+	$(RV_CPP) -DRC=1 -I$RISCV/opencv/include -L$RISCV/opencv/lib -static $(canny_dir)/convolution_arm.cpp $(canny_dir)/gaussian_coefficients_arm.c $(canny_dir)/Canny_test_arm.cpp $(canny_dir)/opencv_Canny_arm.cpp $(canny_dir)/opencv_Gblur_arm.cpp -o $(canny_dir)/canny_mod$(exe_type) `pkg-config --cflags --libs --static opencv`
 cp-canny_mod-rv: canny_mod-rv
 	cp $(canny_dir)/canny_mod$(exe_type) mnt-cv/
 
-update_rootcv: mount_rootcv cp-canny_mod-rv umount_rootcv
-
-upload_rootcv: update_rootcv
-	scp $(cur_dir)/rootcv.bin zedboard:~/mnt/rootcv.bin
-
-.PHONY: canny_mod-rv cp-canny_mod-rv update_rootcv upload_rootcv
+.PHONY: canny_mod-rv cp-canny_mod-rv 
 
 ####################################################################################
 ## Complete ARM-RC-VDMA pipeline
@@ -70,7 +65,13 @@ cp_pipe_fr: pipe_arm pipe_riscv
 	cp $(pipe_dir)/pipe_riscv_$(exe_type) mnt/pipe_fr
 
 ####################################################################################
-## Print VDMA registers
+## Print or set VDMA registers
+
+vdma-set-arm:
+	$(ARM_CC) $(pipe_dir)/vdma_set.c $(pipe_dir)/vdma.c -o $(pipe_dir)/vdma_set
+
+cp-vdma-set-arm: vdma-set-arm
+	scp $(pipe_dir)/vdma_set zedboard:~
 
 print-VDMA-arm:
 	$(ARM_CC) $(pipe_dir)/print_vdma_stats.c $(pipe_dir)/vdma.c -o $(pipe_dir)/print-VDMA
@@ -84,7 +85,7 @@ print-VDMA-rv:
 cp-print-VDMA-rv: print-VDMA-rv
 	cp $(pipe_dir)/print-VDMA_$(exe_type) mnt
 
-.PHONY: print-VDMA-arm print-VDMA-rv
+.PHONY: print-VDMA-arm print-VDMA-rv cp-vdma-set-arm vdma-set-arm
 
 ###################################################################################
 ## Basic VDMA test (alternative folder)
@@ -154,15 +155,26 @@ cp-test-filter-rv: test-filter-rv
 img-comparison:
 	$(CPP) -I/usr/local/include -L/usr/local/lib -I/home/stefano/TESI/openCV/include $(canny_dir)/imageComparison.cpp -o $(canny_dir)/imageComparison `pkg-config --cflags --libs opencv`
 
-canny-mod-filter-sf-arm:
-	$(ARM_CPP) -I$(opencv_arm_dir)/include -L$(opencv_arm_dir)/lib $(pipe_dir)/sepImageFilter.c $(pipe_dir)/vdma.c $(pipe_dir)/openCV_HW_filter.cpp $(pipe_dir)/gaussian_coefficients_arm.c $(pipe_dir)/canny_mod_filter_sf.cpp -o $(pipe_dir)/canny_mod_filter_sf `pkg-config --cflags --libs opencv`
-cp-canny-mod-filter-sf-arm: canny-mod-filter-sf-arm
-	scp $(pipe_dir)/canny_mod_filter_sf zedboard:~
+canny-mod-filter-sf-rv:
+	$(RV_CPP) -DRC=1 -I$RISCV/opencv/include -L$RISCV/opencv/lib -static $(pipe_dir)/sepImageFilter.c $(pipe_dir)/vdma.c $(pipe_dir)/openCV_HW_filter.cpp $(pipe_dir)/gaussian_coefficients_arm.c $(pipe_dir)/canny_mod_filter_sf-rc.cpp -o $(pipe_dir)/canny_mod_filter_sf$(exe_type) `pkg-config --cflags --libs --static opencv`
 
-.PHONY: canny-mod-filter-sf canny-mod-filter-sf-arm cp-canny-mod-filter-sf-arm img-comparison
+cp-canny-mod-filter-sf-rv: canny-mod-filter-sf-rv
+	cp $(pipe_dir)/canny_mod_filter_sf$(exe_type) mnt-cv/
+
+canny-mod-filter-sf-arm:
+	$(ARM_CPP) -I$(opencv_arm_dir)/include -L$(opencv_arm_dir)/lib $(pipe_dir)/sepImageFilter.c $(pipe_dir)/vdma.c $(pipe_dir)/openCV_HW_filter.cpp $(pipe_dir)/gaussian_coefficients_arm.c $(pipe_dir)/canny_mod_filter_sf-arm.cpp -o $(pipe_dir)/canny_mod_filter_sf-arm `pkg-config --cflags --libs opencv`
+cp-canny-mod-filter-sf-arm: canny-mod-filter-sf-arm
+	scp $(pipe_dir)/canny_mod_filter_sf-arm zedboard:~
+
+canny-mod-filter-sf-arm-only:
+	$(ARM_CPP) -I$(opencv_arm_dir)/include -L$(opencv_arm_dir)/lib $(pipe_dir)/sepImageFilter.c $(pipe_dir)/vdma.c $(pipe_dir)/openCV_HW_filter.cpp $(pipe_dir)/gaussian_coefficients_arm.c $(pipe_dir)/canny_mod_filter_sf__arm-only.cpp -o $(pipe_dir)/canny_mod_filter_sf__arm-only `pkg-config --cflags --libs opencv`
+cp-canny-mod-filter-sf-arm-only: canny-mod-filter-sf-arm-only
+	scp $(pipe_dir)/canny_mod_filter_sf__arm-only zedboard:~
+
+.PHONY: canny-mod-filter-sf-rv cp-canny-mod-filter-sf-rv canny-mod-filter-sf-arm cp-canny-mod-filter-sf-arm canny-mod-filter-sf-arm-only cp-canny-mod-filter-sf-arm-only img-comparison
 
 ####################################################################################
-## Write and read memory utilities
+## Memory read and write utilities
 
 write_mem:
 	$(ARM_CC) $(comm_dir)/write_mem.c -o $(comm_dir)/write_mem
@@ -193,11 +205,19 @@ update_root: mount_root cp_pipe_fr cp_read_mem cp-test-VDMA cp-test-VDMA-rv-fr c
 upload_root: update_root cp-print-VDMA-arm cp_read_mem cp-test-VDMA-arm-fr
 	scp root.bin zedboard:~/mnt/root.bin
 
-.PHONY: update_root cp_pipe_fr pipe_arm pipe_riscv update_root upload_root
+
+#update_rootcv: mount_rootcv cp-canny_mod-rv umount_rootcv
+update_rootcv: mount_rootcv cp-canny-mod-filter-sf-rv umount_rootcv
+
+upload_rootcv: update_rootcv
+	scp $(cur_dir)/rootcv.bin zedboard:~/mnt/rootcv.bin
+
+
+.PHONY: update_root cp_pipe_fr pipe_arm pipe_riscv update_root upload_root update_rootcv upload_rootcv
 
 ####################################################################################
 
-cp-all: cp_write_mem cp_read_mem cp-print-VDMA-arm
+cp-all: cp_write_mem cp_read_mem cp-print-VDMA-arm cp-vdma-set-arm
 	scp canny_mod/lena_blurred_0.bmp canny_mod/lena_secret.bmp canny_mod/lena_gray.bmp zedboard:~
 	
 cp-opencv-libs:

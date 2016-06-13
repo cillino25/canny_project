@@ -19,11 +19,14 @@ using namespace std;
 // sepImageFilter_config(filter_handle, 1, 0, 0);
 void GaussianBlur_HW(vdma_handle *vdma_handle, sepimgfilter_handle *filter_handle, unsigned int width, unsigned int height, unsigned int fb_in, unsigned int fb_out){
 	
+	printf("GaussianBlur_HW launched.\n");
+
 	struct timeval start1, start2, stop;
 
 	//gettimeofday(&start1, NULL);
 	// Set VDMA fb in and out
-	vdma_setParams(vdma_handle, AXI_VDMA_BASEADDR, width, height, 2*PIXEL_CHANNELS, BUFFER_SIZE, fb_in, 0, 0, fb_out, 0, 0);
+	//vdma_setParams(vdma_handle, AXI_VDMA_BASEADDR, width, height, 2*PIXEL_CHANNELS, BUFFER_SIZE, fb_in, 0, 0, fb_out, 0, 0);
+	vdma_setParams(vdma_handle, AXI_VDMA_BASEADDR, width, height, PIXEL_CHANNELS, BUFFER_SIZE, fb_in, 0, 0, fb_out, 0, 0);
 	//vdma_setFbInOut(vdma_handle, fb_in, fb_out);
 
 	vdma_start_triple_buffering_mod(vdma_handle);
@@ -102,7 +105,7 @@ void SobelDy_HW(vdma_handle *vdma_handle, sepimgfilter_handle *filter_handle, un
 }
 
 
-void Canny_HW( vdma_handle *vdma_handle, sepimgfilter_handle *filter_handle, Mat dst_img, Mat sobelDxOut, void * dx_virtAddr, Mat sobelDyOut, void * dy_virtAddr, unsigned int width, unsigned int height, unsigned int sobelIn_fbAddr, unsigned int sobelDxOut_fbAddr, unsigned int sobelDyOut_fbAddr, double low_thresh, double high_thresh, int aperture_size, bool L2gradient )
+void Canny_HW_ARM_only( vdma_handle *vdma_handle, sepimgfilter_handle *filter_handle, Mat dst_img, Mat sobelDxOut, void * dx_virtAddr, Mat sobelDyOut, void * dy_virtAddr, unsigned int width, unsigned int height, unsigned int sobelIn_fbAddr, unsigned int sobelDxOut_fbAddr, unsigned int sobelDyOut_fbAddr, double low_thresh, double high_thresh, int aperture_size, bool L2gradient )
 {
 	//printf("Canny HARDWARE used!\n");
 	struct timeval start, stop;
@@ -135,6 +138,122 @@ void Canny_HW( vdma_handle *vdma_handle, sepimgfilter_handle *filter_handle, Mat
   gettimeofday(&stop, NULL);
   printf("SobelDx AND SobelDy wall time: %lf ms\n", ((stop.tv_sec + stop.tv_usec*0.000001)-(start.tv_sec + start.tv_usec*0.000001))*PRESC *1000);
 	
+  // polling variable to 1 --> send execution to rocketchip
+
+	// Copy the images back into OS memory (cached), so nonMaxSuppress will benefit of cacheable memory
+	gettimeofday(&start, NULL);
+  memcpy((void*)sobelDxOut.data, dx_virtAddr, width*height*sizeof(short));
+  memcpy((void*)sobelDyOut.data, dy_virtAddr, width*height*sizeof(short));
+  gettimeofday(&stop, NULL);
+  printf("...copying wall time: %lf ms\n\n", ((stop.tv_sec + stop.tv_usec*0.000001)-(start.tv_sec + start.tv_usec*0.000001))*PRESC *1000);
+	
+
+	if (L2gradient)
+	{
+		low_thresh = std::min(32767.0, low_thresh);		//max positive number on 16 bit = 2^15 - 1
+		high_thresh = std::min(32767.0, high_thresh);
+
+		if (low_thresh > 0) low_thresh *= low_thresh;
+		if (high_thresh > 0) high_thresh *= high_thresh;
+	}
+	int low = cvFloor(low_thresh);
+	int high = cvFloor(high_thresh);
+
+	
+	ptrdiff_t mapstep = width + 2;	//long int type
+	AutoBuffer<uchar> buffer((width+2)*(height+2) + cn * mapstep * 3 * sizeof(int));
+
+	int* mag_buf[3];
+	mag_buf[0] = (int*)(uchar*)buffer;
+	mag_buf[1] = mag_buf[0] + mapstep*cn;
+	mag_buf[2] = mag_buf[1] + mapstep*cn;
+	memset(mag_buf[0], 0, /* cn* */mapstep*sizeof(int));
+
+	uchar* map = (uchar*)(mag_buf[2] + mapstep*cn);
+	memset(map, 1, mapstep);
+	memset(map + mapstep*(height + 1), 1, mapstep);
+
+	int maxsize = std::max(1 << 10, (int)(width * height / 10));
+	std::vector<uchar*> stack(maxsize);
+	uchar **stack_top = &stack[0];
+	uchar **stack_bottom = &stack[0];
+
+	
+
+	gettimeofday(&start, NULL);
+	nonMaxSuppress(height, width, cn, sobelDxOut, sobelDyOut, mapstep, mag_buf, map, &maxsize, &stack, &stack_top, &stack_bottom, low, high, L2gradient);
+  gettimeofday(&stop, NULL);
+  printf("nonMaxSuppress wall time: %lf s\n\n", ((stop.tv_sec + stop.tv_usec*0.000001)-(start.tv_sec + start.tv_usec*0.000001))*PRESC);
+	
+
+	gettimeofday(&start, NULL);
+	hysteresisThresh(mapstep, &maxsize, &stack, &stack_top, &stack_bottom);
+	gettimeofday(&stop, NULL);
+  printf("hysteresisThresh wall time: %lf s\n\n", ((stop.tv_sec + stop.tv_usec*0.000001)-(start.tv_sec + start.tv_usec*0.000001))*PRESC);
+	
+
+	// the final step, form the final image
+	gettimeofday(&start, NULL);
+	const uchar* pmap = map + mapstep + 1;
+	uchar* pdst = dst_img.ptr();
+	for (int i = 0; i < height; i++, pmap += mapstep, pdst += dst_img.step)
+	{
+		for (int j = 0; j < width; j++)
+			pdst[j] = (uchar)-(pmap[j] >> 1);
+	}
+	gettimeofday(&stop, NULL);
+  printf("Final image creation wall time: %lf s\n\n", ((stop.tv_sec + stop.tv_usec*0.000001)-(start.tv_sec + start.tv_usec*0.000001))*PRESC);
+	
+}
+
+
+
+void Canny_HW_ARM( vdma_handle *vdma_handle, sepimgfilter_handle *filter_handle, Mat dst_img, Mat sobelDxOut, void * dx_virtAddr, Mat sobelDyOut, void * dy_virtAddr, unsigned int width, unsigned int height, unsigned int sobelIn_fbAddr, unsigned int sobelDxOut_fbAddr, unsigned int sobelDyOut_fbAddr, double low_thresh, double high_thresh, int aperture_size, bool L2gradient )
+{
+	//printf("Canny HARDWARE used!\n");
+	struct timeval start, stop;
+
+	const int depth = CV_16U;	//type of each individual channel
+	const int cn = 1;			//number of channels of the image
+	
+
+	//if L1_norm and aperture_size is negative
+	if (!L2gradient && (aperture_size & CV_CANNY_L2_GRADIENT) == CV_CANNY_L2_GRADIENT)
+	{
+		// backward compatibility
+		aperture_size &= ~CV_CANNY_L2_GRADIENT;
+		L2gradient = true;
+	}
+
+	//aperture_size must be an odd number and not greater than 7
+	if ((aperture_size & 1) == 0 || (aperture_size != -1 && (aperture_size < 3 || aperture_size > 7)))
+		CV_Error(CV_StsBadFlag, "Aperture size should be odd");
+
+	//swap threshold values if they are inverted
+	if (low_thresh > high_thresh)
+		std::swap(low_thresh, high_thresh);
+
+
+	//Compute partial derivatives using Sobel operator/kernel
+	gettimeofday(&start, NULL);
+	SobelDx_HW(vdma_handle, filter_handle, width, height, sobelIn_fbAddr, sobelDxOut_fbAddr);
+	SobelDy_HW(vdma_handle, filter_handle, width, height, sobelIn_fbAddr, sobelDyOut_fbAddr); 
+  gettimeofday(&stop, NULL);
+  printf("SobelDx AND SobelDy wall time: %lf ms\n", ((stop.tv_sec + stop.tv_usec*0.000001)-(start.tv_sec + start.tv_usec*0.000001))*PRESC *1000);
+	
+  // polling variable to 1 --> send execution to rocketchip
+	
+}
+
+void Canny_HW_RC( vdma_handle *vdma_handle, sepimgfilter_handle *filter_handle, Mat dst_img, Mat sobelDxOut, void * dx_virtAddr, Mat sobelDyOut, void * dy_virtAddr, unsigned int width, unsigned int height, unsigned int sobelIn_fbAddr, unsigned int sobelDxOut_fbAddr, unsigned int sobelDyOut_fbAddr, double low_thresh, double high_thresh, int aperture_size, bool L2gradient )
+{
+	
+	
+  // polling variable to 1 --> send execution to rocketchip
+  
+  
+
+  // Last steps of Canny algorithm are done by Rocketchip; ARM 
 
 	// Copy the images back into OS memory (cached), so nonMaxSuppress will benefit of cacheable memory
 	gettimeofday(&start, NULL);

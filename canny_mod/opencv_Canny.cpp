@@ -95,6 +95,8 @@ namespace my_Space
 		mag_buf[2] = mag_buf[1] + mapstep*cn;
 		memset(mag_buf[0], 0, /* cn* */mapstep*sizeof(int));
 
+		
+
 		uchar* map = (uchar*)(mag_buf[2] + mapstep*cn);
 		memset(map, 1, mapstep);
 		memset(map + mapstep*(src.rows + 1), 1, mapstep);
@@ -103,6 +105,8 @@ namespace my_Space
 		std::vector<uchar*> stack(maxsize);
 		uchar **stack_top = &stack[0];
 		uchar **stack_bottom = &stack[0];
+
+
 
 		/* sector numbers
 		   (Top-Left Origin)
@@ -153,6 +157,10 @@ namespace my_Space
 		{
 
 			int* _norm = mag_buf[(i > 0) + 1] + 1;
+			printf("_norm = %p\n", _norm);
+			printf("mag_buf[0] = %p\n", mag_buf[0]);
+			printf("mag_buf[1] = %p\n", mag_buf[1]);
+			printf("mag_buf[2] = %p\n", mag_buf[2]);
 			if (i < rows)
 			{
 				short* _dx = dx.ptr<short>(i);

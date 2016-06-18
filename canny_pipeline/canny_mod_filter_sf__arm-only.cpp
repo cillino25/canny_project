@@ -100,6 +100,7 @@ int main(int argc, char **argv) {
   }
   printf("/dev/mem opened\n");
   
+  // GaussianBlur kernel coefficient computation
   int *k0_hz_coeffs = (int*) malloc(KERNEL_COEFFS * sizeof(int));
   int *k0_vt_coeffs = (int*) malloc(KERNEL_COEFFS * sizeof(int));
   int norm0=0;
@@ -118,7 +119,9 @@ int main(int argc, char **argv) {
     get_custom_coeff_vector(nGblur, sigma, &k0_vt_coeffs, &norm0);
     norm0 *= norm0;
   }
-  
+
+
+  // SobelDx and SobelDy kernel coefficients computation
   int *k1_hz_coeffs;
   int *k1_vt_coeffs;
   int norm1=0;
@@ -245,7 +248,7 @@ int main(int argc, char **argv) {
 
   // Final application will take frames from VideoCapture with pixels in CV_16U format, so this conversion will not be needed.
   // convertTo will put new frame into gb_in_fb
-  //src_gray_tmp.convertTo(src_gray, CV_16U);
+  src_gray_tmp.convertTo(src_gray, CV_16U);
 
   //imwrite("lena_gray_16U.bmp", src_gray);
 
@@ -259,7 +262,7 @@ int main(int argc, char **argv) {
   imwrite("lena_blurred_0.bmp", gb_dest);
 
   gettimeofday(&start, NULL);
-  Canny_HW(&vdma_handle, &filter_handle, dest, dx, sobel_dx_out_fb, dy, sobel_dy_out_fb, width, height, gb_out_fb_addr, sobel_dx_out_fb_addr, sobel_dy_out_fb_addr, (double)thresh, ((double)thresh*ratio), nCanny, false );
+  Canny_HW_ARM_only(&vdma_handle, &filter_handle, dest, dx, sobel_dx_out_fb, dy, sobel_dy_out_fb, width, height, gb_out_fb_addr, sobel_dx_out_fb_addr, sobel_dy_out_fb_addr, (double)thresh, ((double)thresh*ratio), nCanny, false );
   gettimeofday(&stop, NULL);
   printf("Canny Edge Detector wall time: %lf s\n\n", ((stop.tv_sec + stop.tv_usec*0.000001)-(start.tv_sec + start.tv_usec*0.000001))*PRESC);
   
@@ -275,6 +278,10 @@ int main(int argc, char **argv) {
   free(k0_vt_coeffs);
   munmap(gb_out_fb, BUFFER_SIZE);
   munmap(gb_in_fb, BUFFER_SIZE);
+  munmap(sobel_dx_out_fb, BUFFER_SIZE);
+  munmap(sobel_dy_out_fb, BUFFER_SIZE);
+  munmap(out_img_fb, BUFFER_SIZE);
+  close(devmem);
   printf("Bye!\n");
 
   return 0;

@@ -44,18 +44,20 @@ int main(int argc, char **argv) {
   double sigma = 1;
   int nGblur=5, nCanny=3;
   int custom = 0;
+  int polls = 1;
   char res[256] = "result.bmp";
 
   vdma_handle vdma_handle;
   sepimgfilter_handle filter_handle;
  
   int mem;
-  void *gb_in_fb, *gb_out_fb, *sobel_dx_out_fb, *sobel_dy_out_fb, *out_img_fb;
+  void *gb_in_fb, *gb_out_fb, *sobel_dx_out_fb, *sobel_dy_out_fb, *out_img_fb, *poll_mmap;
   unsigned int gb_in_fb_addr        = MEM2VDMA_BUFFER1_BASEADDR;
   unsigned int gb_out_fb_addr       = MEM2VDMA_BUFFER2_BASEADDR;
   unsigned int sobel_dx_out_fb_addr = MEM2VDMA_BUFFER3_BASEADDR;
   unsigned int sobel_dy_out_fb_addr = VDMA2MEM_BUFFER1_BASEADDR;
   unsigned int out_img_fb_addr      = VDMA2MEM_BUFFER2_BASEADDR;
+  unsigned int poll_addr            = MEM_POLLING_VARIABLE_ADDR;
 
   unsigned int page_size = 4096;//sysconf(_SC_PAGESIZE);
 
@@ -86,6 +88,9 @@ int main(int argc, char **argv) {
 
   if(argc > 6)
     custom = atoi(argv[6]);
+
+  if(argc > 7)
+    polls = atoi(argv[7]);
 
   if((nGblur!=3)&&(nGblur!=5)&&(nGblur!=7)){ printf("nGblur mask size must be in {3,5,7}.\n"); return -1; }
   if((nGblur==3)&&((sigma<0.4)||(sigma>1))){ printf("With GBlur_size=3 sigma must be 0.4 < sigma < 1.\n"); return -1; }
@@ -177,8 +182,7 @@ int main(int argc, char **argv) {
   size = src_gray_tmp.cols * src_gray_tmp.rows * src_gray_tmp.channels();
 
   vdma_handle.vdmaHandler = devmem;
-  //vdma_setup(&vdma_handle, page_size, AXI_VDMA_BASEADDR, width, height, 2*PIXEL_CHANNELS, BUFFER_SIZE, MEM2VDMA_BUFFER1_BASEADDR, MEM2VDMA_BUFFER2_BASEADDR, MEM2VDMA_BUFFER3_BASEADDR, VDMA2MEM_BUFFER1_BASEADDR, VDMA2MEM_BUFFER2_BASEADDR, VDMA2MEM_BUFFER3_BASEADDR, AXI_PULSER);
-  vdma_setup(&vdma_handle, page_size, AXI_VDMA_BASEADDR, width, height, PIXEL_CHANNELS, BUFFER_SIZE, MEM2VDMA_BUFFER1_BASEADDR, MEM2VDMA_BUFFER2_BASEADDR, MEM2VDMA_BUFFER3_BASEADDR, VDMA2MEM_BUFFER1_BASEADDR, VDMA2MEM_BUFFER2_BASEADDR, VDMA2MEM_BUFFER3_BASEADDR, AXI_PULSER);
+  vdma_setup(&vdma_handle, page_size, AXI_VDMA_BASEADDR, width, height, 2*PIXEL_CHANNELS, BUFFER_SIZE, MEM2VDMA_BUFFER1_BASEADDR, MEM2VDMA_BUFFER2_BASEADDR, MEM2VDMA_BUFFER3_BASEADDR, VDMA2MEM_BUFFER1_BASEADDR, VDMA2MEM_BUFFER2_BASEADDR, VDMA2MEM_BUFFER3_BASEADDR, AXI_PULSER);
   
   printf("VDMA set up\n");
 
@@ -190,13 +194,13 @@ int main(int argc, char **argv) {
 
   gb_in_fb = (unsigned int*)mmap(NULL, BUFFER_SIZE, PROT_READ | PROT_WRITE, MAP_SHARED, vdma_handle.vdmaHandler, gb_in_fb_addr);
   if(((unsigned int *)gb_in_fb) == MAP_FAILED) {
-    printf("vdmaVirtualAddress mapping for absolute memory access failed.\n");
+    printf("gb_in_fb mapping for absolute memory access failed.\n");
     return -1;
   }
 
   gb_out_fb = (unsigned int*)mmap(NULL, BUFFER_SIZE, PROT_READ | PROT_WRITE, MAP_SHARED, vdma_handle.vdmaHandler, gb_out_fb_addr);
   if(((unsigned int *)gb_out_fb) == MAP_FAILED) {
-    printf("vdmaVirtualAddress mapping for absolute memory access failed.\n");
+    printf("gb_out_fb mapping for absolute memory access failed.\n");
     return -1;
   }
 
@@ -214,9 +218,17 @@ int main(int argc, char **argv) {
 
   out_img_fb = (unsigned int*)mmap(NULL, BUFFER_SIZE, PROT_READ | PROT_WRITE, MAP_SHARED, vdma_handle.vdmaHandler, out_img_fb_addr);
   if(((unsigned int *)out_img_fb) == MAP_FAILED) {
-    printf("vdmaVirtualAddress mapping for absolute memory access failed.\n");
+    printf("out_img_fb mapping for absolute memory access failed.\n");
     return -1;
   }
+
+  poll_mmap = (unsigned int*)mmap(NULL, 4096, PROT_READ | PROT_WRITE, MAP_SHARED, vdma_handle.vdmaHandler, MEM_POLLING_VARIABLE_ADDR);
+  if(((unsigned int *)poll_mmap) == MAP_FAILED) {
+    printf("poll_mmap mapping for absolute memory access failed.\n");
+    return -1;
+  }
+
+  for(i=0; i<polls; i++)  ((volatile unsigned int *) poll_mmap)[i] = 0;
 
   printf("Frame buffers set up\n");
 
@@ -234,6 +246,8 @@ int main(int argc, char **argv) {
   gb_dest.create(src_gray.size(), src_gray.type());
   gb_dest.data = (unsigned char*)gb_out_fb;
 
+  //dest.data = (unsigned char*) out_img_fb;
+
   printf("Mat created\n");
   
   /******************************************************************************/
@@ -245,7 +259,7 @@ int main(int argc, char **argv) {
 
   // Final application will take frames from VideoCapture with pixels in CV_16U format, so this conversion will not be needed.
   // convertTo will put new frame into gb_in_fb
-  //src_gray_tmp.convertTo(src_gray, CV_16U);
+  src_gray_tmp.convertTo(src_gray, CV_16U);
 
   //imwrite("lena_gray_16U.bmp", src_gray);
 
@@ -256,17 +270,25 @@ int main(int argc, char **argv) {
   gettimeofday(&stop, NULL);
   printf("\nGaussianBlur_HW wall time: %lf s\n\n", ((stop.tv_sec + stop.tv_usec*0.000001)-(start.tv_sec + start.tv_usec*0.000001))*PRESC);
 
-  imwrite("lena_blurred_0.bmp", gb_dest);
+  //imwrite("lena_blurred_0.bmp", gb_dest);
 
   gettimeofday(&start, NULL);
-  Canny_HW(&vdma_handle, &filter_handle, dest, dx, sobel_dx_out_fb, dy, sobel_dy_out_fb, width, height, gb_out_fb_addr, sobel_dx_out_fb_addr, sobel_dy_out_fb_addr, (double)thresh, ((double)thresh*ratio), nCanny, false );
+  Canny_HW_ARM(&vdma_handle, &filter_handle, width, height, gb_out_fb_addr, sobel_dx_out_fb_addr, sobel_dy_out_fb_addr );
   gettimeofday(&stop, NULL);
   printf("Canny Edge Detector wall time: %lf s\n\n", ((stop.tv_sec + stop.tv_usec*0.000001)-(start.tv_sec + start.tv_usec*0.000001))*PRESC);
   
-  imwrite("result.bmp", dest);
-  imwrite("dx.bmp", dx);
-  imwrite("dy.bmp", dy);
+  // set polling variable(s) to 1, and wait for it(them) to go back to 0
+  printf("Set polling variable to 1..\n");
+  for(i=0; i<polls; i++) ((volatile unsigned int *)poll_mmap)[i] = 1;
 
+
+  while(*((volatile unsigned int *)poll_mmap) == 1);
+  // Copy image from output frame buffer to OS memory
+  // MAYBE NOT NEEDED
+  memcpy((void*)dest.data, out_img_fb, width*height);
+
+  imwrite("result.bmp", dest);
+  
 
 
   // Halt VDMA and unmap memory ranges
@@ -275,8 +297,12 @@ int main(int argc, char **argv) {
   free(k0_vt_coeffs);
   munmap(gb_out_fb, BUFFER_SIZE);
   munmap(gb_in_fb, BUFFER_SIZE);
-  printf("Bye!\n");
+  munmap(sobel_dx_out_fb, BUFFER_SIZE);
+  munmap(sobel_dy_out_fb, BUFFER_SIZE);
+  munmap(out_img_fb, BUFFER_SIZE);
+  close(devmem);
 
+  printf("Bye!\n");
   return 0;
 }
 

@@ -26,25 +26,32 @@
 
 
 #ifndef RC
- #define AXI_VDMA_BASEADDR        0x45000000
- #define AXI_VDMA_HIGHADDR        0x4500FFFF
- #define AXI_PULSER               0x46000000
- #define AXI_SEPIMGFILTER         0x47000000
+ #define AXI_VDMA_BASEADDR           0x45000000
+ #define AXI_VDMA_HIGHADDR           0x4500FFFF
+ #define AXI_PULSER                  0x46000000
+ #define AXI_SEPIMGFILTER            0x47000000
+ #define AXI_POLLING_VARIABLE_ADDR   0x47100000
 #else
- #define AXI_VDMA_BASEADDR        0x25000000
- #define AXI_VDMA_HIGHADDR        0x2500FFFF
- #define AXI_PULSER               0x26000000
- #define AXI_SEPIMGFILTER         0x27000000
+ #define AXI_VDMA_BASEADDR           0x25000000
+ #define AXI_VDMA_HIGHADDR           0x2500FFFF
+ #define AXI_PULSER                  0x26000000
+ #define AXI_SEPIMGFILTER            0x27000000
+ #define AXI_POLLING_VARIABLE_ADDR   0x27100000
 #endif
 
 #define AXI_GPIO_BASEADDR        0x44000000
 #define AXI_GPIO_HIGHADDR        0x4400FFFF
+
+
+
+#define MEM_POLLING_VARIABLE_ADDR            0x1FA00000
 
 /* Memory buffer starting address (RAM) */
 #define BUFFER_MEM_READ_START_ADDRESS        0x1F400000
 #define BUFFER_MEM_WRITE_START_ADDRESS       0x1F700000
 /* Buffer size = 1M */
 #define BUFFER_SIZE				                   0x00100000
+
 
 
 #define MEM2VDMA_BUFFER1_BASEADDR		(BUFFER_MEM_READ_START_ADDRESS)

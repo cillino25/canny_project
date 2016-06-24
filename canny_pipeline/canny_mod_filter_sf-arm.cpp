@@ -192,37 +192,37 @@ int main(int argc, char **argv) {
 
   printf("sepImageFilter set up\n");
 
-  gb_in_fb = (unsigned int*)mmap(NULL, BUFFER_SIZE, PROT_READ | PROT_WRITE, MAP_SHARED, vdma_handle.vdmaHandler, gb_in_fb_addr);
+  gb_in_fb = (unsigned int*)mmap(NULL, BUFFER_SIZE, PROT_READ | PROT_WRITE, MAP_SHARED | MAP_HUGETLB, vdma_handle.vdmaHandler, gb_in_fb_addr);
   if(((unsigned int *)gb_in_fb) == MAP_FAILED) {
     printf("gb_in_fb mapping for absolute memory access failed.\n");
     return -1;
   }
 
-  gb_out_fb = (unsigned int*)mmap(NULL, BUFFER_SIZE, PROT_READ | PROT_WRITE, MAP_SHARED, vdma_handle.vdmaHandler, gb_out_fb_addr);
+  gb_out_fb = (unsigned int*)mmap(NULL, BUFFER_SIZE, PROT_READ | PROT_WRITE, MAP_SHARED | MAP_HUGETLB, vdma_handle.vdmaHandler, gb_out_fb_addr);
   if(((unsigned int *)gb_out_fb) == MAP_FAILED) {
     printf("gb_out_fb mapping for absolute memory access failed.\n");
     return -1;
   }
 
-  sobel_dx_out_fb = (unsigned int*)mmap(NULL, BUFFER_SIZE, PROT_READ | PROT_WRITE, MAP_SHARED, vdma_handle.vdmaHandler, sobel_dx_out_fb_addr);
+  sobel_dx_out_fb = (unsigned int*)mmap(NULL, BUFFER_SIZE, PROT_READ | PROT_WRITE, MAP_SHARED | MAP_HUGETLB, vdma_handle.vdmaHandler, sobel_dx_out_fb_addr);
   if(((unsigned int *)sobel_dx_out_fb) == MAP_FAILED) {
     printf("vdmaVirtualAddress mapping for absolute memory access failed.\n");
     return -1;
   }
 
-  sobel_dy_out_fb = (unsigned int*)mmap(NULL, BUFFER_SIZE, PROT_READ | PROT_WRITE, MAP_SHARED, vdma_handle.vdmaHandler, sobel_dy_out_fb_addr);
+  sobel_dy_out_fb = (unsigned int*)mmap(NULL, BUFFER_SIZE, PROT_READ | PROT_WRITE, MAP_SHARED | MAP_HUGETLB, vdma_handle.vdmaHandler, sobel_dy_out_fb_addr);
   if(((unsigned int *)sobel_dy_out_fb) == MAP_FAILED) {
     printf("vdmaVirtualAddress mapping for absolute memory access failed.\n");
     return -1;
   }
 
-  out_img_fb = (unsigned int*)mmap(NULL, BUFFER_SIZE, PROT_READ | PROT_WRITE, MAP_SHARED, vdma_handle.vdmaHandler, out_img_fb_addr);
+  out_img_fb = (unsigned int*)mmap(NULL, BUFFER_SIZE, PROT_READ | PROT_WRITE, MAP_SHARED | MAP_HUGETLB, vdma_handle.vdmaHandler, out_img_fb_addr);
   if(((unsigned int *)out_img_fb) == MAP_FAILED) {
     printf("out_img_fb mapping for absolute memory access failed.\n");
     return -1;
   }
 
-  poll_mmap = (unsigned int*)mmap(NULL, 4096, PROT_READ | PROT_WRITE, MAP_SHARED, vdma_handle.vdmaHandler, MEM_POLLING_VARIABLE_ADDR);
+  poll_mmap = (unsigned int*)mmap(NULL, 4096, PROT_READ | PROT_WRITE, MAP_SHARED | MAP_HUGETLB, vdma_handle.vdmaHandler, MEM_POLLING_VARIABLE_ADDR);
   if(((unsigned int *)poll_mmap) == MAP_FAILED) {
     printf("poll_mmap mapping for absolute memory access failed.\n");
     return -1;
@@ -277,15 +277,18 @@ int main(int argc, char **argv) {
   gettimeofday(&stop, NULL);
   printf("Canny Edge Detector wall time: %lf s\n\n", ((stop.tv_sec + stop.tv_usec*0.000001)-(start.tv_sec + start.tv_usec*0.000001))*PRESC);
   
+  
+  //Canny_HW_RC(out_img_fb, sobel_dx_out_fb, sobel_dy_out_fb, width, height, (double)thresh, ((double)thresh*ratio), nCanny, false );
+
+  
+
+  // WITH POLLING COLLABORATION
   // set polling variable(s) to 1, and wait for it(them) to go back to 0
   printf("Set polling variable to 1..\n");
   for(i=0; i<polls; i++) ((volatile unsigned int *)poll_mmap)[i] = 1;
-
-
   while(*((volatile unsigned int *)poll_mmap) == 1);
   // Copy image from output frame buffer to OS memory
-  // MAYBE NOT NEEDED
-  memcpy((void*)dest.data, out_img_fb, width*height);
+  memcpy((void*)dest.data, out_img_fb, width*height);   // MAYBE NOT NEEDED
 
   imwrite("result.bmp", dest);
   

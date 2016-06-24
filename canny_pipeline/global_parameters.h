@@ -44,11 +44,16 @@
 
 
 
-#define MEM_POLLING_VARIABLE_ADDR            0x1FA00000
+//#define MEM_POLLING_VARIABLE_ADDR            0x1FA00000
+#define MEM_POLLING_VARIABLE_ADDR            0x1FF00000
 
 /* Memory buffer starting address (RAM) */
-#define BUFFER_MEM_READ_START_ADDRESS        0x1F400000
-#define BUFFER_MEM_WRITE_START_ADDRESS       0x1F700000
+//#define BUFFER_MEM_READ_START_ADDRESS        0x1F400000
+//#define BUFFER_MEM_WRITE_START_ADDRESS       0x1F700000
+#define BUFFER_MEM_READ_START_ADDRESS        0x1E400000
+#define BUFFER_MEM_WRITE_START_ADDRESS       0x1E700000
+
+
 /* Buffer size = 1M */
 #define BUFFER_SIZE				                   0x00100000
 

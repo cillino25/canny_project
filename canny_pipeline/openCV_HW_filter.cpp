@@ -256,6 +256,12 @@ void Canny_HW_RC( void * destImage_virtAddr, void * dx_virtAddr, void * dy_virtA
 	//char * dx_data = (char*) malloc(width*height*sizeof(short));
 	//char * dy_data = (char*) malloc(width*height*sizeof(short));
 
+	//printf("DEBUG: first 100 values of Dx (in frame buffer memory):\n");
+	//for(i=0; i<100; i++) printf("%d ", ((short *)dx_virtAddr)[i]);
+	//printf("\n\nDEBUG: first 100 values of Dy (in frame buffer memory):\n");
+	//for(i=0; i<100; i++) printf("%d ", ((short *)dy_virtAddr)[i]);
+	//printf("\n\n");
+
 	// Copy the images back into OS memory (cached), so nonMaxSuppress will benefit of cacheable memory
 	printf("Copy images into OS memory\n");
 	gettimeofday(&start, NULL);
@@ -264,6 +270,12 @@ void Canny_HW_RC( void * destImage_virtAddr, void * dx_virtAddr, void * dy_virtA
   gettimeofday(&stop, NULL);
   printf("...copying wall time: %lf ms\n\n", ((stop.tv_sec + stop.tv_usec*0.000001)-(start.tv_sec + start.tv_usec*0.000001))*PRESC *1000);
 	
+  //printf("DEBUG: first 100 values of Dx (in system memory):\n");
+	//for(i=0; i<100; i++) printf("%d ", ((short *)sobelDxOut.data)[i]);
+	//printf("\n\nDEBUG: first 100 values of Dy (in system memory):\n");
+	//for(i=0; i<100; i++) printf("%d ", ((short *)sobelDyOut.data)[i]);
+	//printf("\n\n");
+
   gettimeofday(&start, NULL);
 	if (L2gradient)
 	{
@@ -284,7 +296,7 @@ void Canny_HW_RC( void * destImage_virtAddr, void * dx_virtAddr, void * dy_virtA
 	mag_buf[0] = (int*)(uchar*)buffer;
 	mag_buf[1] = mag_buf[0] + mapstep*cn;
 	mag_buf[2] = mag_buf[1] + mapstep*cn;
-	for(i=0; i<mapstep*sizeof(int); i++) *(mag_buf[0]+i)=0;					//memset(mag_buf[0], 0, /* cn* */mapstep*sizeof(int));
+	for(i=0; i<mapstep; i++) *(mag_buf[0]+i)=0;					//memset(mag_buf[0], 0, /* cn* */mapstep*sizeof(int));
 	
 
 	//printf("map creation and initialization\n");
@@ -294,14 +306,15 @@ void Canny_HW_RC( void * destImage_virtAddr, void * dx_virtAddr, void * dy_virtA
 
 	//printf("Stack initialization\n");
 	int maxsize = std::max(1 << 10, (int)(width * height / 10));
+	//printf("-d: maxsize=%d\n", maxsize);
 	std::vector<uchar*> stack(maxsize);
 	uchar **stack_top = &stack[0];
 	uchar **stack_bottom = &stack[0];
 	
 	gettimeofday(&stop, NULL);
-  printf("Initialization wall time: %lf ms\n\n", ((stop.tv_sec + stop.tv_usec*0.000001)-(start.tv_sec + start.tv_usec*0.000001))*PRESC *1000);
+  //printf("Initialization wall time: %lf ms\n\n", ((stop.tv_sec + stop.tv_usec*0.000001)-(start.tv_sec + start.tv_usec*0.000001))*PRESC *1000);
 	
-
+  //printf("-d: height=%d, width=%d\n", height, width);
 	
 	//printf("nonMaxSuppress\n");
 	gettimeofday(&start, NULL);
@@ -328,16 +341,24 @@ void Canny_HW_RC( void * destImage_virtAddr, void * dx_virtAddr, void * dy_virtA
 			
 			if (!L2gradient)
 			{
-				int j = 0, width = width * cn;
-				for ( ; j < width; ++j){
+				//printf("!L2gradient\n");
+				//printf("-d: width=%d, cn=%d", width, cn);
+				int j = 0;
+				width = width * cn;
+				//printf("-d: width=%d, cn=%d\n", width, cn);
+				for (j=0; j < width; j++){
 					_norm[j] = std::abs(int(_dx[j])) + std::abs(int(_dy[j]));
+					//printf("-d: [%d] dx=%d, dy=%d, norm=%d\n", j, _dx[j], _dy[j], _norm[j]);
 				}
 			}
 			else
 			{
+				//printf("L2gradient\n");
 				int j = 0, width = width * cn;
-				for ( ; j < width; ++j)
+				for ( ; j < width; ++j){
 					_norm[j] = int(_dx[j])*_dx[j] + int(_dy[j])*_dy[j];
+					//printf("-d: [%d] dx=%d, dy=%d, norm=%d\n", j, _dx[j], _dy[j], _norm[j]);
+				}
 			}
 
 			if (cn > 1)
@@ -357,7 +378,7 @@ void Canny_HW_RC( void * destImage_virtAddr, void * dx_virtAddr, void * dy_virtA
 		}
 		else{
 			//memset(_norm-1, 0, /* cn* */mapstep*sizeof(int));
-			for(int i = 0; i < mapstep*sizeof(int); i++) *(_norm-1 + i) = 0;
+			for(int i = 0; i < mapstep; i++) *(_norm-1 + i) = 0;
 		}
 
 		// at the very beginning we do not have a complete ring
@@ -476,20 +497,32 @@ void Canny_HW_RC( void * destImage_virtAddr, void * dx_virtAddr, void * dy_virtA
 	// the final step, form the final image
 	gettimeofday(&start, NULL);
 	const uchar* pmap = map + mapstep + 1;
-	uchar* pdst = dst_img.ptr();
+	//uchar* pdst = dst_img.ptr();
+	uchar* pdst = dst_img.data;
+	//printf("\n\nDEBUG: pdst:\n");
 	for (int i = 0; i < height; i++, pmap += mapstep, pdst += dst_img.step)
 	{
-		for (int j = 0; j < width; j++)
+		for (int j = 0; j < width; j++){
 			pdst[j] = (uchar)-(pmap[j] >> 1);
+			//printf("%d ", pdst[j]);
+		}
 	}
 	gettimeofday(&stop, NULL);
   printf("Final image creation wall time: %lf ms\n\n", ((stop.tv_sec + stop.tv_usec*0.000001)-(start.tv_sec + start.tv_usec*0.000001))*PRESC *1000);
 	
+	//printf("\n\nDEBUG: first 1000 output image values (in system memory):\n");
+	//for(i=0; i<1000; i++) printf("%d ", ((char *)dst_img.data)[i]);
+	//printf("\n\n");
+
 	// Copy the final image to a memory buffer (it has to be read from the ARM in order to be displayed)
 	gettimeofday(&start, NULL);
   memcpy(destImage_virtAddr, (void*)dst_img.data, width*height);
   gettimeofday(&stop, NULL);
   printf("Final image copy wall time: %lf ms\n\n", ((stop.tv_sec + stop.tv_usec*0.000001)-(start.tv_sec + start.tv_usec*0.000001))*PRESC * 1000);
+
+  //printf("\n\nDEBUG: first 1000 output image values (in free buffer memory):\n");
+	//for(i=0; i<1000; i++) printf("%d ", ((char *)destImage_virtAddr)[i]);
+	//printf("\n\n");
 
   // Freeing prisoners
   //sobelDxOut.release();
@@ -552,7 +585,7 @@ void nonMaxSuppress(int rows, int cols, int cn, Mat dx, Mat dy, ptrdiff_t mapste
 		}
 		else{
 			//memset(_norm-1, 0, /* cn* */mapstep*sizeof(int));
-			for(int i = 0; i < mapstep*sizeof(int); i++) *(_norm-1 + i) = 0;
+			for(int i = 0; i < mapstep; i++) *(_norm-1 + i) = 0;
 		}
 
 		

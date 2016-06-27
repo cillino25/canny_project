@@ -679,6 +679,7 @@
 	},
 	"file_history":
 	[
+		"/usr/share/riscv_src/rocket-chip/fsim/generated-src/consts.DefaultFPGAConfig_L1_64K.vh",
 		"/media/stefano/data_ext4/Dropbox/poliTO/tesi/elaborato_finale/tex/Makefile",
 		"/usr/share/riscv_src/linux-4.1.17/.config",
 		"/media/stefano/data_ext4/Dropbox/poliTO/tesi/canny_project/canny_pipeline/openCV_HW_filter.cpp.bck",
@@ -805,8 +806,7 @@
 		"/usr/share/riscv_src/openCV/canny/canny_detector.cpp",
 		"/Dropbox/poliTO/tesi/RISCV/Configs.scala",
 		"/usr/share/riscv_src/dev/rocket-chip/src/main/scala/Configs.scala",
-		"/Dropbox/poliTO/tesi/RISCV/stable_configurations",
-		"/usr/share/riscv_src/dev/riscv-tools/riscv-gnu-toolchain/Makefile.in"
+		"/Dropbox/poliTO/tesi/RISCV/stable_configurations"
 	],
 	"find":
 	{

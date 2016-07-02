@@ -2,8 +2,8 @@ CC=gcc
 CPP=g++
 RV_CC=riscv64-unknown-linux-gnu-gcc
 RV_CPP=riscv64-unknown-linux-gnu-g++
-ARM_CC=arm-xilinx-linux-gnueabi-gcc
-ARM_CPP=arm-xilinx-linux-gnueabi-g++
+ARM_CC=arm-linux-gnueabihf-gcc
+ARM_CPP=arm-linux-gnueabihf-g++
 
 ifeq ($(RISCV_TYPE),riscv)
 	exe_type=_rv64g

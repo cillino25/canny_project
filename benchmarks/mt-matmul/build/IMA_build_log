@@ -1,0 +1,16 @@
+matmul.o: nella funzione ".L16":
+matmul.c:(.text+0x228): riferimento non definito a "__eqdf2"
+matmul.o: nella funzione ".L12":
+matmul.c:(.text+0x250): riferimento non definito a "__eqdf2"
+matmul.o: nella funzione ".L11":
+matmul.c:(.text+0x2fc): riferimento non definito a "__nedf2"
+matmul.o: nella funzione ".L31":
+matmul.c:(.text+0x4f4): riferimento non definito a "__muldf3"
+matmul.c:(.text+0x508): riferimento non definito a "__adddf3"
+mt-matmul.o: nella funzione ".L16":
+mt-matmul.c:(.text+0x228): riferimento non definito a "__eqdf2"
+mt-matmul.o: nella funzione ".L12":
+mt-matmul.c:(.text+0x250): riferimento non definito a "__eqdf2"
+mt-matmul.o: nella funzione ".L11":
+mt-matmul.c:(.text+0x2fc): riferimento non definito a "__nedf2"
+collect2: error: ld returned 1 exit status

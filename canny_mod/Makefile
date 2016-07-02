@@ -16,7 +16,7 @@ canny_mod_metrics:
 	g++ -g -DMETRICS=1 -I/usr/local/include -L/usr/local/lib -I/home/stefano/TESI/openCV/include convolution.cpp gaussian_coefficients.c Canny_test.cpp opencv_Canny.cpp opencv_Gblur.cpp -o canny_mod `pkg-config --cflags --libs opencv` -lm
 
 canny_mod_riscv:
-	riscv64-unknown-linux-gnu-g++ -g -static -DRC=1 -I$(RISCV)/include -L$(RISCV)/lib -I/home/stefano/TESI/openCV/include convolution_arm.cpp gaussian_coefficients_arm.c Canny_test_arm.cpp opencv_Canny_arm.cpp opencv_Gblur_arm.cpp -o canny_mod_$(exe_type) `pkg-config --cflags --libs --static opencv`
+	riscv64-unknown-linux-gnu-g++ -g -static -DRC=1 -I$(RISCV)/include -L$(RISCV)/lib -I/home/stefano/TESI/openCV/include convolution_arm.cpp gaussian_coefficients_arm.c Canny_test_arm.cpp opencv_Canny.cpp opencv_Gblur_arm.cpp -o canny_mod_$(exe_type) `pkg-config --cflags --libs --static opencv`
 
 canny_mod_riscv_elf:
 	riscv64-unknown-elf-g++ -g -static -DRC=1 -I$(RISCV)/include -L$(RISCV)/lib -I/home/stefano/TESI/openCV/include convolution.cpp gaussian_coefficients.c Canny_test.cpp opencv_Canny.cpp opencv_Gblur.cpp -o canny_mod_$(exe_type) `pkg-config --cflags --libs --static opencv`

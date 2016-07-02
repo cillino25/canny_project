@@ -3,7 +3,8 @@ include Makefrag
 cur_dir=.
 
 canny_dir=$(cur_dir)/canny_mod
-opencv_arm_dir=/usr/share/opencv_arm
+video_dir=$(cur_dir)/canny_video
+opencv_arm_dir=/usr/share/opencv_armhf
 test-VDMA_dir=$(cur_dir)/VDMA_test
 pipe_dir=$(cur_dir)/canny_pipeline
 comm_dir=$(cur_dir)/comm_test/arm
@@ -43,13 +44,24 @@ umount_rootcv:
 
 
 ####################################################################################
-## Canny_mod Rocketchip
+## Canny_mod
+canny_mod-arm:
+	$(ARM_CPP) $(canny_dir)/gaussian_coefficients.c $(canny_dir)/Canny_test.cpp $(canny_dir)/opencv_Canny.cpp $(canny_dir)/opencv_Gblur.cpp $(canny_dir)/imageComparison.cpp -o $(canny_dir)/canny_mod_arm -I$(opencv_arm_dir)/include -L$(opencv_arm_dir)/lib `pkg-config --cflags --static --libs opencv`
+cp-canny_mod-arm: canny_mod-arm
+	scp $(canny_dir)/canny_mod_arm zedboard:/canny
+
+canny_mod-arm_metrics:
+	$(ARM_CPP) -DMETRICS=1 $(canny_dir)/gaussian_coefficients.c $(canny_dir)/Canny_test.cpp $(canny_dir)/opencv_Canny.cpp $(canny_dir)/opencv_Gblur.cpp $(canny_dir)/imageComparison.cpp -o $(canny_dir)/canny_mod_arm -I$(opencv_arm_dir)/include -L$(opencv_arm_dir)/lib `pkg-config --cflags --static --libs opencv`
+cp-canny_mod-arm_metrics: canny_mod-arm_metrics
+	scp $(canny_dir)/canny_mod_arm zedboard:/canny
+
+
 canny_mod-rv:
 	$(RV_CPP) -DRC=1 -I$RISCV/opencv/include -L$RISCV/opencv/lib -static $(canny_dir)/convolution_arm.cpp $(canny_dir)/gaussian_coefficients_arm.c $(canny_dir)/Canny_test_arm.cpp $(canny_dir)/opencv_Canny_arm.cpp $(canny_dir)/opencv_Gblur_arm.cpp -o $(canny_dir)/canny_mod$(exe_type) `pkg-config --cflags --libs --static opencv`
 cp-canny_mod-rv: canny_mod-rv
 	cp $(canny_dir)/canny_mod$(exe_type) mnt-cv/
 
-.PHONY: canny_mod-rv cp-canny_mod-rv 
+.PHONY: canny_mod-rv cp-canny_mod-rv  canny_mod-arm cp-canny_mod-arm
 
 ####################################################################################
 ## Complete ARM-RC-VDMA pipeline
@@ -131,7 +143,7 @@ test-filter-sf:
 	$(CPP) -I/usr/local/include -L/usr/local/lib -I/home/stefano/TESI/openCV/include $(pipe_dir)/sepImageFilter.c $(pipe_dir)/vdma.c $(pipe_dir)/test-filter-sf.cpp -o $(pipe_dir)/test-filter-sf `pkg-config --cflags --libs opencv`
 
 test-filter-sf-arm-cv:
-	$(ARM_CPP) $(pipe_dir)/sepImageFilter.c $(pipe_dir)/vdma.c $(pipe_dir)/test-filter-sf.cpp -o $(pipe_dir)/test-filter-arm-sf -I$(opencv_arm_dir)/include -L$(opencv_arm_dir)/lib `pkg-config --cflags --libs opencv`
+	$(ARM_CPP) $(pipe_dir)/sepImageFilter.c $(pipe_dir)/vdma.c $(pipe_dir)/test-filter-sf.cpp -o $(pipe_dir)/test-filter-arm-sf -I$(opencv_arm_dir)/include -L$(opencv_arm_dir)/lib `pkg-config --cflags --static --libs opencv`
 cp-test-filter-sf-arm-cv: test-filter-sf-arm-cv
 	scp $(pipe_dir)/test-filter-arm-sf zedboard:~/
 
@@ -165,21 +177,37 @@ run-canny-mod-filter-sf-rv: mount_rootcv cp-canny-mod-filter-sf-rv umount_rootcv
 	spike --isa=RV64IMA +disk=rootcv.bin bbl_rv64ima /usr/share/riscv_src/linux-4.1.17/vmlinux_rv64ima
 
 canny-mod-filter-sf-arm:
-	$(ARM_CPP) -I$(opencv_arm_dir)/include -L$(opencv_arm_dir)/lib $(pipe_dir)/sepImageFilter.c $(pipe_dir)/vdma.c $(pipe_dir)/openCV_HW_filter.cpp $(pipe_dir)/gaussian_coefficients_arm.c $(pipe_dir)/canny_mod_filter_sf-arm.cpp -o $(pipe_dir)/canny_mod_filter_sf-arm `pkg-config --cflags --libs opencv`
+	$(ARM_CPP) -I$(opencv_arm_dir)/include -L$(opencv_arm_dir)/lib $(pipe_dir)/sepImageFilter.c $(pipe_dir)/vdma.c $(pipe_dir)/openCV_HW_filter.cpp $(pipe_dir)/gaussian_coefficients_arm.c $(pipe_dir)/canny_mod_filter_sf-arm.cpp -o $(pipe_dir)/canny_mod_filter_sf-arm `pkg-config --cflags --static --libs opencv`
 cp-canny-mod-filter-sf-arm: canny-mod-filter-sf-arm
-	scp $(pipe_dir)/canny_mod_filter_sf-arm zedboard:~
+	scp $(pipe_dir)/canny_mod_filter_sf-arm zedboard:/canny
+	#scp $(pipe_dir)/canny_mod_filter_sf-arm zedboard:~
 
 canny-mod-filter-pipe: canny-mod-filter-sf-rv canny-mod-filter-sf-arm
 
 
 
 canny-mod-filter-sf-arm-only:
-	$(ARM_CPP) -I$(opencv_arm_dir)/include -L$(opencv_arm_dir)/lib $(pipe_dir)/sepImageFilter.c $(pipe_dir)/vdma.c $(pipe_dir)/openCV_HW_filter.cpp $(pipe_dir)/gaussian_coefficients_arm.c $(pipe_dir)/canny_mod_filter_sf__arm-only.cpp -o $(pipe_dir)/canny_mod_filter_sf__arm-only `pkg-config --cflags --libs opencv`
+	$(ARM_CPP) -I$(opencv_arm_dir)/include -L$(opencv_arm_dir)/lib $(pipe_dir)/sepImageFilter.c $(pipe_dir)/vdma.c $(pipe_dir)/openCV_HW_filter.cpp $(pipe_dir)/gaussian_coefficients_arm.c $(pipe_dir)/canny_mod_filter_sf__arm-only.cpp -o $(pipe_dir)/canny_mod_filter_sf__arm-only `pkg-config --cflags --static --libs opencv`
 cp-canny-mod-filter-sf-arm-only: canny-mod-filter-sf-arm-only
-	scp $(pipe_dir)/canny_mod_filter_sf__arm-only zedboard:~
+	scp $(pipe_dir)/canny_mod_filter_sf__arm-only zedboard:/canny
 
 .PHONY: canny-mod-filter-sf-rv cp-canny-mod-filter-sf-rv canny-mod-filter-sf-arm cp-canny-mod-filter-sf-arm canny-mod-filter-sf-arm-only cp-canny-mod-filter-sf-arm-only img-comparison
 .PHONY: run-canny-mod-filter-sf-rv
+
+
+
+####################################################################################
+## Canny Video application
+
+canny-video-arm_only:
+	$(ARM_CPP) -I$(opencv_arm_dir)/include -L$(opencv_arm_dir)/lib $(video_dir)/canny_video__arm-only.cpp $(video_dir)/sepImageFilter.c $(video_dir)/vdma.c $(video_dir)/gaussian_coefficients.c $(video_dir)/opencv_Canny.cpp $(video_dir)/opencv_Gblur.cpp $(video_dir)/openCV_HW_filter.cpp -o $(video_dir)/canny_video__arm-only `pkg-config --cflags --static --libs opencv`
+
+cp-canny-video-arm_only: canny-video-arm_only
+	scp canny_video__arm-only zedboard:/canny
+
+
+.PHONY: canny-video-arm_only cp-canny-video-arm_only
+
 ####################################################################################
 ## Memory read and write utilities
 
@@ -214,11 +242,14 @@ upload_root: update_root cp-print-VDMA-arm cp_read_mem cp-test-VDMA-arm-fr
 
 
 #update_rootcv: mount_rootcv cp-canny_mod-rv umount_rootcv
+#update_rootcv: mount_rootcv cp-canny-mod-filter-sf-rv umount_rootcv
+#
+#upload_rootcv: update_rootcv
+#	scp $(cur_dir)/rootcv.bin zedboard:~/mnt/rootcv.bin
+
 update_rootcv: mount_rootcv cp-canny-mod-filter-sf-rv umount_rootcv
-
 upload_rootcv: update_rootcv
-	scp $(cur_dir)/rootcv.bin zedboard:~/mnt/rootcv.bin
-
+	scp $(cur_dir)/rootcv.bin zedboard:/canny/rootcv.bin
 
 .PHONY: update_root cp_pipe_fr pipe_arm pipe_riscv update_root upload_root update_rootcv upload_rootcv
 

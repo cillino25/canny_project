@@ -45,6 +45,7 @@ int main(int argc, char **argv) {
   int nGblur=5, nCanny=3;
   int custom = 0;
   int polls = 1;
+  char in_img[256] = "lena_secret.bmp";
   char res[256] = "result.bmp";
 
   vdma_handle vdma_handle;
@@ -70,11 +71,11 @@ int main(int argc, char **argv) {
 
   unsigned char * src_data;
 
-  if( argc < 3 ){
-    printf("Not enough arguments.\nList of arguments: ./canny_mod_filter_sf <*source_img> <*threshold> <sigma> <gBlurMaskSize> <cannyMaskSize> <alg_type> <output_file>\n");
-    return -1;
-  }
-  if(argc >= 2)
+
+  if(argc > 1)
+    strcpy(in_img, argv[1]);
+  
+  if(argc > 2)
     thresh = atoi(argv[2]);
 
   if(argc > 3)
@@ -91,6 +92,8 @@ int main(int argc, char **argv) {
 
   if(argc > 7)
     polls = atoi(argv[7]);
+
+  printf("Input image will be %s\n", in_img);
 
   if((nGblur!=3)&&(nGblur!=5)&&(nGblur!=7)){ printf("nGblur mask size must be in {3,5,7}.\n"); return -1; }
   if((nGblur==3)&&((sigma<0.4)||(sigma>1))){ printf("With GBlur_size=3 sigma must be 0.4 < sigma < 1.\n"); return -1; }
@@ -156,22 +159,13 @@ int main(int argc, char **argv) {
     int k2_vt[KERNEL_COEFFS]={0}; k2_vt_coeffs=k2_vt;
   }
 
-  //printf("k0_hz_coeffs: "); for(i=0; i<KERNEL_COEFFS; i++) printf("%d ", k0_hz_coeffs[i]); printf("\n");
-  //printf("k0_vt_coeffs: "); for(i=0; i<KERNEL_COEFFS; i++) printf("%d ", k0_vt_coeffs[i]); printf("\n");
-  //printf("norm0 = %d\n", norm0);
-  //printf("k1_hz_coeffs: "); for(i=0; i<KERNEL_COEFFS; i++) printf("%d ", k1_hz_coeffs[i]); printf("\n");
-  //printf("k1_vt_coeffs: "); for(i=0; i<KERNEL_COEFFS; i++) printf("%d ", k1_vt_coeffs[i]); printf("\n");
-  //printf("norm1 = %d\n", norm1);
-  //printf("k2_hz_coeffs: "); for(i=0; i<KERNEL_COEFFS; i++) printf("%d ", k2_hz_coeffs[i]); printf("\n");
-  //printf("k2_vt_coeffs: "); for(i=0; i<KERNEL_COEFFS; i++) printf("%d ", k2_vt_coeffs[i]); printf("\n");
-  //printf("norm2 = %d\n", norm2);
-
+  
   /************************************************************************/
   /* Load the first sacrifical frame in order to get video parameters
   /************************************************************************/
 
   // Load the image in the BGR format
-  Mat src_gray_tmp = imread(argv[1], CV_LOAD_IMAGE_GRAYSCALE);
+  Mat src_gray_tmp = imread(in_img, CV_LOAD_IMAGE_GRAYSCALE);
   
   printf("Input image has %ld bytes per each pixel\n", src_gray_tmp.elemSize());
   if(!src_gray_tmp.data){ printf("No source data.\nExiting..\n"); return 1; }
@@ -192,37 +186,37 @@ int main(int argc, char **argv) {
 
   printf("sepImageFilter set up\n");
 
-  gb_in_fb = (unsigned int*)mmap(NULL, BUFFER_SIZE, PROT_READ | PROT_WRITE, MAP_SHARED | MAP_HUGETLB, vdma_handle.vdmaHandler, gb_in_fb_addr);
+  gb_in_fb = (unsigned int*)mmap(NULL, BUFFER_SIZE, PROT_READ | PROT_WRITE, MAP_SHARED, vdma_handle.vdmaHandler, gb_in_fb_addr);
   if(((unsigned int *)gb_in_fb) == MAP_FAILED) {
     printf("gb_in_fb mapping for absolute memory access failed.\n");
     return -1;
   }
 
-  gb_out_fb = (unsigned int*)mmap(NULL, BUFFER_SIZE, PROT_READ | PROT_WRITE, MAP_SHARED | MAP_HUGETLB, vdma_handle.vdmaHandler, gb_out_fb_addr);
+  gb_out_fb = (unsigned int*)mmap(NULL, BUFFER_SIZE, PROT_READ | PROT_WRITE, MAP_SHARED, vdma_handle.vdmaHandler, gb_out_fb_addr);
   if(((unsigned int *)gb_out_fb) == MAP_FAILED) {
     printf("gb_out_fb mapping for absolute memory access failed.\n");
     return -1;
   }
 
-  sobel_dx_out_fb = (unsigned int*)mmap(NULL, BUFFER_SIZE, PROT_READ | PROT_WRITE, MAP_SHARED | MAP_HUGETLB, vdma_handle.vdmaHandler, sobel_dx_out_fb_addr);
+  sobel_dx_out_fb = (unsigned int*)mmap(NULL, BUFFER_SIZE, PROT_READ | PROT_WRITE, MAP_SHARED, vdma_handle.vdmaHandler, sobel_dx_out_fb_addr);
   if(((unsigned int *)sobel_dx_out_fb) == MAP_FAILED) {
     printf("vdmaVirtualAddress mapping for absolute memory access failed.\n");
     return -1;
   }
 
-  sobel_dy_out_fb = (unsigned int*)mmap(NULL, BUFFER_SIZE, PROT_READ | PROT_WRITE, MAP_SHARED | MAP_HUGETLB, vdma_handle.vdmaHandler, sobel_dy_out_fb_addr);
+  sobel_dy_out_fb = (unsigned int*)mmap(NULL, BUFFER_SIZE, PROT_READ | PROT_WRITE, MAP_SHARED, vdma_handle.vdmaHandler, sobel_dy_out_fb_addr);
   if(((unsigned int *)sobel_dy_out_fb) == MAP_FAILED) {
     printf("vdmaVirtualAddress mapping for absolute memory access failed.\n");
     return -1;
   }
 
-  out_img_fb = (unsigned int*)mmap(NULL, BUFFER_SIZE, PROT_READ | PROT_WRITE, MAP_SHARED | MAP_HUGETLB, vdma_handle.vdmaHandler, out_img_fb_addr);
+  out_img_fb = (unsigned int*)mmap(NULL, BUFFER_SIZE, PROT_READ | PROT_WRITE, MAP_SHARED, vdma_handle.vdmaHandler, out_img_fb_addr);
   if(((unsigned int *)out_img_fb) == MAP_FAILED) {
     printf("out_img_fb mapping for absolute memory access failed.\n");
     return -1;
   }
 
-  poll_mmap = (unsigned int*)mmap(NULL, 4096, PROT_READ | PROT_WRITE, MAP_SHARED | MAP_HUGETLB, vdma_handle.vdmaHandler, MEM_POLLING_VARIABLE_ADDR);
+  poll_mmap = (unsigned int*)mmap(NULL, 4096, PROT_READ | PROT_WRITE, MAP_SHARED, vdma_handle.vdmaHandler, MEM_POLLING_VARIABLE_ADDR);
   if(((unsigned int *)poll_mmap) == MAP_FAILED) {
     printf("poll_mmap mapping for absolute memory access failed.\n");
     return -1;

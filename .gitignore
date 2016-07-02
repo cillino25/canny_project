@@ -3,9 +3,10 @@ mnt/
 busybox-1.24.1/
 root.bin
 rootcv.bin
+rootcv.bin.bck
 *.bin
 *.bmp
 BOOT.bin.VDMA_genSepImageFilter-1fb
 BOOT.bin.VDMA_genSepImageFilter-1fb-fsync
 BOOT.bin.VDMA_genSepImageFilter-3fb-fsync
-
+benchmarks/mt-matmul/build/spike_log_2cores

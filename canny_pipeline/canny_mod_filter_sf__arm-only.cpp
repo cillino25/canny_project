@@ -44,6 +44,7 @@ int main(int argc, char **argv) {
   double sigma = 1;
   int nGblur=5, nCanny=3;
   int custom = 0;
+  char in_img[256] = "lena_secret.bmp";
   char res[256] = "result.bmp";
 
   vdma_handle vdma_handle;
@@ -65,14 +66,26 @@ int main(int argc, char **argv) {
   int size=0, width=0, height=0;
   unsigned short *img_data;
   unsigned short *img_info;
-
   unsigned char * src_data;
 
-  if( argc < 3 ){
-    printf("Not enough arguments.\nList of arguments: ./canny_mod_filter_sf <*source_img> <*threshold> <sigma> <gBlurMaskSize> <cannyMaskSize> <alg_type> <output_file>\n");
-    return -1;
-  }
-  if(argc >= 2)
+  /*Video types*/
+//  Mat frame, frame_out; 
+  const char win_name_in[]="Live Video...";
+  const char win_name_out[]="Real Time Canny...";
+  const char *Mat_types[] = {"CV_8U", "CV_8S", "CV_16U", "CV_16S", "CV_32S", "CV_32F", "CV_64F"};
+  int set_height = 0, set_width = 0, video_width, video_height;
+  int cam_id = 0;       // Webcam connected to USB port
+  double fps;
+
+
+  //if( argc < 3 ){
+  //  printf("Not enough arguments.\nList of arguments: ./canny_mod_filter_sf <*source_img> <*threshold> <sigma> <gBlurMaskSize> <cannyMaskSize> <alg_type> <output_file>\n");
+  //  return -1;
+  //}
+  if(argc > 1)
+    strcpy(in_img, argv[1]);
+
+  if(argc > 2)
     thresh = atoi(argv[2]);
 
   if(argc > 3)
@@ -93,6 +106,7 @@ int main(int argc, char **argv) {
   if((nGblur==7)&&((sigma<1)||(sigma>1.5))){ printf("With GBlur_size=7 sigma must be 1 < sigma < 1.5.\n"); return -1; }
   if((nCanny!=3)&&(nCanny!=5)&&(nCanny!=7)){ printf("nCanny mask size must be in {3,5,7}.\n"); return -1; }
 
+  printf("Input image will be %s\n", in_img);
 
   if((devmem = open("/dev/mem", O_RDWR | O_SYNC)) == -1){
     printf("Can't open /dev/mem.\nExiting...\n");
@@ -122,37 +136,66 @@ int main(int argc, char **argv) {
 
 
   // SobelDx and SobelDy kernel coefficients computation
-  int *k1_hz_coeffs;
-  int *k1_vt_coeffs;
+  int k1_hz_coeffs[KERNEL_COEFFS]; for(i=0; i<KERNEL_COEFFS; i++) k1_hz_coeffs[i]=0;
+  int k1_vt_coeffs[KERNEL_COEFFS]; for(i=0; i<KERNEL_COEFFS; i++) k1_vt_coeffs[i]=0;
   int norm1=0;
-  int *k2_hz_coeffs;
-  int *k2_vt_coeffs;
+  int k2_hz_coeffs[KERNEL_COEFFS]; for(i=0; i<KERNEL_COEFFS; i++) k2_hz_coeffs[i]=0;
+  int k2_vt_coeffs[KERNEL_COEFFS]; for(i=0; i<KERNEL_COEFFS; i++) k2_vt_coeffs[i]=0;
   int norm2=0;
 
-  if(nCanny==3){
-    int k1_hz[] = {0, 0, -1, 0, 1, 0, 0}; k1_hz_coeffs=k1_hz;
-    int k1_vt[] = {0, 0,  1, 2, 1, 0, 0}; k1_vt_coeffs=k1_vt;
-    int k2_hz[] = {0, 0,  1, 2, 1, 0, 0}; k2_hz_coeffs=k2_hz;
-    int k2_vt[] = {0, 0, -1, 0, 1, 0, 0}; k2_vt_coeffs=k2_vt;
-    norm1=norm2=2;
-  }else if(nCanny==5){
-    int k1_hz[] = {0, -1, -2, 0, 2, 1, 0}; k1_hz_coeffs=k1_hz;
-    int k1_vt[] = {0,  1,  4, 6, 4, 1, 0}; k1_vt_coeffs=k1_vt;
-    int k2_hz[] = {0,  1,  4, 6, 4, 1, 0}; k2_hz_coeffs=k2_hz;
-    int k2_vt[] = {0, -1, -2, 0, 2, 1, 0}; k2_vt_coeffs=k2_vt;
-    norm1=norm2=2;
-  }else if(nCanny==7){ 
-    int k1_hz[] = {-1, -4, -5, 0,   5, 4, 1}; k1_hz_coeffs=k1_hz;
-    int k1_vt[] = { 1,  6, 15, 20, 15, 6, 1}; k1_vt_coeffs=k1_vt;
-    int k2_hz[] = { 1,  6, 15, 20, 15, 6, 1}; k2_hz_coeffs=k2_hz;
-    int k2_vt[] = {-1, -4, -5, 0,   5, 4, 1}; k2_vt_coeffs=k2_vt;
-    norm1=norm2=2;
-  }else{
-    int k1_hz[KERNEL_COEFFS]={0}; k1_hz_coeffs=k1_hz;
-    int k1_vt[KERNEL_COEFFS]={0}; k1_vt_coeffs=k1_vt;
-    int k2_hz[KERNEL_COEFFS]={0}; k2_hz_coeffs=k2_hz;
-    int k2_vt[KERNEL_COEFFS]={0}; k2_vt_coeffs=k2_vt;
+  
+  Mat Sx_hz, Sx_vt, Sy_hz, Sy_vt;
+  getDerivKernels(Sx_hz, Sx_vt, 1, 0, nCanny, false, CV_32F);
+  getDerivKernels(Sy_hz, Sy_vt, 0, 1, nCanny, false, CV_32F);
+
+  //printf("Sx_hz: "); for(i=0; i<KERNEL_COEFFS; i++) printf("%d ", (int)Sx_hz.at<float>(i));
+  //printf("\nSx_vt: "); for(i=0; i<KERNEL_COEFFS; i++) printf("%d ", (int)Sx_vt.at<float>(i));
+  //printf("\nSy_hz: "); for(i=0; i<KERNEL_COEFFS; i++) printf("%d ", (int)Sy_hz.at<float>(i));
+  //printf("\nSy_vt: "); for(i=0; i<KERNEL_COEFFS; i++) printf("%d ", (int)Sy_vt.at<float>(i));
+  //printf("\n\n");
+
+  printf("nC: %d\n", nCanny);
+  for(i=0; i<nCanny; i++){
+    printf("index=%d\n", i+(KERNEL_COEFFS-nCanny/2));
+    k1_hz_coeffs[i+(KERNEL_COEFFS-nCanny)/2] = (int)Sx_hz.at<float>(i);
+    k1_vt_coeffs[i+(KERNEL_COEFFS-nCanny)/2] = (int)Sx_vt.at<float>(i);
+    k2_hz_coeffs[i+(KERNEL_COEFFS-nCanny)/2] = (int)Sy_hz.at<float>(i);
+    k2_vt_coeffs[i+(KERNEL_COEFFS-nCanny)/2] = (int)Sy_vt.at<float>(i);
   }
+  
+
+  /*
+  Mat Sx_hz, Sx_vt, Sy_hz, Sy_vt;
+  getDerivKernels(Sx_hz, Sx_vt, 1, 0, nCanny, false, CV_32F);
+  getDerivKernels(Sy_hz, Sy_vt, 0, 1, nCanny, false, CV_32F);
+
+  float *Sx_p_hz, *Sx_p_vt, *Sy_p_hz, *Sy_p_vt;
+  Sx_p_hz = Sx_hz.ptr<float>(0);
+  Sx_p_vt = Sx_vt.ptr<float>(0);
+  Sy_p_hz = Sy_hz.ptr<float>(0);
+  Sy_p_vt = Sy_vt.ptr<float>(0);
+
+  int zeros = KERNEL_COEFFS - nCanny;
+  int j=0;
+  for(int i=0; i<KERNEL_COEFFS; i++)
+  {
+    if( (i < zeros/2)  ||  (i >= KERNEL_COEFFS - zeros/2))
+    {
+      k1_hz_coeffs[i] = 0;
+      k1_vt_coeffs[i] = 0;
+      k2_hz_coeffs[i] = 0;
+      k2_vt_coeffs[i] = 0;
+    }
+    else
+    {
+      k1_hz_coeffs[i] = (int)Sx_p_hz[j];
+      k1_vt_coeffs[i] = (int)Sx_p_vt[j];
+      k2_hz_coeffs[i] = (int)Sy_p_hz[j];
+      k2_vt_coeffs[i] = (int)Sy_p_vt[j];
+      j++;    
+    }
+  }
+  */
 
   //printf("k0_hz_coeffs: "); for(i=0; i<KERNEL_COEFFS; i++) printf("%d ", k0_hz_coeffs[i]); printf("\n");
   //printf("k0_vt_coeffs: "); for(i=0; i<KERNEL_COEFFS; i++) printf("%d ", k0_vt_coeffs[i]); printf("\n");
@@ -169,7 +212,7 @@ int main(int argc, char **argv) {
   /************************************************************************/
 
   // Load the image in the BGR format
-  Mat src_gray_tmp = imread(argv[1], CV_LOAD_IMAGE_GRAYSCALE);
+  Mat src_gray_tmp = imread(in_img, CV_LOAD_IMAGE_GRAYSCALE);
   
   printf("Input image has %ld bytes per each pixel\n", src_gray_tmp.elemSize());
   if(!src_gray_tmp.data){ printf("No source data.\nExiting..\n"); return 1; }

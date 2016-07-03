@@ -46,7 +46,7 @@ umount_rootcv:
 ####################################################################################
 ## Canny_mod
 canny_mod-arm:
-	$(ARM_CPP) $(canny_dir)/gaussian_coefficients.c $(canny_dir)/Canny_test.cpp $(canny_dir)/opencv_Canny.cpp $(canny_dir)/opencv_Gblur.cpp $(canny_dir)/imageComparison.cpp -o $(canny_dir)/canny_mod_arm -I$(opencv_arm_dir)/include -L$(opencv_arm_dir)/lib `pkg-config --cflags --static --libs opencv`
+	$(ARM_CPP) --static $(canny_dir)/gaussian_coefficients.c $(canny_dir)/Canny_test.cpp $(canny_dir)/opencv_Canny.cpp $(canny_dir)/opencv_Gblur.cpp $(canny_dir)/imageComparison.cpp -o $(canny_dir)/canny_mod_arm -I$(opencv_arm_dir)/include -L$(opencv_arm_dir)/lib `pkg-config --cflags --static --libs opencv`
 cp-canny_mod-arm: canny_mod-arm
 	scp $(canny_dir)/canny_mod_arm zedboard:/canny
 

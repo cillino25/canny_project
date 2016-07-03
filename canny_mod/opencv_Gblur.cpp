@@ -52,7 +52,7 @@ namespace my_Space
 			
 			my_Space::createGaussianKernels(kx, ky, type, ksize, sigma1, sigma2);
 			cv::sepFilter2D(_src, _dst, CV_MAT_DEPTH(type), kx, ky, Point(-1,-1), 0, borderType );
-			imwrite("src_blurred_0.bmp", _dst);
+			//imwrite("src_blurred_0.bmp", _dst);
 
 		}else if(custom == 1){	// OpenCV Gaussian Separable 2D filter with (integer-approximated coefficients)
 			int h, i;
@@ -68,7 +68,7 @@ namespace my_Space
 			Mat K = Mat(1, ksize.width, CV_32FC1, kernel);
 			cv::sepFilter2D(_src, _dst, -1 , K, K, Point( -1, -1 ), 0, BORDER_DEFAULT );
 
-			imwrite("src_blurred_1.bmp", _dst);
+			//imwrite("src_blurred_1.bmp", _dst);
 			free(kernel);
 		}
 		

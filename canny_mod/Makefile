@@ -5,7 +5,7 @@ else
 endif
 
 canny_mod-arm:
-	arm-xilinx-linux-gnueabi-g++ convolution_arm.cpp gaussian_coefficients_arm.c Canny_test_arm.cpp opencv_Canny_arm.cpp opencv_Gblur_arm.cpp -o canny_mod_arm `pkg-config --cflags --libs opencv`
+	arm-xilinx-linux-gnueabi-g++ gaussian_coefficients.c Canny_test.cpp opencv_Canny.cpp opencv_Gblur.cpp -o canny_mod_arm `pkg-config --cflags --libs opencv`
 cp-canny-arm: canny_mod-arm
 	scp canny_mod_arm zedboard:~
 

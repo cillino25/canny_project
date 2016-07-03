@@ -170,6 +170,20 @@ namespace my_Space
 			3   2   1
 		*/
 
+		// Grouped functions - only for kcachegrind
+		// gettimeofday(&start, NULL);
+		// my_Space::nonMaxSuppress(src, cn, dx, dy, gradient, mapstep, mag_buf, map, &maxsize, &stack, &stack_top, &stack_bottom, low, high, L2gradient);
+	 //  gettimeofday(&stop, NULL);
+	 //  printf("nonMaxSuppress wall time: %lf s\n\n", ((stop.tv_sec + stop.tv_usec*0.000001)-(start.tv_sec + start.tv_usec*0.000001))*PRESC);
+		
+
+		// gettimeofday(&start, NULL);
+		// my_Space::hysteresisThresh(mapstep, &maxsize, &stack, &stack_top, &stack_bottom);
+		// gettimeofday(&stop, NULL);
+	 //  printf("hysteresisThresh wall time: %lf s\n\n", ((stop.tv_sec + stop.tv_usec*0.000001)-(start.tv_sec + start.tv_usec*0.000001))*PRESC);
+		
+
+
 		gettimeofday(&start, NULL);
 
 		#define CANNY_PUSH_MOD(d)   *(d) = uchar(2), *stack_top++ = (d)
@@ -339,6 +353,7 @@ namespace my_Space
 			if (!m[mapstep])    CANNY_PUSH_MOD(m + mapstep);
 			if (!m[mapstep+1])  CANNY_PUSH_MOD(m + mapstep + 1);
 		}
+
 		gettimeofday(&stop, NULL);
 	 	printf("hysteresisThresh wall time:     %3.3lf ms\n\n", ((stop.tv_sec + stop.tv_usec*0.000001)-(start.tv_sec + start.tv_usec*0.000001))*PRESC*1000);
 

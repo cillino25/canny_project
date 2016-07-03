@@ -100,7 +100,6 @@ int main( int argc, char **argv )
   //printf("cvtColor wall time: %lf s\n\n", ((stop.tv_sec + stop.tv_usec*0.000001)-(start.tv_sec + start.tv_usec*0.000001))*PRESC);
   
   
-  
   //imwrite("src_gray.bmp", src_gray);
 
   //Size s1 = src_gray.size();
@@ -169,7 +168,7 @@ void CannyThreshold(const Mat src, Mat *dst, int Threshold, double sigma, int gB
   my_Space::GaussianBlur(src, *dst, Size(gBlurMaskSize,gBlurMaskSize), sigma, sigma, BORDER_DEFAULT, custom);
   gettimeofday(&stop, NULL);
   printf("Gaussian Blur wall time: %lf s\n\n", ((stop.tv_sec + stop.tv_usec*0.000001)-(start.tv_sec + start.tv_usec*0.000001))*PRESC);
-  
+  //imwrite("src_blurred.bmp", *dst);
 
   //printf("Canny start..\n");
   gettimeofday(&start, NULL);

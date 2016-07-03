@@ -25,7 +25,7 @@ root.bin:
 	dd if=/dev/zero of=$(cur_dir)/root.bin bs=1M count=64
 	mkfs.ext2 -F $(cur_dir)/root.bin
 rootcv.bin:
-	dd if=/dev/zero of=$(cur_dir)/rootcv.bin bs=1M count=128
+	dd if=/dev/zero of=$(cur_dir)/rootcv.bin bs=1M count=256
 	mkfs.ext2 -F $(cur_dir)/rootcv.bin
 
 
@@ -57,7 +57,7 @@ cp-canny_mod-arm_metrics: canny_mod-arm_metrics
 
 
 canny_mod-rv:
-	$(RV_CPP) -DRC=1 -I$RISCV/opencv/include -L$RISCV/opencv/lib -static $(canny_dir)/convolution_arm.cpp $(canny_dir)/gaussian_coefficients_arm.c $(canny_dir)/Canny_test_arm.cpp $(canny_dir)/opencv_Canny_arm.cpp $(canny_dir)/opencv_Gblur_arm.cpp -o $(canny_dir)/canny_mod$(exe_type) `pkg-config --cflags --libs --static opencv`
+	$(RV_CPP) -DRC=1 -I$(RISCV)/opencv/include -L$(RISCV)/opencv/lib -static $(canny_dir)/convolution.cpp $(canny_dir)/gaussian_coefficients.c $(canny_dir)/Canny_test.cpp $(canny_dir)/opencv_Canny.cpp $(canny_dir)/opencv_Gblur.cpp -o $(canny_dir)/canny_mod$(exe_type) `pkg-config --cflags --libs --static opencv`
 cp-canny_mod-rv: canny_mod-rv
 	cp $(canny_dir)/canny_mod$(exe_type) mnt-cv/
 
@@ -205,8 +205,14 @@ canny-video-arm_only:
 cp-canny-video-arm_only: canny-video-arm_only
 	scp canny_video__arm-only zedboard:/canny
 
+canny-video-rv:
+	$(RV_CPP) -DRC=1 -I$(RISCV)/opencv/include -L$(RISCV)/opencv/lib -static $(video_dir)/sepImageFilter.c $(video_dir)/vdma.c $(video_dir)/openCV_HW_filter.cpp $(video_dir)/gaussian_coefficients.c $(video_dir)/canny_video-rc.cpp -o $(video_dir)/canny_video$(exe_type) `pkg-config --cflags --libs --static opencv`
 
-.PHONY: canny-video-arm_only cp-canny-video-arm_only
+cp-canny-video-rv: canny-video-rv
+	cp $(video_dir)/canny_video$(exe_type) mnt-cv/
+
+
+.PHONY: canny-video-arm_only cp-canny-video-arm_only canny-video-rv cp-canny-video-rv
 
 ####################################################################################
 ## Memory read and write utilities
@@ -247,7 +253,12 @@ upload_root: update_root cp-print-VDMA-arm cp_read_mem cp-test-VDMA-arm-fr
 #upload_rootcv: update_rootcv
 #	scp $(cur_dir)/rootcv.bin zedboard:~/mnt/rootcv.bin
 
-update_rootcv: mount_rootcv cp-canny-mod-filter-sf-rv umount_rootcv
+# Update ROOTCV.bin for single frame testing
+#update_rootcv: mount_rootcv cp-canny-mod-filter-sf-rv umount_rootcv
+
+#update_rootcv: mount_rootcv cp-canny_mod-rv umount_rootcv
+
+update_rootcv: mount_rootcv cp-canny-video-rv umount_rootcv
 upload_rootcv: update_rootcv
 	scp $(cur_dir)/rootcv.bin zedboard:/canny/rootcv.bin
 

@@ -26,6 +26,11 @@
 #include "sepImageFilter.h"
 #include "sepImageFilter_parameters.h"
 
+#include <iostream>
+
+//#include "opencv_Canny.h"
+//#include "opencv_Gblur.h"
+
 //using namespace my_Space;
 using namespace cv;
 using namespace std;
@@ -41,9 +46,8 @@ int main(int argc, char **argv) {
   double sigma = 1;
   int nGblur=5, nCanny=3;
   int custom = 0;
-  int polls = 1;
-  char in_img[256] = "lena_secret.bmp";
   char res[256] = "result.bmp";
+  int polls = 1;
 
   vdma_handle vdma_handle;
   sepimgfilter_handle filter_handle;
@@ -55,7 +59,6 @@ int main(int argc, char **argv) {
   unsigned int sobel_dx_out_fb_addr = MEM2VDMA_BUFFER3_BASEADDR;
   unsigned int sobel_dy_out_fb_addr = VDMA2MEM_BUFFER1_BASEADDR;
   unsigned int out_img_fb_addr      = VDMA2MEM_BUFFER2_BASEADDR;
-  unsigned int poll_addr            = MEM_POLLING_VARIABLE_ADDR;
 
   unsigned int page_size = 4096;//sysconf(_SC_PAGESIZE);
 
@@ -65,32 +68,32 @@ int main(int argc, char **argv) {
   int size=0, width=0, height=0;
   unsigned short *img_data;
   unsigned short *img_info;
-
   unsigned char * src_data;
+
+  /*Video types*/
+//  Mat frame, frame_out; 
+  const char win_name_in[]="Live Video...";
+  const char win_name_out[]="Real Time Canny...";
+  const char *Mat_types[] = {"CV_8U", "CV_8S", "CV_16U", "CV_16S", "CV_32S", "CV_32F", "CV_64F"};
+  int set_height = 0, set_width = 0, video_width, video_height;
+  int cam_id = 0;       // Webcam connected to USB port
+  double fps;
 
 
   if(argc > 1)
-    strcpy(in_img, argv[1]);
-  
+    thresh = atoi(argv[1]);
+
   if(argc > 2)
-    thresh = atoi(argv[2]);
+    sigma = (double)atof(argv[2]);
 
   if(argc > 3)
-    sigma = (double)atof(argv[3]);
+    nGblur = atoi(argv[3]);
 
   if(argc > 4)
-    nGblur = atoi(argv[4]);
+    nCanny = atoi(argv[4]);
 
   if(argc > 5)
-    nCanny = atoi(argv[5]);
-
-  if(argc > 6)
-    custom = atoi(argv[6]);
-
-  if(argc > 7)
-    polls = atoi(argv[7]);
-
-  printf("Input image will be %s\n", in_img);
+    custom = atoi(argv[5]);
 
   if((nGblur!=3)&&(nGblur!=5)&&(nGblur!=7)){ printf("nGblur mask size must be in {3,5,7}.\n"); return -1; }
   if((nGblur==3)&&((sigma<0.4)||(sigma>1))){ printf("With GBlur_size=3 sigma must be 0.4 < sigma < 1.\n"); return -1; }
@@ -98,6 +101,7 @@ int main(int argc, char **argv) {
   if((nGblur==7)&&((sigma<1)||(sigma>1.5))){ printf("With GBlur_size=7 sigma must be 1 < sigma < 1.5.\n"); return -1; }
   if((nCanny!=3)&&(nCanny!=5)&&(nCanny!=7)){ printf("nCanny mask size must be in {3,5,7}.\n"); return -1; }
 
+  
 
   if((devmem = open("/dev/mem", O_RDWR | O_SYNC)) == -1){
     printf("Can't open /dev/mem.\nExiting...\n");
@@ -105,8 +109,9 @@ int main(int argc, char **argv) {
   }
   printf("/dev/mem opened\n");
   
-  int *k0_hz_coeffs = (int*) malloc(KERNEL_COEFFS * sizeof(int));
-  int *k0_vt_coeffs = (int*) malloc(KERNEL_COEFFS * sizeof(int));
+  // GaussianBlur kernel coefficient computation
+  int *k0_hz_coeffs = (int*) calloc(KERNEL_COEFFS, sizeof(int));
+  int *k0_vt_coeffs = (int*) calloc(KERNEL_COEFFS, sizeof(int));
   int norm0=0;
   
   if(nGblur != KERNEL_COEFFS){
@@ -123,57 +128,113 @@ int main(int argc, char **argv) {
     get_custom_coeff_vector(nGblur, sigma, &k0_vt_coeffs, &norm0);
     norm0 *= norm0;
   }
+
   
-  int *k1_hz_coeffs;
-  int *k1_vt_coeffs;
+
+  // SobelDx and SobelDy kernel coefficients computation
+  int k1_hz_coeffs[KERNEL_COEFFS]; for(i=0; i<KERNEL_COEFFS; i++) k1_hz_coeffs[i]=0;
+  int k1_vt_coeffs[KERNEL_COEFFS]; for(i=0; i<KERNEL_COEFFS; i++) k1_vt_coeffs[i]=0;
   int norm1=0;
-  int *k2_hz_coeffs;
-  int *k2_vt_coeffs;
+  int k2_hz_coeffs[KERNEL_COEFFS]; for(i=0; i<KERNEL_COEFFS; i++) k2_hz_coeffs[i]=0;
+  int k2_vt_coeffs[KERNEL_COEFFS]; for(i=0; i<KERNEL_COEFFS; i++) k2_vt_coeffs[i]=0;
   int norm2=0;
 
-  if(nCanny==3){
-    int k1_hz[] = {0, 0, -1, 0, 1, 0, 0}; k1_hz_coeffs=k1_hz;
-    int k1_vt[] = {0, 0,  1, 2, 1, 0, 0}; k1_vt_coeffs=k1_vt;
-    int k2_hz[] = {0, 0,  1, 2, 1, 0, 0}; k2_hz_coeffs=k2_hz;
-    int k2_vt[] = {0, 0, -1, 0, 1, 0, 0}; k2_vt_coeffs=k2_vt;
-    norm1=norm2=2;
-  }else if(nCanny==5){
-    int k1_hz[] = {0, -1, -2, 0, 2, 1, 0}; k1_hz_coeffs=k1_hz;
-    int k1_vt[] = {0,  1,  4, 6, 4, 1, 0}; k1_vt_coeffs=k1_vt;
-    int k2_hz[] = {0,  1,  4, 6, 4, 1, 0}; k2_hz_coeffs=k2_hz;
-    int k2_vt[] = {0, -1, -2, 0, 2, 1, 0}; k2_vt_coeffs=k2_vt;
-    norm1=norm2=2;
-  }else if(nCanny==7){ 
-    int k1_hz[] = {-1, -4, -5, 0,   5, 4, 1}; k1_hz_coeffs=k1_hz;
-    int k1_vt[] = { 1,  6, 15, 20, 15, 6, 1}; k1_vt_coeffs=k1_vt;
-    int k2_hz[] = { 1,  6, 15, 20, 15, 6, 1}; k2_hz_coeffs=k2_hz;
-    int k2_vt[] = {-1, -4, -5, 0,   5, 4, 1}; k2_vt_coeffs=k2_vt;
-    norm1=norm2=2;
-  }else{
-    int k1_hz[KERNEL_COEFFS]={0}; k1_hz_coeffs=k1_hz;
-    int k1_vt[KERNEL_COEFFS]={0}; k1_vt_coeffs=k1_vt;
-    int k2_hz[KERNEL_COEFFS]={0}; k2_hz_coeffs=k2_hz;
-    int k2_vt[KERNEL_COEFFS]={0}; k2_vt_coeffs=k2_vt;
-  }
+  
+  Mat Sx_hz, Sx_vt, Sy_hz, Sy_vt;
+  cv::getDerivKernels(Sx_hz, Sx_vt, 1, 0, nCanny, false, CV_32F);
+  cv::getDerivKernels(Sy_hz, Sy_vt, 0, 1, nCanny, false, CV_32F);
 
   
+  for(i=0; i<nCanny; i++){
+    k1_hz_coeffs[i+(KERNEL_COEFFS-nCanny)/2] = (int)Sx_hz.at<float>(i);
+    k1_vt_coeffs[i+(KERNEL_COEFFS-nCanny)/2] = (int)Sx_vt.at<float>(i);
+    k2_hz_coeffs[i+(KERNEL_COEFFS-nCanny)/2] = (int)Sy_hz.at<float>(i);
+    k2_vt_coeffs[i+(KERNEL_COEFFS-nCanny)/2] = (int)Sy_vt.at<float>(i);
+  }
+
+  //printf("k0_hz_coeffs: "); for(i=0; i<KERNEL_COEFFS; i++) printf("%d ", k0_hz_coeffs[i]); printf("\n");
+  //printf("k0_vt_coeffs: "); for(i=0; i<KERNEL_COEFFS; i++) printf("%d ", k0_vt_coeffs[i]); printf("\n");
+  //printf("norm0 = %d\n", norm0);
+  //printf("k1_hz_coeffs: "); for(i=0; i<KERNEL_COEFFS; i++) printf("%d ", k1_hz_coeffs[i]); printf("\n");
+  //printf("k1_vt_coeffs: "); for(i=0; i<KERNEL_COEFFS; i++) printf("%d ", k1_vt_coeffs[i]); printf("\n");
+  //printf("norm1 = %d\n", norm1);
+  //printf("k2_hz_coeffs: "); for(i=0; i<KERNEL_COEFFS; i++) printf("%d ", k2_hz_coeffs[i]); printf("\n");
+  //printf("k2_vt_coeffs: "); for(i=0; i<KERNEL_COEFFS; i++) printf("%d ", k2_vt_coeffs[i]); printf("\n");
+  //printf("norm2 = %d\n", norm2);
+
+
+
+  /************************************************************************/
+  /* Set Video Capture peripheral
+  /************************************************************************/
+
+  VideoCapture cap(cam_id);
+  if(!cap.isOpened()){
+    perror("Could not load a camera or video.: ");
+    return -1;
+  }    
+
+  if(set_width && set_height){
+    if(cap.set(CV_CAP_PROP_FRAME_WIDTH, set_width)){
+      perror("set width:");
+      return 1;     
+    }
+
+    if(cap.set(CV_CAP_PROP_FRAME_HEIGHT, set_height)){
+      perror("set height:");
+      return 1;     
+    }
+  }
+
+
+  if(cap.set(CV_CAP_PROP_MODE, CV_CAP_MODE_GRAY)) perror("set mode:");
+  
+  if(cap.set(CV_CAP_PROP_FORMAT, CAP_OPENNI_DEPTH_MAP)) perror("set format:");
+  
+
+  width = (int) cap.get(CV_CAP_PROP_FRAME_WIDTH);    // Width of the frames in the video stream
+  height = (int) cap.get(CV_CAP_PROP_FRAME_HEIGHT);    // Height of the frames in the video stream
+  fps = (int) cap.get(CV_CAP_PROP_FPS);            // Frame rate
+    
+  cout << "Width: " << width << endl; 
+  cout << "Height: " << height << endl; 
+  cout << "Frames per second using video.get(CV_CAP_PROP_FPS): " << fps << endl;  
+  cout << "Mode : " << (int) cap.get(CV_CAP_PROP_MODE) << endl;
+  cout << "Format : " << (int) cap.get(CV_CAP_PROP_FORMAT) << endl << endl;
+
+
   /************************************************************************/
   /* Load the first sacrifical frame in order to get video parameters
   /************************************************************************/
 
-  // Load the image in the BGR format
-  Mat src_gray_tmp = imread(in_img, CV_LOAD_IMAGE_GRAYSCALE);
-  
-  printf("Input image has %ld bytes per each pixel\n", src_gray_tmp.elemSize());
-  if(!src_gray_tmp.data){ printf("No source data.\nExiting..\n"); return 1; }
+  // Load the image in the BGR format (static image)
+  // Mat src_gray_tmp = imread(in_img, CV_LOAD_IMAGE_GRAYSCALE);
+    
+  // Load sacrifical frame with webcam
+  Mat frame_gray_tmp;
+
+  gettimeofday(&start, NULL);
+  cap >> frame_gray_tmp;
+  gettimeofday(&stop, NULL);
+  printf("Sacrifical frame read\n");
+  printf("\nSacrifical frame read wall time:     %3.3lf ms\n\n", ((stop.tv_sec + stop.tv_usec*0.000001)-(start.tv_sec + start.tv_usec*0.000001))*PRESC *1000);
+
+  imwrite("sacrifical.bmp", frame_gray_tmp);
+
+  printf("Input image has %ld bytes per each pixel\n", (long int)frame_gray_tmp.elemSize());
+  printf("width: %d\n", frame_gray_tmp.cols);
+  printf("height: %d\n", frame_gray_tmp.rows);
+  printf("depth: %d  -->  %s\n\n", frame_gray_tmp.depth(), Mat_types[frame_gray_tmp.depth()]);
+  if(!frame_gray_tmp.data){ printf("No source data.\nExiting..\n"); return 1; }
   
 
-  width = src_gray_tmp.cols;
-  height = src_gray_tmp.rows;
-  size = src_gray_tmp.cols * src_gray_tmp.rows * src_gray_tmp.channels();
+  width = frame_gray_tmp.cols;
+  height = frame_gray_tmp.rows;
+  size = frame_gray_tmp.cols * frame_gray_tmp.rows * frame_gray_tmp.channels();
 
   vdma_handle.vdmaHandler = devmem;
-  vdma_setup(&vdma_handle, page_size, AXI_VDMA_BASEADDR, width, height, 2*PIXEL_CHANNELS, BUFFER_SIZE, MEM2VDMA_BUFFER1_BASEADDR, MEM2VDMA_BUFFER2_BASEADDR, MEM2VDMA_BUFFER3_BASEADDR, VDMA2MEM_BUFFER1_BASEADDR, VDMA2MEM_BUFFER2_BASEADDR, VDMA2MEM_BUFFER3_BASEADDR, AXI_PULSER);
+  //vdma_setup(&vdma_handle, page_size, AXI_VDMA_BASEADDR, width, height, 2*PIXEL_CHANNELS, BUFFER_SIZE, MEM2VDMA_BUFFER1_BASEADDR, MEM2VDMA_BUFFER2_BASEADDR, MEM2VDMA_BUFFER3_BASEADDR, VDMA2MEM_BUFFER1_BASEADDR, VDMA2MEM_BUFFER2_BASEADDR, VDMA2MEM_BUFFER3_BASEADDR, AXI_PULSER);
+  vdma_setup(&vdma_handle, page_size, AXI_VDMA_BASEADDR, width, height, PIXEL_CHANNELS, BUFFER_SIZE, MEM2VDMA_BUFFER1_BASEADDR, MEM2VDMA_BUFFER2_BASEADDR, MEM2VDMA_BUFFER3_BASEADDR, VDMA2MEM_BUFFER1_BASEADDR, VDMA2MEM_BUFFER2_BASEADDR, VDMA2MEM_BUFFER3_BASEADDR, AXI_PULSER);
   
   printf("VDMA set up\n");
 
@@ -185,13 +246,13 @@ int main(int argc, char **argv) {
 
   gb_in_fb = (unsigned int*)mmap(NULL, BUFFER_SIZE, PROT_READ | PROT_WRITE, MAP_SHARED, vdma_handle.vdmaHandler, gb_in_fb_addr);
   if(((unsigned int *)gb_in_fb) == MAP_FAILED) {
-    printf("gb_in_fb mapping for absolute memory access failed.\n");
+    printf("vdmaVirtualAddress mapping for absolute memory access failed.\n");
     return -1;
   }
 
   gb_out_fb = (unsigned int*)mmap(NULL, BUFFER_SIZE, PROT_READ | PROT_WRITE, MAP_SHARED, vdma_handle.vdmaHandler, gb_out_fb_addr);
   if(((unsigned int *)gb_out_fb) == MAP_FAILED) {
-    printf("gb_out_fb mapping for absolute memory access failed.\n");
+    printf("vdmaVirtualAddress mapping for absolute memory access failed.\n");
     return -1;
   }
 
@@ -209,17 +270,16 @@ int main(int argc, char **argv) {
 
   out_img_fb = (unsigned int*)mmap(NULL, BUFFER_SIZE, PROT_READ | PROT_WRITE, MAP_SHARED, vdma_handle.vdmaHandler, out_img_fb_addr);
   if(((unsigned int *)out_img_fb) == MAP_FAILED) {
-    printf("out_img_fb mapping for absolute memory access failed.\n");
+    printf("vdmaVirtualAddress mapping for absolute memory access failed.\n");
     return -1;
   }
-
-  poll_mmap = (unsigned int*)mmap(NULL, 4096, PROT_READ | PROT_WRITE, MAP_SHARED, vdma_handle.vdmaHandler, MEM_POLLING_VARIABLE_ADDR);
+  
+  poll_mmap = (unsigned int*)mmap(NULL, BUFFER_SIZE, PROT_READ | PROT_WRITE, MAP_SHARED, devmem, MEM_POLLING_VARIABLE_ADDR);
+  //poll_mmap = (unsigned int*)mmap(NULL, BUFFER_SIZE, PROT_READ | PROT_WRITE, MAP_SHARED, devmem, AXI_POLLING_VARIABLE_ADDR);
   if(((unsigned int *)poll_mmap) == MAP_FAILED) {
     printf("poll_mmap mapping for absolute memory access failed.\n");
     return -1;
   }
-
-  for(i=0; i<polls; i++)  ((volatile unsigned int *) poll_mmap)[i] = 0;
 
   printf("Frame buffers set up\n");
 
@@ -227,62 +287,66 @@ int main(int argc, char **argv) {
   /* Load the frames that will be computed
   /************************************************************************/
   Mat gb_dest;
-  Mat src_gray(height, width, CV_16U);
+  Mat frame_gray(height, width, CV_16U);
   Mat dx(height, width, CV_16SC(1));
   Mat dy(height, width, CV_16SC(1));
   Mat dest(height, width, CV_8U);
 
   // Set image data at the gb_in_fb address (to avoid another memory copy): next loaded frames will go directly to gb_in_fb (?)
-  src_gray.data = (unsigned char *)gb_in_fb;
-  gb_dest.create(src_gray.size(), src_gray.type());
+  frame_gray.data = (unsigned char *)gb_in_fb;
+  gb_dest.create(frame_gray.size(), frame_gray.type());
   gb_dest.data = (unsigned char*)gb_out_fb;
 
-  //dest.data = (unsigned char*) out_img_fb;
-
   printf("Mat created\n");
+
+  namedWindow(win_name_in, CV_WINDOW_AUTOSIZE);
+  namedWindow(win_name_out, CV_WINDOW_AUTOSIZE);
   
   /******************************************************************************/
   /*********************************** LOOP BEGINS ******************************/
 
-  src_gray_tmp = imread(argv[1], CV_LOAD_IMAGE_GRAYSCALE);
-
-  printf("Image read\n");
-
-  // Final application will take frames from VideoCapture with pixels in CV_16U format, so this conversion will not be needed.
-  // convertTo will put new frame into gb_in_fb
-  src_gray_tmp.convertTo(src_gray, CV_16U);
-
-  //imwrite("lena_gray_16U.bmp", src_gray);
-
-  printf("Image converted\n");
-
-  gettimeofday(&start, NULL);
-  GaussianBlur_HW(&vdma_handle, &filter_handle, width, height, gb_in_fb_addr, gb_out_fb_addr);
-  gettimeofday(&stop, NULL);
-  printf("\nGaussianBlur_HW wall time: %lf s\n\n", ((stop.tv_sec + stop.tv_usec*0.000001)-(start.tv_sec + start.tv_usec*0.000001))*PRESC);
-
-  //imwrite("lena_blurred_0.bmp", gb_dest);
-
-  gettimeofday(&start, NULL);
-  Canny_HW_ARM(&vdma_handle, &filter_handle, width, height, gb_out_fb_addr, sobel_dx_out_fb_addr, sobel_dy_out_fb_addr );
-  gettimeofday(&stop, NULL);
-  printf("Canny Edge Detector wall time: %lf s\n\n", ((stop.tv_sec + stop.tv_usec*0.000001)-(start.tv_sec + start.tv_usec*0.000001))*PRESC);
-  
-  
-  //Canny_HW_RC(out_img_fb, sobel_dx_out_fb, sobel_dy_out_fb, width, height, (double)thresh, ((double)thresh*ratio), nCanny, false );
+  int frame_count = 0;
+  double t = 0;
 
   
+    
+  while(char(waitKey(1)) != 'q'){
 
-  // WITH POLLING COLLABORATION
-  // set polling variable(s) to 1, and wait for it(them) to go back to 0
-  printf("Set polling variable to 1..\n");
-  for(i=0; i<polls; i++) ((volatile unsigned int *)poll_mmap)[i] = 1;
-  while(*((volatile unsigned int *)poll_mmap) == 1);
-  // Copy image from output frame buffer to OS memory
-  memcpy((void*)dest.data, out_img_fb, width*height);   // MAYBE NOT NEEDED
 
-  imwrite("result.bmp", dest);
+    gettimeofday(&start, NULL);
+    cap >> frame_gray_tmp;
+    //imshow(win_name_in, frame_gray_tmp);
+
+    // Final application will take frames from VideoCapture with pixels in CV_16U format, so this conversion will not be needed.
+    // convertTo will put new frame into gb_in_fb
+    frame_gray_tmp.convertTo(frame_gray, CV_16U);
+
+    GaussianBlur_HW(&vdma_handle, &filter_handle, width, height, gb_in_fb_addr, gb_out_fb_addr);
+    Canny_HW_ARM(&vdma_handle, &filter_handle, width, height, gb_out_fb_addr, sobel_dx_out_fb_addr, sobel_dy_out_fb_addr );
+    
+    for(i=0; i<polls; i++) ((volatile unsigned int *)poll_mmap)[i] = 1;
+    while(*((volatile unsigned int *)poll_mmap) == 1);
+    // Copy image from output frame buffer to OS memory
+    memcpy((void*)dest.data, out_img_fb, width*height);   // MAYBE NOT NEEDED
+
+    
+    imshow(win_name_out, dest);
+
+    //imwrite("tmp.bmp", dest);
+    
+    gettimeofday(&stop, NULL);
+    t = t + ((stop.tv_sec + stop.tv_usec*0.000001)-(start.tv_sec + start.tv_usec*0.000001))*PRESC;
+    frame_count++;
+    if(t>=1)
+    {
+      printf("Time elapsed:   %3.3lf   Frame rate:   %3.3lf\n", t , frame_count/t );
+      frame_count = 0;      
+      t = 0;
+    }
+
+  }  
   
+
 
 
   // Halt VDMA and unmap memory ranges
@@ -295,8 +359,8 @@ int main(int argc, char **argv) {
   munmap(sobel_dy_out_fb, BUFFER_SIZE);
   munmap(out_img_fb, BUFFER_SIZE);
   close(devmem);
-
   printf("Bye!\n");
+
   return 0;
 }
 

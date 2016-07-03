@@ -21,7 +21,7 @@
 
 #include "openCV_HW_filter.h"
 
-#include "gaussian_coefficients_arm.h"
+#include "gaussian_coefficients.h"
 
 #include "global_parameters.h"
 #include "vdma_parameters.h"
@@ -45,7 +45,7 @@ int main(int argc, char **argv) {
   int nGblur=5, nCanny=3;
   int custom = 0;
   int polls = 1;
-  char in_img[256] = "lena_gray.bmp";
+  char in_img[256] = "640x480.bmp";
   char res[256] = "result.bmp";
 
 
@@ -66,26 +66,24 @@ int main(int argc, char **argv) {
 
   unsigned char * src_data;
 
+
   if(argc > 1)
-    strcpy(in_img, argv[1]);
+    thresh = atoi(argv[1]);
 
   if(argc > 2)
-    thresh = atoi(argv[2]);
+    sigma = (double)atof(argv[2]);
 
   if(argc > 3)
-    sigma = (double)atof(argv[3]);
+    nGblur = atoi(argv[3]);
 
   if(argc > 4)
-    nGblur = atoi(argv[4]);
+    nCanny = atoi(argv[4]);
 
   if(argc > 5)
-    nCanny = atoi(argv[5]);
-
-  if(argc > 6)
-    custom = atoi(argv[6]);
+    custom = atoi(argv[5]);
   
-  if(argc > 7)
-    polls = atoi(argv[7]);
+  if(argc > 6)
+    polls = atoi(argv[6]);
 
   if((nGblur!=3)&&(nGblur!=5)&&(nGblur!=7)){ printf("nGblur mask size must be in {3,5,7}.\n"); return -1; }
   if((nGblur==3)&&((sigma<0.4)||(sigma>1))){ printf("With GBlur_size=3 sigma must be 0.4 < sigma < 1.\n"); return -1; }
@@ -93,7 +91,7 @@ int main(int argc, char **argv) {
   if((nGblur==7)&&((sigma<1)||(sigma>1.5))){ printf("With GBlur_size=7 sigma must be 1 < sigma < 1.5.\n"); return -1; }
   if((nCanny!=3)&&(nCanny!=5)&&(nCanny!=7)){ printf("nCanny mask size must be in {3,5,7}.\n"); return -1; }
 
-  printf("Input image will be %s\n", in_img);
+  //printf("Input image will be %s\n", in_img);
 
   if((devmem = open("/dev/mem", O_RDWR | O_SYNC)) == -1){
     printf("Can't open /dev/mem.\nExiting...\n");
@@ -138,13 +136,15 @@ int main(int argc, char **argv) {
     return -1;
   }
 
+  
   poll_mmap = (unsigned int*)mmap(NULL, BUFFER_SIZE, PROT_READ | PROT_WRITE, MAP_SHARED, devmem, MEM_POLLING_VARIABLE_ADDR);
+  //poll_mmap = (unsigned int*)mmap(NULL, BUFFER_SIZE, PROT_READ | PROT_WRITE, MAP_SHARED, devmem, AXI_POLLING_VARIABLE_ADDR);
   if(((unsigned int *)poll_mmap) == MAP_FAILED) {
     printf("poll_mmap mapping for absolute memory access failed.\n");
     return -1;
   }
 
-  //for(i=0; i<polls; i++)  ((volatile unsigned int *) poll_mmap)[i] = 0;
+  for(i=0; i<polls; i++)  ((volatile unsigned int *) poll_mmap)[i] = 0;
 
   printf("Frame buffers set up\n");
 
@@ -155,17 +155,18 @@ int main(int argc, char **argv) {
 
   // wait until polling variable goes to 1
   printf("Waiting for polling variable to go to 1...\n");
-  //while( ((volatile unsigned int *)poll_mmap)[0] != 1);
-
-  printf("Starting Canny_HW_RC\n");
-  gettimeofday(&start, NULL);
-  Canny_HW_RC(out_img_fb, sobel_dx_out_fb, sobel_dy_out_fb, width, height, (double)thresh, ((double)thresh*ratio), nCanny, false );
-  gettimeofday(&stop, NULL);
-  printf("Canny Edge Detector wall time: %lf s\n\n", ((stop.tv_sec + stop.tv_usec*0.000001)-(start.tv_sec + start.tv_usec*0.000001))*PRESC);
+  while(1){
+    while( ((volatile unsigned int *)poll_mmap)[0] == 0);
+    printf("Starting Canny_HW_RC\n");
   
-  printf("Setting polling variable to 0..\n");
-  for(i=0; i<polls; i++) ((volatile unsigned int *)poll_mmap)[i] = 0;  
-
+    gettimeofday(&start, NULL);
+    Canny_HW_RC(out_img_fb, sobel_dx_out_fb, sobel_dy_out_fb, width, height, (int)thresh, (int)(thresh*ratio), nCanny, false );
+    gettimeofday(&stop, NULL);
+    printf("Canny Edge Detector wall time: %lf s\n\n", ((stop.tv_sec + stop.tv_usec*0.000001)-(start.tv_sec + start.tv_usec*0.000001))*PRESC);
+    
+    printf("Setting polling variable to 0..\n");
+    for(i=0; i<polls; i++) ((volatile unsigned int *)poll_mmap)[i] = 0;  
+  }
 
   printf("Exiting\n");
   // Halt VDMA and unmap memory ranges

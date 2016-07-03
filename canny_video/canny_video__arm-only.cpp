@@ -28,10 +28,10 @@
 
 #include <iostream>
 
-#include "opencv_Canny.h"
-#include "opencv_Gblur.h"
+//#include "opencv_Canny.h"
+//#include "opencv_Gblur.h"
 
-using namespace my_Space;
+//using namespace my_Space;
 using namespace cv;
 using namespace std;
 
@@ -80,19 +80,19 @@ int main(int argc, char **argv) {
 
 
   if(argc > 1)
-    thresh = atoi(argv[2]);
+    thresh = atoi(argv[1]);
 
   if(argc > 2)
-    sigma = (double)atof(argv[3]);
+    sigma = (double)atof(argv[2]);
 
   if(argc > 3)
-    nGblur = atoi(argv[4]);
+    nGblur = atoi(argv[3]);
 
   if(argc > 4)
-    nCanny = atoi(argv[5]);
+    nCanny = atoi(argv[4]);
 
   if(argc > 5)
-    custom = atoi(argv[6]);
+    custom = atoi(argv[5]);
 
   if((nGblur!=3)&&(nGblur!=5)&&(nGblur!=7)){ printf("nGblur mask size must be in {3,5,7}.\n"); return -1; }
   if((nGblur==3)&&((sigma<0.4)||(sigma>1))){ printf("With GBlur_size=3 sigma must be 0.4 < sigma < 1.\n"); return -1; }
@@ -100,7 +100,7 @@ int main(int argc, char **argv) {
   if((nGblur==7)&&((sigma<1)||(sigma>1.5))){ printf("With GBlur_size=7 sigma must be 1 < sigma < 1.5.\n"); return -1; }
   if((nCanny!=3)&&(nCanny!=5)&&(nCanny!=7)){ printf("nCanny mask size must be in {3,5,7}.\n"); return -1; }
 
-  printf("Input image will be %s\n", in_img);
+  
 
   if((devmem = open("/dev/mem", O_RDWR | O_SYNC)) == -1){
     printf("Can't open /dev/mem.\nExiting...\n");
@@ -109,8 +109,8 @@ int main(int argc, char **argv) {
   printf("/dev/mem opened\n");
   
   // GaussianBlur kernel coefficient computation
-  int *k0_hz_coeffs = (int*) malloc(KERNEL_COEFFS * sizeof(int));
-  int *k0_vt_coeffs = (int*) malloc(KERNEL_COEFFS * sizeof(int));
+  int *k0_hz_coeffs = (int*) calloc(KERNEL_COEFFS, sizeof(int));
+  int *k0_vt_coeffs = (int*) calloc(KERNEL_COEFFS, sizeof(int));
   int norm0=0;
   
   if(nGblur != KERNEL_COEFFS){
@@ -128,44 +128,7 @@ int main(int argc, char **argv) {
     norm0 *= norm0;
   }
 
-  /*
-  int k1_hz_coeffs[KERNEL_COEFFS];
-  int k1_vt_coeffs[KERNEL_COEFFS];
-  int norm1=0;
-  int k2_hz_coeffs[KERNEL_COEFFS];
-  int k2_vt_coeffs[KERNEL_COEFFS];
-  int norm2=0;
-
-  Mat Sx_hz, Sx_vt, Sy_hz, Sy_vt;
-  cv::getDerivKernels(Sx_hz, Sx_vt, 1, 0, nCanny, false, CV_32F);
-  cv::getDerivKernels(Sy_hz, Sy_vt, 0, 1, nCanny, false, CV_32F);
-  float *Sx_p_hz, *Sx_p_vt, *Sy_p_hz, *Sy_p_vt;
-  Sx_p_hz = Sx_hz.ptr<float>(0);
-  Sx_p_vt = Sx_vt.ptr<float>(0);
-  Sy_p_hz = Sy_hz.ptr<float>(0);
-  Sy_p_vt = Sy_vt.ptr<float>(0);
-
-  int zeros = KERNEL_COEFFS - nCanny;
-  int j=0;
-  for(int i=0; i<KERNEL_COEFFS; i++)
-  {
-    if( (i < zeros/2)  ||  (i >= KERNEL_COEFFS - zeros/2))
-    {
-      k1_hz_coeffs[i] = 0;
-      k1_vt_coeffs[i] = 0;
-      k2_hz_coeffs[i] = 0;
-      k2_vt_coeffs[i] = 0;
-    }
-    else
-    {
-      k1_hz_coeffs[i] = (int)Sx_p_hz[j];
-      k1_vt_coeffs[i] = (int)Sx_p_vt[j];
-      k2_hz_coeffs[i] = (int)Sy_p_hz[j];
-      k2_vt_coeffs[i] = (int)Sy_p_vt[j];
-      j++;    
-    }
-  }
-  */
+  
 
   // SobelDx and SobelDy kernel coefficients computation
   int k1_hz_coeffs[KERNEL_COEFFS]; for(i=0; i<KERNEL_COEFFS; i++) k1_hz_coeffs[i]=0;
@@ -257,7 +220,7 @@ int main(int argc, char **argv) {
 
   imwrite("sacrifical.bmp", frame_gray_tmp);
 
-  printf("Input image has %ld bytes per each pixel\n", frame_gray_tmp.elemSize());
+  printf("Input image has %ld bytes per each pixel\n", (long int)frame_gray_tmp.elemSize());
   printf("width: %d\n", frame_gray_tmp.cols);
   printf("height: %d\n", frame_gray_tmp.rows);
   printf("depth: %d  -->  %s\n\n", frame_gray_tmp.depth(), Mat_types[frame_gray_tmp.depth()]);

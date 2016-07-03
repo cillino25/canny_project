@@ -523,7 +523,15 @@
 			"file": "/media/stefano/data_ext4/Dropbox/poliTO/tesi/canny_project/Makefile",
 			"settings":
 			{
-				"buffer_size": 10467,
+				"buffer_size": 11746,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "/media/stefano/data_ext4/Dropbox/poliTO/tesi/canny_project/Makefrag",
+			"settings":
+			{
+				"buffer_size": 256,
 				"line_ending": "Unix"
 			}
 		},
@@ -536,20 +544,67 @@
 			}
 		},
 		{
-			"file": "imageComparison.cpp",
+			"file": "/media/stefano/data_ext4/Dropbox/poliTO/tesi/elaborato_finale/tex/chap0.tex",
 			"settings":
 			{
-				"buffer_size": 7368,
+				"buffer_size": 95,
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"file": "imageComparison.h",
+			"file": "/media/stefano/data_ext4/Dropbox/poliTO/tesi/elaborato_finale/tex/chap1.tex",
 			"settings":
 			{
-				"buffer_size": 383,
-				"line_ending": "Unix",
-				"name": "imageComparison.h"
+				"buffer_size": 15446,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "/media/stefano/data_ext4/Dropbox/poliTO/tesi/elaborato_finale/tex/chap2.tex",
+			"settings":
+			{
+				"buffer_size": 387,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "/media/stefano/data_ext4/Dropbox/poliTO/tesi/elaborato_finale/tex/chap3.tex",
+			"settings":
+			{
+				"buffer_size": 47401,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "/media/stefano/data_ext4/Dropbox/poliTO/tesi/elaborato_finale/tex/chap4.tex",
+			"settings":
+			{
+				"buffer_size": 24256,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "/media/stefano/data_ext4/Dropbox/poliTO/tesi/elaborato_finale/tex/chap5.tex",
+			"settings":
+			{
+				"buffer_size": 451,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "/media/stefano/data_ext4/Dropbox/poliTO/tesi/elaborato_finale/tex/chap6.tex",
+			"settings":
+			{
+				"buffer_size": 46,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "/media/stefano/data_ext4/Dropbox/poliTO/tesi/elaborato_finale/tex/main.tex",
+			"settings":
+			{
+				"buffer_size": 39444,
+				"line_ending": "Unix"
 			}
 		},
 		{
@@ -572,7 +627,15 @@
 			"file": "opencv_Canny.cpp",
 			"settings":
 			{
-				"buffer_size": 15876,
+				"buffer_size": 20483,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "/media/stefano/data_ext4/Dropbox/poliTO_private/tesi/Canny_Video/ARM_Video_sf/openCV_HW_filter.cpp",
+			"settings":
+			{
+				"buffer_size": 26183,
 				"line_ending": "Unix"
 			}
 		},
@@ -665,6 +728,14 @@
 	],
 	"file_history":
 	[
+		"/media/stefano/data_ext4/Dropbox/poliTO/tesi/canny_project/canny_mod/opencv_Canny.cpp",
+		"/media/stefano/data_ext4/Dropbox/poliTO/tesi/canny_project/canny_mod/FeatureSIM.m",
+		"/media/stefano/data_ext4/Dropbox/poliTO/tesi/canny_project/canny_mod/compare_similarity.m",
+		"/media/stefano/data_ext4/Dropbox/poliTO/tesi/canny_project/prof/analysis_ARM-only.txt",
+		"/media/stefano/data_ext4/Dropbox/poliTO/tesi/canny_project/canny_mod/quality_metrics_OpenCV.h",
+		"/media/stefano/data_ext4/Dropbox/poliTO/tesi/canny_project/canny_mod/quality_metrics_OpenCV.cpp",
+		"/media/stefano/data_ext4/Dropbox/poliTO/tesi/canny_project/canny_mod/imageComparison.h",
+		"/media/stefano/data_ext4/Dropbox/poliTO/tesi/canny_project/canny_mod/imageComparison.cpp",
 		"/media/stefano/data_ext4/Dropbox/poliTO/tesi/canny_project/canny_mod/Makefile",
 		"/media/stefano/data_ext4/Dropbox/poliTO/tesi/canny_project/canny_mod/gaussian_coefficients_arm.h",
 		"/media/stefano/data_ext4/Dropbox/poliTO/tesi/canny_project/canny_mod/gaussian_coefficients.h",
@@ -676,7 +747,6 @@
 		"/media/stefano/data_ext4/Dropbox/poliTO/tesi/canny_project/canny_mod/convolution_arm.h",
 		"/media/stefano/data_ext4/Dropbox/poliTO/tesi/canny_project/canny_mod/convolution_arm.cpp",
 		"/media/stefano/data_ext4/Dropbox/poliTO/tesi/canny_project/canny_mod/opencv_Gblur_arm.h",
-		"/media/stefano/data_ext4/Dropbox/poliTO/tesi/canny_project/canny_mod/opencv_Canny.cpp",
 		"/media/stefano/data_ext4/Dropbox/poliTO/tesi/canny_project/canny_mod/opencv_Gblur.cpp",
 		"/media/stefano/data_ext4/Dropbox/poliTO/tesi/canny_project/canny_mod/opencv_Gblur_arm.cpp",
 		"/media/stefano/data_ext4/Dropbox/poliTO/tesi/canny_project/canny_mod/opencv_Canny_arm.cpp",
@@ -685,8 +755,6 @@
 		"/media/stefano/data_ext4/Dropbox/poliTO/tesi/canny_project/canny_mod/opencv_Canny.h",
 		"/media/stefano/data_ext4/Dropbox/poliTO/tesi/canny_project/canny_mod/Canny_test.cpp",
 		"/media/stefano/data_ext4/Dropbox/poliTO/tesi/canny_project/canny_mod/opencv_Canny_arm.h",
-		"/media/stefano/data_ext4/Dropbox/poliTO/tesi/canny_project/canny_mod/imageComparison.cpp",
-		"/media/stefano/data_ext4/Dropbox/poliTO/tesi/canny_project/canny_mod/FeatureSIM.m",
 		"/media/stefano/data_ext4/Dropbox/poliTO/tesi/canny_project/canny_mod/opencv_Gblur.h",
 		"/usr/share/opencv/opencv-3.0.0/modules/imgcodecs/include/opencv2/imgcodecs.hpp",
 		"/media/stefano/data_ext4/Dropbox/poliTO/tesi/vivado2015/ip_repo/genSepImageFilter_project/genSepImageFilter_project.srcs/sources_1/imports/vhdl/sepImageFilter_axisInt_out.vhd",
@@ -703,7 +771,6 @@
 		"/media/stefano/data_ext4/Dropbox/poliTO/tesi/canny_project/canny_mod/opencv_funcs.h",
 		"/root/opencv_arm_export.sh",
 		"/home/stefano/opencl_patch.sh",
-		"/media/stefano/data_ext4/Dropbox/poliTO/tesi/canny_project/canny_mod/compare_similarity.m",
 		"/media/stefano/data_ext4/Dropbox/poliTO/tesi/canny_project/canny_mod/convolution.cpp",
 		"/Dropbox/poliTO/tesi/canny_project/canny_mod/opencv_Gblur.h",
 		"/Dropbox/poliTO/tesi/canny_project/canny_mod/opencv_Gblur.h.longlong",
@@ -717,8 +784,6 @@
 		"/usr/share/riscv_src/rocket-chip/fpga-zynq/zedboard/03.NoFPU_VDMA_fsync/03.NoFPU_VDMA_fsync.srcs/constrs_1/imports/constrs/base.xdc",
 		"/Dropbox/poliTO/tesi/canny_project/canny_mod/Canny_test.cpp",
 		"/Dropbox/poliTO/tesi/canny_project/canny_mod/convolution.cpp",
-		"/media/stefano/data_ext4/Dropbox/poliTO/tesi/canny_project/canny_mod/quality_metrics_OpenCV.cpp",
-		"/media/stefano/data_ext4/Dropbox/poliTO/tesi/canny_project/canny_mod/quality_metrics_OpenCV.h",
 		"/media/stefano/data_ext4/Dropbox/poliTO/tesi/canny_project/canny_mod/generate_lena_imgs.sh",
 		"/media/stefano/data_ext4/Dropbox/poliTO/tesi/canny_project/canny_mod/gen_imgs.sh",
 		"/Dropbox/poliTO/tesi/canny_project/canny_mod/convolution.h",
@@ -790,9 +855,7 @@
 		"/media/stefano/data_ext4/Dropbox/poliTO/tesi/canny/canny_mod/quality_metrics_OpenCV.hpp",
 		"/media/stefano/data_ext4/Dropbox/poliTO/tesi/canny/opencv_Gblur.h",
 		"/media/stefano/data_ext4/Dropbox/poliTO/tesi/canny/opencv_Gblur.cpp",
-		"/media/stefano/data_ext4/Dropbox/poliTO/tesi/canny/opencv_funcs.h",
-		"/media/stefano/data_ext4/Dropbox/poliTO/tesi/canny/opencv_Canny.cpp",
-		"/media/stefano/data_ext4/Dropbox/poliTO/tesi/canny/opencv_Canny.h"
+		"/media/stefano/data_ext4/Dropbox/poliTO/tesi/canny/opencv_funcs.h"
 	],
 	"find":
 	{
@@ -811,6 +874,11 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"cp-canny_mod-rv",
+			"sobelDyOut",
+			"sobelDxOut",
+			"width",
+			"height",
 			"custom",
 			"nonMaxSuppress",
 			"low",
@@ -933,12 +1001,7 @@
 			"NTLB",
 			"__SLONGWORD_TYPE",
 			"__clock_t_type",
-			"clock_t",
-			"__clock_t",
-			"clock_t",
-			"gettimeof",
-			"time_t",
-			"__RISCVEB__"
+			"clock_t"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -946,6 +1009,10 @@
 		"regex": false,
 		"replace_history":
 		[
+			"dy",
+			"dx",
+			"src.cols",
+			"src.rows",
 			"cols",
 			"rows",
 			"$(canny_dir)",
@@ -1027,7 +1094,7 @@
 	"groups":
 	[
 		{
-			"selected": 0,
+			"selected": 10,
 			"sheets":
 			[
 				{
@@ -1036,30 +1103,58 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 10467,
+						"buffer_size": 11746,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								1634,
-								1634
+								2163,
+								2163
 							]
 						],
 						"settings":
 						{
 							"syntax": "Packages/Makefile/Makefile.sublime-syntax"
 						},
-						"translation.x": 0.0,
-						"translation.y": 627.0,
+						"translation.x": 30.0,
+						"translation.y": 699.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 0,
+					"stack_index": 10,
 					"type": "text"
 				},
 				{
 					"buffer": 1,
+					"file": "/media/stefano/data_ext4/Dropbox/poliTO/tesi/canny_project/Makefrag",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 256,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								150,
+								150
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Text/Plain text.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 11,
+					"type": "text"
+				},
+				{
+					"buffer": 2,
 					"file": "Canny_test.cpp",
 					"semi_transient": false,
 					"settings":
@@ -1071,8 +1166,8 @@
 						"selection":
 						[
 							[
-								3176,
-								3176
+								4091,
+								4091
 							]
 						],
 						"settings":
@@ -1082,63 +1177,60 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 2166.0,
+						"translation.y": 2394.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 1,
-					"type": "text"
-				},
-				{
-					"buffer": 2,
-					"file": "imageComparison.cpp",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 7368,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								370,
-								370
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/C++/C++.sublime-syntax",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": -0.0,
-						"translation.y": 741.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 2,
+					"stack_index": 8,
 					"type": "text"
 				},
 				{
 					"buffer": 3,
-					"file": "imageComparison.h",
+					"file": "/media/stefano/data_ext4/Dropbox/poliTO/tesi/elaborato_finale/tex/chap0.tex",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 383,
+						"buffer_size": 95,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								383,
-								383
+								0,
+								0
 							]
 						],
 						"settings":
 						{
-							"auto_name": "imageComparison.h",
-							"syntax": "Packages/C++/C++.sublime-syntax"
+							"syntax": "Packages/LaTeX/LaTeX.sublime-syntax"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 7,
+					"type": "text"
+				},
+				{
+					"buffer": 4,
+					"file": "/media/stefano/data_ext4/Dropbox/poliTO/tesi/elaborato_finale/tex/chap1.tex",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 15446,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/LaTeX/LaTeX.sublime-syntax"
 						},
 						"translation.x": 0.0,
 						"translation.y": 0.0,
@@ -1148,7 +1240,175 @@
 					"type": "text"
 				},
 				{
-					"buffer": 4,
+					"buffer": 5,
+					"file": "/media/stefano/data_ext4/Dropbox/poliTO/tesi/elaborato_finale/tex/chap2.tex",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 387,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/LaTeX/LaTeX.sublime-syntax"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 5,
+					"type": "text"
+				},
+				{
+					"buffer": 6,
+					"file": "/media/stefano/data_ext4/Dropbox/poliTO/tesi/elaborato_finale/tex/chap3.tex",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 47401,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/LaTeX/LaTeX.sublime-syntax"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 4,
+					"type": "text"
+				},
+				{
+					"buffer": 7,
+					"file": "/media/stefano/data_ext4/Dropbox/poliTO/tesi/elaborato_finale/tex/chap4.tex",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 24256,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/LaTeX/LaTeX.sublime-syntax"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 3,
+					"type": "text"
+				},
+				{
+					"buffer": 8,
+					"file": "/media/stefano/data_ext4/Dropbox/poliTO/tesi/elaborato_finale/tex/chap5.tex",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 451,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/LaTeX/LaTeX.sublime-syntax"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 2,
+					"type": "text"
+				},
+				{
+					"buffer": 9,
+					"file": "/media/stefano/data_ext4/Dropbox/poliTO/tesi/elaborato_finale/tex/chap6.tex",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 46,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/LaTeX/LaTeX.sublime-syntax"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 1,
+					"type": "text"
+				},
+				{
+					"buffer": 10,
+					"file": "/media/stefano/data_ext4/Dropbox/poliTO/tesi/elaborato_finale/tex/main.tex",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 39444,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								239,
+								239
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/LaTeX/LaTeX.sublime-syntax"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
+					"type": "text"
+				},
+				{
+					"buffer": 11,
 					"file": "gaussian_coefficients.c",
 					"semi_transient": false,
 					"settings":
@@ -1173,11 +1433,11 @@
 						"translation.y": 2280.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 7,
+					"stack_index": 16,
 					"type": "text"
 				},
 				{
-					"buffer": 5,
+					"buffer": 12,
 					"file": "gaussian_coefficients.h",
 					"semi_transient": false,
 					"settings":
@@ -1201,24 +1461,24 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 8,
+					"stack_index": 13,
 					"type": "text"
 				},
 				{
-					"buffer": 6,
+					"buffer": 13,
 					"file": "opencv_Canny.cpp",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 15876,
+						"buffer_size": 20483,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								12121,
-								12121
+								8575,
+								8575
 							]
 						],
 						"settings":
@@ -1227,14 +1487,43 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 453.0,
+						"translation.y": 2109.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 4,
+					"stack_index": 9,
 					"type": "text"
 				},
 				{
-					"buffer": 7,
+					"buffer": 14,
+					"file": "/media/stefano/data_ext4/Dropbox/poliTO_private/tesi/Canny_Video/ARM_Video_sf/openCV_HW_filter.cpp",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 26183,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								12411,
+								12411
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/C++/C++.sublime-syntax",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 6612.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 12,
+					"type": "text"
+				},
+				{
+					"buffer": 15,
 					"file": "opencv_Canny.h",
 					"semi_transient": false,
 					"settings":
@@ -1259,11 +1548,11 @@
 						"translation.y": 228.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 5,
+					"stack_index": 15,
 					"type": "text"
 				},
 				{
-					"buffer": 8,
+					"buffer": 16,
 					"file": "opencv_funcs.h",
 					"semi_transient": false,
 					"settings":
@@ -1287,11 +1576,11 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 9,
+					"stack_index": 17,
 					"type": "text"
 				},
 				{
-					"buffer": 9,
+					"buffer": 17,
 					"file": "opencv_Gblur.cpp",
 					"semi_transient": false,
 					"settings":
@@ -1316,11 +1605,11 @@
 						"translation.y": 285.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 3,
+					"stack_index": 14,
 					"type": "text"
 				},
 				{
-					"buffer": 10,
+					"buffer": 18,
 					"file": "opencv_Gblur.h",
 					"semi_transient": false,
 					"settings":
@@ -1344,7 +1633,7 @@
 						"translation.y": 684.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 10,
+					"stack_index": 18,
 					"type": "text"
 				}
 			]

@@ -392,7 +392,7 @@ void Canny_HW_ARM( vdma_handle *vdma_handle, sepimgfilter_handle *filter_handle,
 	
 }
 
-void Canny_HW_RC( void * destImage_virtAddr, void * dx_virtAddr, void * dy_virtAddr, unsigned int width, unsigned int height, double low_thresh, double high_thresh, int aperture_size, bool L2gradient )
+void Canny_HW_RC( void * destImage_virtAddr, void * dx_virtAddr, void * dy_virtAddr, unsigned int width, unsigned int height, int low_thresh, int high_thresh, int aperture_size, bool L2gradient )
 {
 	printf("Canny HW RocketChip part\nInitialize variables..\n");
 	int i=0;
@@ -446,16 +446,19 @@ void Canny_HW_RC( void * destImage_virtAddr, void * dx_virtAddr, void * dy_virtA
 	//printf("\n\n");
 
   gettimeofday(&start, NULL);
-	if (L2gradient)
-	{
-		low_thresh = std::min(32767.0, low_thresh);		//max positive number on 16 bit = 2^15 - 1
-		high_thresh = std::min(32767.0, high_thresh);
+	//if (L2gradient)
+	//{
+	//	low_thresh = std::min(32767.0, low_thresh);		//max positive number on 16 bit = 2^15 - 1
+	//	high_thresh = std::min(32767.0, high_thresh);
+	//	
+	//	if (low_thresh > 0) low_thresh *= low_thresh;
+	//	if (high_thresh > 0) high_thresh *= high_thresh;
+	//}
+	//int low = cvFloor(low_thresh);
+	//int high = cvFloor(high_thresh);
 
-		if (low_thresh > 0) low_thresh *= low_thresh;
-		if (high_thresh > 0) high_thresh *= high_thresh;
-	}
-	int low = cvFloor(low_thresh);
-	int high = cvFloor(high_thresh);
+  int low = low_thresh;
+	int high = high_thresh;
 
 	ptrdiff_t mapstep = width + 2;	//long int type
 	AutoBuffer<uchar> buffer((width+2)*(height+2) + cn * mapstep * 3 * sizeof(int));

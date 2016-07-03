@@ -171,26 +171,190 @@ namespace my_Space
 		*/
 
 		gettimeofday(&start, NULL);
-		my_Space::nonMaxSuppress(src, cn, dx, dy, gradient, mapstep, mag_buf, map, &maxsize, &stack, &stack_top, &stack_bottom, low, high, L2gradient);
-	  gettimeofday(&stop, NULL);
-	  printf("nonMaxSuppress wall time: %lf s\n\n", ((stop.tv_sec + stop.tv_usec*0.000001)-(start.tv_sec + start.tv_usec*0.000001))*PRESC);
-		
 
+		#define CANNY_PUSH_MOD(d)   *(d) = uchar(2), *stack_top++ = (d)
+		#define CANNY_POP_MOD(d)     (d) = *--stack_top
+		// calculate magnitude and angle of gradient, perform non-maxima suppression.
+		// fill the map with one of the following values:
+		//   0 - the pixel might belong to an edge
+		//   1 - the pixel can not belong to an edge
+		//   2 - the pixel does belong to an edge
+		//printf("-d1\n");
+		for (int i = 0; i <= src.rows; i++)
+		{
+
+			int* _norm = mag_buf[(i > 0) + 1] + 1;
+			if (i < src.rows)
+			{
+				short* _dx = dx.ptr<short>(i); // returns a pointer to the specified matrix row
+				//short* _dx = (short*) (dx.data + i*src.cols*2);
+				
+				short* _dy = dy.ptr<short>(i);
+				//short* _dy = (short*) (dy.data + i*src.cols*2);
+				
+				if (!L2gradient)
+				{
+					int j = 0, lwidth = src.cols * cn;
+					for ( ; j < lwidth; ++j){
+						_norm[j] = std::abs(int(_dx[j])) + std::abs(int(_dy[j]));
+					}
+				}
+				else
+				{
+					int j = 0, lwidth = src.cols * cn;
+					for ( ; j < lwidth; ++j)
+						_norm[j] = int(_dx[j])*_dx[j] + int(_dy[j])*_dy[j];
+				}
+
+				if (cn > 1)
+				{
+					for(int j = 0, jn = 0; j < src.cols; ++j, jn += cn)
+					{
+						int maxIdx = jn;
+						for(int k = 1; k < cn; ++k){
+							if(_norm[jn + k] > _norm[maxIdx]) maxIdx = jn + k;
+						}
+						_norm[j] = _norm[maxIdx];
+						_dx[j] = _dx[maxIdx];
+						_dy[j] = _dy[maxIdx];
+					}
+				}
+				_norm[-1] = _norm[src.cols] = 0;
+			}
+			else{
+				memset(_norm-1, 0, /* cn* */mapstep*sizeof(int));
+				//for(int i = 0; i < mapstep; i++) *(_norm-1 + i) = 0;
+			}
+
+			// at the very beginning we do not have a complete ring
+			// buffer of 3 magnitude rows for non-maxima suppression
+			if (i == 0)
+				continue;
+			
+			uchar* _map = map + mapstep*i + 1;
+			_map[-1] = _map[src.cols] = 1;
+
+			int* _mag = mag_buf[1] + 1; // take the central row
+			ptrdiff_t magstep1 = mag_buf[2] - mag_buf[1];
+			ptrdiff_t magstep2 = mag_buf[0] - mag_buf[1];
+
+			const short* _x = dx.ptr<short>(i-1);
+			const short* _y = dy.ptr<short>(i-1);
+			
+			if ((stack_top - stack_bottom) + src.cols > maxsize)
+			{
+				int sz = (int)(stack_top - stack_bottom);
+				maxsize = std::max(maxsize * 3/2, sz + (int)src.cols);
+				stack.resize(maxsize);
+				stack_bottom = &stack[0];
+				stack_top = stack_bottom + sz;
+			}
+
+			int prev_flag = 0;
+			for (int j = 0; j < src.cols; j++)
+			{
+				#define CANNY_SHIFT 15
+				const int TG22 = (int)(0.4142135623730950488016887242097*(1<<CANNY_SHIFT) + 0.5);
+
+				int m = _mag[j];
+
+				if (m > low)
+				{
+					int xs = _x[j];
+					int ys = _y[j];
+					int x = std::abs(xs);
+					int y = std::abs(ys) << CANNY_SHIFT;
+
+					int tg22x = x * TG22;
+
+					if (y < tg22x)
+					{
+						if (m > _mag[j-1] && m >= _mag[j+1]) goto __ocv_canny_push;
+					}
+					else
+					{
+						int tg67x = tg22x + (x << (CANNY_SHIFT+1));
+						if (y > tg67x)
+						{
+							if (m > _mag[j+magstep2] && m >= _mag[j+magstep1]) goto __ocv_canny_push;
+						}
+						else
+						{
+							int s = (xs ^ ys) < 0 ? -1 : 1;
+							if (m > _mag[j+magstep2-s] && m > _mag[j+magstep1+s]) goto __ocv_canny_push;
+						}
+					}
+				}
+				prev_flag = 0;
+				_map[j] = uchar(1);
+				continue;
+
+				__ocv_canny_push:
+				if (!prev_flag && m > high && _map[j-mapstep] != 2)
+				{
+					CANNY_PUSH_MOD(_map + j);
+					prev_flag = 1;
+				}
+				else
+					_map[j] = 0;
+			}
+
+			// scroll the ring buffer
+			_mag = mag_buf[0];
+			mag_buf[0] = mag_buf[1];
+			mag_buf[1] = mag_buf[2];
+			mag_buf[2] = _mag;
+		}
+
+	 	gettimeofday(&stop, NULL);
+	  	printf("nonMaxSuppress wall time:       %3.3lf ms\n\n", ((stop.tv_sec + stop.tv_usec*0.000001)-(start.tv_sec + start.tv_usec*0.000001))*PRESC *1000);	
+
+	//	gettimeofday(&start, NULL);
+	//	hysteresisThresh(mapstep, &maxsize, &stack, &stack_top, &stack_bottom);
+	//	gettimeofday(&stop, NULL);
+	// 	printf("hysteresisThresh wall time:      %3.3lf ms\n\n", ((stop.tv_sec + stop.tv_usec*0.000001)-(start.tv_sec + start.tv_usec*0.000001))*PRESC *1000);
+
+	//	hysteresisThresh(mapstep, &maxsize, &stack, &stack_top, &stack_bottom);
 		gettimeofday(&start, NULL);
-		my_Space::hysteresisThresh(mapstep, &maxsize, &stack, &stack_top, &stack_bottom);
+		while (stack_top > stack_bottom)
+		{
+			uchar* m;
+			if ((stack_top - stack_bottom) + 8 > maxsize)
+			{
+				int sz = (int)(stack_top - stack_bottom);
+				maxsize = maxsize * 3/2;
+				stack.resize(maxsize);
+				stack_bottom = &stack[0];
+				stack_top = stack_bottom + sz;
+			}
+
+			CANNY_POP_MOD(m);
+
+			if (!m[-1])         CANNY_PUSH_MOD(m - 1);
+			if (!m[1])          CANNY_PUSH_MOD(m + 1);
+			if (!m[-mapstep-1]) CANNY_PUSH_MOD(m - mapstep - 1);
+			if (!m[-mapstep])   CANNY_PUSH_MOD(m - mapstep);
+			if (!m[-mapstep+1]) CANNY_PUSH_MOD(m - mapstep + 1);
+			if (!m[mapstep-1])  CANNY_PUSH_MOD(m + mapstep - 1);
+			if (!m[mapstep])    CANNY_PUSH_MOD(m + mapstep);
+			if (!m[mapstep+1])  CANNY_PUSH_MOD(m + mapstep + 1);
+		}
 		gettimeofday(&stop, NULL);
-	  printf("hysteresisThresh wall time: %lf s\n\n", ((stop.tv_sec + stop.tv_usec*0.000001)-(start.tv_sec + start.tv_usec*0.000001))*PRESC);
-		
+	 	printf("hysteresisThresh wall time:     %3.3lf ms\n\n", ((stop.tv_sec + stop.tv_usec*0.000001)-(start.tv_sec + start.tv_usec*0.000001))*PRESC*1000);
 
 		// the final step, form the final image
+		gettimeofday(&start, NULL);
 		const uchar* pmap = map + mapstep + 1;
-		
 		uchar* pdst = dst.ptr();
 		for (int i = 0; i < src.rows; i++, pmap += mapstep, pdst += dst.step)
 		{
 			for (int j = 0; j < src.cols; j++)
 				pdst[j] = (uchar)-(pmap[j] >> 1);
 		}
+		gettimeofday(&stop, NULL);
+  	printf("Final image creation wall time: %3.3lf ms\n\n", ((stop.tv_sec + stop.tv_usec*0.000001)-(start.tv_sec + start.tv_usec*0.000001))*PRESC *1000);
+	
+		//imwrite("dst_img.bmp", dst_img);
 	}
 
 	void nonMaxSuppress(Mat src, int cn, Mat dx, Mat dy, Mat gradient, ptrdiff_t mapstep, int* mag_buf[], uchar* map, int* maxsize, std::vector<uchar*> *stack, uchar*** stack_top, uchar*** stack_bottom, int low, int high, bool L2gradient)
